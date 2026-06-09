@@ -1,0 +1,10 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="ActivityProjectApp.MainWindow"
+        Title="Activity Project"
+        Width="900"
+        Height="600">
+
+    <ContentControl x:Name="MainContent"/>
+
+</Window>

@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ActivityProjectApp.Views.LoginView">
+
+    <Grid Background="#F4F6F8">
+
+        <Border Width="350"
+                Padding="25"
+                Background="White"
+                CornerRadius="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+
+            <StackPanel Spacing="15">
+
+                <TextBlock Text="Activity Project"
+                           FontSize="26"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Login Test Screen"
+                           FontSize="14"
+                           Foreground="Gray"
+                           HorizontalAlignment="Center"/>
+
+                <TextBox x:Name="EmailTextBox"
+                         Watermark="Email"/>
+
+                <TextBox x:Name="PasswordTextBox"
+                         Watermark="Password"
+                         PasswordChar="*"/>
+
+                <Button Content="Login"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Click="LoginButton_Click"/>
+
+                <TextBlock x:Name="MessageTextBlock"
+                           Text=""
+                           Foreground="Red"
+                           HorizontalAlignment="Center"/>
+
+            </StackPanel>
+
+        </Border>
+
+    </Grid>
+
+</UserControl>
