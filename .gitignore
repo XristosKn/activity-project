@@ -1,0 +1,19 @@
+# SAS generated files
+*.log
+*.lst
+*.html
+*.rtf
+*.pdf
+
+# Data and generated output folders
+data/*
+output/*
+logs/*
+
+# Keep empty folders in Git
+!data/.gitkeep
+!output/.gitkeep
+!logs/.gitkeep
+
+# OS/editor files
+.DS_Store
