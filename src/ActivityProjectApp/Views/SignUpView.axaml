@@ -1,0 +1,83 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ActivityProjectApp.Views.SignUpView"
+             Background="#F4F6F8">
+
+    <Grid Background="#F4F6F8">
+
+        <Border Width="460"
+                Padding="30"
+                Background="White"
+                CornerRadius="12"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+
+            <StackPanel Spacing="14">
+
+                <TextBlock Text="Create Account"
+                           FontSize="28"
+                           FontWeight="Bold"
+                           Foreground="Black"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Sign up as a customer"
+                           FontSize="14"
+                           Foreground="#777777"
+                           HorizontalAlignment="Center"/>
+
+                <TextBox x:Name="NameTextBox"
+                         Watermark="Name"
+                         Height="36"/>
+
+                <TextBox x:Name="LastNameTextBox"
+                         Watermark="Last Name"
+                         Height="36"/>
+
+                <TextBox x:Name="UsernameTextBox"
+                         Watermark="Username"
+                         Height="36"/>
+
+                <TextBox x:Name="EmailTextBox"
+                         Watermark="Email"
+                         Height="36"/>
+
+                <TextBox x:Name="PhoneTextBox"
+                         Watermark="Phone"
+                         Height="36"/>
+
+                <TextBox x:Name="PasswordTextBox"
+                         Watermark="Password"
+                         PasswordChar="*"
+                         Height="36"/>
+
+                <TextBox x:Name="ConfirmPasswordTextBox"
+                         Watermark="Confirm Password"
+                         PasswordChar="*"
+                         Height="36"/>
+
+                <Button x:Name="CreateAccountButton"
+                        Content="Create Account"
+                        Height="36"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"/>
+
+                <Button x:Name="BackToLoginButton"
+                        Content="Back to Login"
+                        Height="36"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"/>
+
+                <TextBlock x:Name="SignUpMessageTextBlock"
+                           Text=""
+                           FontSize="13"
+                           TextWrapping="Wrap"
+                           Foreground="Red"
+                           HorizontalAlignment="Center"/>
+
+            </StackPanel>
+
+        </Border>
+
+    </Grid>
+
+</UserControl>

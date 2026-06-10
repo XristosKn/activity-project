@@ -73,8 +73,12 @@ namespace ActivityProjectApp.Views
 
         private void SignUpButton_Click(object? sender, RoutedEventArgs e)
         {
-            LoginMessageTextBlock.Foreground = Brushes.Gray;
-            LoginMessageTextBlock.Text = "Sign up form will be available later.";
+            Window? window = TopLevel.GetTopLevel(this) as Window;
+
+            if (window != null)
+            {
+                window.Content = new SignUpView();
+            }
         }
     }
 }
