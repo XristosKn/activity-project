@@ -63,9 +63,14 @@ namespace ActivityProjectApp.Views
             }
 
             if (currentUser is Customer)
-            {
-                LoginMessageTextBlock.Foreground = Brushes.Green;
-                LoginMessageTextBlock.Text = "Customer login successful. Customer dashboard will be added later.";
+{
+                Window? window = TopLevel.GetTopLevel(this) as Window;
+
+                if (window != null)
+                {
+                    window.Content = new CustomerDashboardView();
+                }
+
                 return;
             }
 

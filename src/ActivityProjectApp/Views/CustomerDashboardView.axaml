@@ -1,0 +1,239 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:ActivityProjectApp.Models"
+             x:Class="ActivityProjectApp.Views.CustomerDashboardView"
+             Background="#F4F6F8">
+
+    <Grid RowDefinitions="Auto,*"
+          Background="#F4F6F8">
+
+        <!-- Top bar -->
+        <Border Grid.Row="0"
+                Background="White"
+                Padding="20"
+                BorderBrush="#DDDDDD"
+                BorderThickness="0,0,0,1">
+
+            <DockPanel>
+
+                <StackPanel DockPanel.Dock="Left"
+                            Spacing="4">
+                    <TextBlock Text="Customer Dashboard"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="Black"/>
+
+                    <TextBlock x:Name="WelcomeTextBlock"
+                               Text="Welcome"
+                               FontSize="14"
+                               Foreground="#666666"/>
+                </StackPanel>
+
+                <Button x:Name="LogoutButton"
+                        Content="Logout"
+                        Width="100"
+                        Height="36"
+                        HorizontalContentAlignment="Center"
+                        DockPanel.Dock="Right"/>
+
+            </DockPanel>
+
+        </Border>
+
+        <!-- Main content -->
+        <Grid Grid.Row="1"
+              Margin="30"
+              RowDefinitions="Auto,*">
+
+            <!-- Search section -->
+            <Border Grid.Row="0"
+                    Background="White"
+                    CornerRadius="12"
+                    Padding="20"
+                    Margin="0,0,0,20">
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <TextBox x:Name="SearchTextBox"
+                             Grid.Column="0"
+                             Watermark="Search activities, categories or locations..."
+                             Height="38"
+                             Margin="0,0,12,0"/>
+
+                    <Button x:Name="SearchButton"
+                            Grid.Column="1"
+                            Content="Search"
+                            Width="110"
+                            Height="38"
+                            HorizontalContentAlignment="Center"/>
+
+                </Grid>
+
+            </Border>
+
+            <!-- Map and events section -->
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="2*,*">
+
+                <!-- Fake map area -->
+                <Border Grid.Column="0"
+                        Background="White"
+                        CornerRadius="12"
+                        Padding="20"
+                        Margin="0,0,20,0">
+
+                    <Grid RowDefinitions="Auto,*">
+
+                        <StackPanel Grid.Row="0"
+                                    Spacing="4"
+                                    Margin="0,0,0,12">
+
+                            <TextBlock Text="Activity Map"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="Black"/>
+
+                            <TextBlock Text="Map placeholder. Later this area can be replaced by a real map control."
+                                       FontSize="14"
+                                       Foreground="#666666"
+                                       TextWrapping="Wrap"/>
+
+                        </StackPanel>
+
+                        <!-- Placeholder map -->
+                        <Border Grid.Row="1"
+                                Background="#E8EEF5"
+                                CornerRadius="12"
+                                Padding="20">
+
+                            <Grid>
+
+                                <TextBlock Text="Digital Map Preview"
+                                           FontSize="24"
+                                           FontWeight="Bold"
+                                           Foreground="#5A6B7A"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+
+                                <StackPanel HorizontalAlignment="Left"
+                                            VerticalAlignment="Top"
+                                            Margin="40,40,0,0"
+                                            Spacing="6">
+                                    <TextBlock Text="●"
+                                               FontSize="28"
+                                               Foreground="#D9534F"/>
+                                    <TextBlock Text="Water Sports"
+                                               FontSize="13"
+                                               Foreground="Black"/>
+                                </StackPanel>
+
+                                <StackPanel HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Margin="0,0,80,0"
+                                            Spacing="6">
+                                    <TextBlock Text="●"
+                                               FontSize="28"
+                                               Foreground="#D9534F"/>
+                                    <TextBlock Text="Fitness"
+                                               FontSize="13"
+                                               Foreground="Black"/>
+                                </StackPanel>
+
+                                <StackPanel HorizontalAlignment="Center"
+                                            VerticalAlignment="Bottom"
+                                            Margin="0,0,0,60"
+                                            Spacing="6">
+                                    <TextBlock Text="●"
+                                               FontSize="28"
+                                               Foreground="#D9534F"/>
+                                    <TextBlock Text="Outdoor"
+                                               FontSize="13"
+                                               Foreground="Black"/>
+                                </StackPanel>
+
+                            </Grid>
+
+                        </Border>
+
+                    </Grid>
+
+                </Border>
+
+                <!-- Events list -->
+                <Border Grid.Column="1"
+                        Background="White"
+                        CornerRadius="12"
+                        Padding="20">
+
+                    <StackPanel Spacing="12">
+
+                        <TextBlock Text="Available Events"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="Black"/>
+
+                        <TextBlock x:Name="EventsCountTextBlock"
+                                   Text="0 events found"
+                                   FontSize="13"
+                                   Foreground="#777777"/>
+
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+                            <ItemsControl x:Name="AvailableEventsItemsControl">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type models:ActivityEvent}">
+                                        <Border Background="#F4F6F8"
+                                                CornerRadius="8"
+                                                Padding="12"
+                                                Margin="0,0,0,10">
+
+                                            <StackPanel Spacing="5">
+
+                                                <TextBlock Text="{Binding Title}"
+                                                           FontSize="16"
+                                                           FontWeight="Bold"
+                                                           Foreground="Black"/>
+
+                                                <TextBlock Text="{Binding Category}"
+                                                           FontSize="13"
+                                                           Foreground="#555555"/>
+
+                                                <TextBlock Text="{Binding Address}"
+                                                           FontSize="13"
+                                                           Foreground="#555555"
+                                                           TextWrapping="Wrap"/>
+
+                                                <TextBlock Text="{Binding Price}"
+                                                           FontSize="13"
+                                                           Foreground="#777777"/>
+
+                                                <TextBlock Text="{Binding Status}"
+                                                           FontSize="13"
+                                                           Foreground="#777777"/>
+
+                                            </StackPanel>
+
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+
+                        </ScrollViewer>
+
+                        <TextBlock x:Name="DashboardMessageTextBlock"
+                                   Text=""
+                                   FontSize="13"
+                                   Foreground="Red"
+                                   TextWrapping="Wrap"/>
+
+                    </StackPanel>
+
+                </Border>
+
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>
