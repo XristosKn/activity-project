@@ -5,7 +5,7 @@
 
     <Grid Background="#F4F6F8">
 
-        <Border Width="460"
+        <Border Width="500"
                 Padding="30"
                 Background="White"
                 CornerRadius="12"
@@ -20,11 +20,21 @@
                            Foreground="Black"
                            HorizontalAlignment="Center"/>
 
-                <TextBlock Text="Sign up as a customer"
+                <TextBlock Text="Choose your account type and complete the form"
                            FontSize="14"
                            Foreground="#777777"
                            HorizontalAlignment="Center"/>
 
+                <!-- Account type -->
+                <ComboBox x:Name="AccountTypeComboBox"
+                          PlaceholderText="Select account type"
+                          Height="36"
+                          HorizontalAlignment="Stretch">
+                    <ComboBoxItem Content="Customer"/>
+                    <ComboBoxItem Content="Service Provider"/>
+                </ComboBox>
+
+                <!-- Common user fields -->
                 <TextBox x:Name="NameTextBox"
                          Watermark="Name"
                          Height="36"/>
@@ -55,15 +65,93 @@
                          PasswordChar="*"
                          Height="36"/>
 
+                <!-- Customer extra fields -->
+                <StackPanel x:Name="CustomerFieldsPanel"
+                            Spacing="10"
+                            IsVisible="False">
+
+                    <TextBlock Text="Customer Details"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="Black"/>
+
+                    <ComboBox x:Name="GenderComboBox"
+                              PlaceholderText="Select gender"
+                              Height="36"
+                              HorizontalAlignment="Stretch">
+                        <ComboBoxItem Content="Male"/>
+                        <ComboBoxItem Content="Female"/>
+                        <ComboBoxItem Content="Other"/>
+                    </ComboBox>
+
+                    <DatePicker x:Name="DateOfBirthPicker"
+                                HorizontalAlignment="Stretch"/>
+
+                </StackPanel>
+
+                <!-- Service Provider extra fields -->
+                <StackPanel x:Name="ServiceProviderFieldsPanel"
+                            Spacing="10"
+                            IsVisible="False">
+
+                    <TextBlock Text="Service Provider Details"
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Foreground="Black"/>
+
+                    <TextBlock Text="Select one or more types of service"
+                            FontSize="13"
+                            Foreground="#555555"/>
+
+                    <ScrollViewer Height="190"
+                                VerticalScrollBarVisibility="Auto"
+                                BorderBrush="#999999"
+                                BorderThickness="1">
+
+                        <StackPanel x:Name="TypeOfServiceCheckBoxPanel"
+                                    Spacing="6"
+                                    Margin="8">
+
+                            <CheckBox Content="Water Sports"/>
+                            <CheckBox Content="Mountain Activities"/>
+                            <CheckBox Content="Fitness &amp; Wellness"/>
+                            <CheckBox Content="Team Sports"/>
+                            <CheckBox Content="Outdoor Adventure"/>
+                            <CheckBox Content="Cultural Activities"/>
+                            <CheckBox Content="Creative Workshops"/>
+                            <CheckBox Content="Food &amp; Drink Experiences"/>
+                            <CheckBox Content="Kids Activities"/>
+                            <CheckBox Content="Extreme Sports"/>
+                            <CheckBox Content="Winter Sports"/>
+                            <CheckBox Content="Dance &amp; Music"/>
+                            <CheckBox Content="Educational Activities"/>
+                            <CheckBox Content="Tours &amp; Excursions"/>
+                            <CheckBox Content="Other"/>
+
+                        </StackPanel>
+
+                    </ScrollViewer>
+
+                    <TextBlock Text="More service provider fields will be added later."
+                               FontSize="12"
+                               Foreground="#777777"
+                               TextWrapping="Wrap"/>
+
+                </StackPanel>
+
                 <Button x:Name="CreateAccountButton"
                         Content="Create Account"
                         Height="36"
+                        Background="#D0D0D0"
+                        Foreground="Black"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"/>
 
                 <Button x:Name="BackToLoginButton"
                         Content="Back to Login"
                         Height="36"
+                        Background="#E6E6E6"
+                        Foreground="Black"
                         HorizontalAlignment="Stretch"
                         HorizontalContentAlignment="Center"/>
 

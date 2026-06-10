@@ -1,0 +1,166 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ActivityProjectApp.Views.ServiceProviderDashboardView"
+             Background="#F4F6F8">
+
+    <Grid RowDefinitions="Auto,*"
+          Background="#F4F6F8">
+
+        <!-- Top bar -->
+        <Border Grid.Row="0"
+                Background="White"
+                Padding="20"
+                BorderBrush="#DDDDDD"
+                BorderThickness="0,0,0,1">
+
+            <DockPanel>
+
+                <StackPanel DockPanel.Dock="Left"
+                            Spacing="4">
+                    <TextBlock Text="Service Provider Dashboard"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="Black"/>
+
+                    <TextBlock x:Name="WelcomeTextBlock"
+                               Text="Welcome"
+                               FontSize="14"
+                               Foreground="#666666"/>
+                </StackPanel>
+
+                <Button x:Name="LogoutButton"
+                        Content="Logout"
+                        Width="100"
+                        Height="36"
+                        HorizontalContentAlignment="Center"
+                        DockPanel.Dock="Right"/>
+
+            </DockPanel>
+
+        </Border>
+
+        <!-- Main content -->
+        <Grid Grid.Row="1"
+              Margin="30"
+              ColumnDefinitions="260,*">
+
+            <!-- Side menu -->
+            <Border Grid.Column="0"
+                    Background="White"
+                    CornerRadius="12"
+                    Padding="20"
+                    Margin="0,0,25,0">
+
+                <StackPanel Spacing="12">
+
+                    <TextBlock Text="Menu"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="Black"/>
+
+                    <Button x:Name="CreateActivityButton"
+                            Content="Create Activity"
+                            Height="40"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"/>
+
+                    <Button x:Name="MyActivitiesButton"
+                            Content="My Activities"
+                            Height="40"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"/>
+
+                    <Button x:Name="BookingsButton"
+                            Content="Bookings"
+                            Height="40"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"/>
+
+                    <Button x:Name="ProfileButton"
+                            Content="Profile"
+                            Height="40"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"/>
+
+                </StackPanel>
+
+            </Border>
+
+            <!-- Dashboard area -->
+            <Border Grid.Column="1"
+                    Background="White"
+                    CornerRadius="12"
+                    Padding="25">
+
+                <StackPanel Spacing="18">
+
+                    <TextBlock Text="Overview"
+                               FontSize="22"
+                               FontWeight="Bold"
+                               Foreground="Black"/>
+
+                    <TextBlock Text="This is the main page for service providers. From here, providers will be able to create and manage activities."
+                               FontSize="14"
+                               Foreground="#555555"
+                               TextWrapping="Wrap"/>
+
+                    <UniformGrid Columns="3"
+                                 Rows="1">
+
+                        <Border Background="#F4F6F8"
+                                CornerRadius="10"
+                                Padding="20"
+                                Margin="0,0,12,0">
+                            <StackPanel>
+                                <TextBlock Text="0"
+                                           FontSize="30"
+                                           FontWeight="Bold"
+                                           Foreground="Black"/>
+                                <TextBlock Text="Active Activities"
+                                           Foreground="#666666"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F4F6F8"
+                                CornerRadius="10"
+                                Padding="20"
+                                Margin="0,0,12,0">
+                            <StackPanel>
+                                <TextBlock Text="0"
+                                           FontSize="30"
+                                           FontWeight="Bold"
+                                           Foreground="Black"/>
+                                <TextBlock Text="Bookings"
+                                           Foreground="#666666"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#F4F6F8"
+                                CornerRadius="10"
+                                Padding="20">
+                            <StackPanel>
+                                <TextBlock Text="0"
+                                           FontSize="30"
+                                           FontWeight="Bold"
+                                           Foreground="Black"/>
+                                <TextBlock Text="Pending Requests"
+                                           Foreground="#666666"/>
+                            </StackPanel>
+                        </Border>
+
+                    </UniformGrid>
+
+                    <TextBlock x:Name="DashboardMessageTextBlock"
+                               Text="Select an option from the menu."
+                               FontSize="14"
+                               Foreground="#777777"/>
+
+                </StackPanel>
+
+            </Border>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>

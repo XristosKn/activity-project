@@ -1,7 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using ActivityProjectApp.Data;
 using ActivityProjectApp.Models;
 using ActivityProjectApp.Services;
 
@@ -15,10 +14,7 @@ namespace ActivityProjectApp.Views
         {
             InitializeComponent();
 
-            var userRepository = new FakeUserRepository();
-            var sessionService = new SessionService();
-
-            _authService = new AuthService(userRepository, sessionService);
+            _authService = AppServices.AuthService;
 
             LoginButton.Click += LoginButton_Click;
             SignUpButton.Click += SignUpButton_Click;
@@ -54,21 +50,27 @@ namespace ActivityProjectApp.Views
 
             User? currentUser = _authService.GetCurrentUser();
 
-            LoginMessageTextBlock.Foreground = Brushes.Green;
-            LoginMessageTextBlock.Text = message;
+            if (currentUser is ServiceProvider)
+            {
+                Window? window = TopLevel.GetTopLevel(this) as Window;
+
+                if (window != null)
+                {
+                    window.Content = new ServiceProviderDashboardView();
+                }
+
+                return;
+            }
 
             if (currentUser is Customer)
             {
-                // TODO:
-                // Navigate to Customer dashboard.
-                LoginMessageTextBlock.Text = "Customer login successful.";
+                LoginMessageTextBlock.Foreground = Brushes.Green;
+                LoginMessageTextBlock.Text = "Customer login successful. Customer dashboard will be added later.";
+                return;
             }
-            else if (currentUser is ServiceProvider)
-            {
-                // TODO:
-                // Navigate to Service Provider dashboard.
-                LoginMessageTextBlock.Text = "Service Provider login successful.";
-            }
+
+            LoginMessageTextBlock.Foreground = Brushes.Green;
+            LoginMessageTextBlock.Text = message;
         }
 
         private void SignUpButton_Click(object? sender, RoutedEventArgs e)

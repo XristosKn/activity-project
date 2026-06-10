@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using ActivityProjectApp.Data;
 using ActivityProjectApp.Models;
 
@@ -45,6 +47,88 @@ namespace ActivityProjectApp.Services
                 message = "Login successful.";
             }
 
+            return true;
+        }
+
+        public bool RegisterCustomer(
+            string name,
+            string lastName,
+            string username,
+            string email,
+            string phone,
+            string password,
+            string gender,
+            DateTime dateOfBirth,
+            out string message)
+        {
+            if (_userRepository.UsernameExists(username))
+            {
+                message = "Username already exists.";
+                return false;
+            }
+
+            if (_userRepository.EmailExists(email))
+            {
+                message = "Email already exists.";
+                return false;
+            }
+
+            Customer customer = new Customer
+            {
+                Name = name,
+                LastName = lastName,
+                Username = username,
+                Email = email,
+                Phone = phone,
+                Password = password,
+                EnrollmentDate = DateTime.Now,
+                Gender = gender,
+                DateBirth = dateOfBirth
+            };
+
+            _userRepository.AddUser(customer);
+
+            message = "Customer account created successfully.";
+            return true;
+        }
+
+        public bool RegisterServiceProvider(
+            string name,
+            string lastName,
+            string username,
+            string email,
+            string phone,
+            string password,
+            List<string> selectedTypesOfService,
+            out string message)
+        {
+            if (_userRepository.UsernameExists(username))
+            {
+                message = "Username already exists.";
+                return false;
+            }
+
+            if (_userRepository.EmailExists(email))
+            {
+                message = "Email already exists.";
+                return false;
+            }
+
+            ServiceProvider serviceProvider = new ServiceProvider
+            {
+                Name = name,
+                LastName = lastName,
+                Username = username,
+                Email = email,
+                Phone = phone,
+                Password = password,
+                EnrollmentDate = DateTime.Now,
+                TypeofService = string.Join(", ", selectedTypesOfService)
+            };
+
+            _userRepository.AddUser(serviceProvider);
+
+            message = "Service Provider account created successfully.";
             return true;
         }
 

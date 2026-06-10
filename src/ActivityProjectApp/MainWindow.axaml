@@ -3,9 +3,10 @@
         xmlns:views="clr-namespace:ActivityProjectApp.Views"
         x:Class="ActivityProjectApp.MainWindow"
         Title="Activity Project"
-        Width="900"
-        Height="600"
-        WindowStartupLocation="CenterScreen">
+        WindowState="Maximized"
+        MinWidth="1000"
+        MinHeight="1000"
+        Background="#F4F6F8">
 
     <views:LoginView/>
 
