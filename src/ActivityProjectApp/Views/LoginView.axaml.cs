@@ -1,14 +1,24 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using ActivityProjectApp.Data;
+using ActivityProjectApp.Models;
+using ActivityProjectApp.Services;
 
 namespace ActivityProjectApp.Views
 {
     public partial class LoginView : UserControl
     {
+        private readonly AuthService _authService;
+
         public LoginView()
         {
             InitializeComponent();
+
+            var userRepository = new FakeUserRepository();
+            var sessionService = new SessionService();
+
+            _authService = new AuthService(userRepository, sessionService);
 
             LoginButton.Click += LoginButton_Click;
             SignUpButton.Click += SignUpButton_Click;
@@ -33,14 +43,31 @@ namespace ActivityProjectApp.Views
                 return;
             }
 
-            if (identifier == "customer@test.com" && password == "1234")
+            bool loginSuccess = _authService.Login(identifier, password, out string message);
+
+            if (!loginSuccess)
             {
-                LoginMessageTextBlock.Foreground = Brushes.Green;
-                LoginMessageTextBlock.Text = "Login successful.";
+                LoginMessageTextBlock.Foreground = Brushes.Red;
+                LoginMessageTextBlock.Text = message;
+                return;
             }
-            else
+
+            User? currentUser = _authService.GetCurrentUser();
+
+            LoginMessageTextBlock.Foreground = Brushes.Green;
+            LoginMessageTextBlock.Text = message;
+
+            if (currentUser is Customer)
             {
-                LoginMessageTextBlock.Text = "Invalid username/email or password.";
+                // TODO:
+                // Navigate to Customer dashboard.
+                LoginMessageTextBlock.Text = "Customer login successful.";
+            }
+            else if (currentUser is ServiceProvider)
+            {
+                // TODO:
+                // Navigate to Service Provider dashboard.
+                LoginMessageTextBlock.Text = "Service Provider login successful.";
             }
         }
 
