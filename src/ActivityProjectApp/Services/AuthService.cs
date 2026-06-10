@@ -83,7 +83,11 @@ namespace ActivityProjectApp.Services
                 Password = password,
                 EnrollmentDate = DateTime.Now,
                 Gender = gender,
-                DateBirth = dateOfBirth
+                DateBirth = dateOfBirth,
+
+                CurrentLatitude = null,
+                CurrentLongitude = null,
+                LocationPermissionStatus = "NotRequested"
             };
 
             _userRepository.AddUser(customer);

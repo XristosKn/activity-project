@@ -1,5 +1,6 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:ActivityProjectApp.Models"
              x:Class="ActivityProjectApp.Views.ServiceProviderDashboardView"
              Background="#F4F6F8">
 
@@ -92,70 +93,254 @@
                     CornerRadius="12"
                     Padding="25">
 
-                <StackPanel Spacing="18">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
 
-                    <TextBlock Text="Overview"
-                               FontSize="22"
-                               FontWeight="Bold"
-                               Foreground="Black"/>
+                    <StackPanel Spacing="18">
 
-                    <TextBlock Text="This is the main page for service providers. From here, providers will be able to create and manage activities."
-                               FontSize="14"
-                               Foreground="#555555"
-                               TextWrapping="Wrap"/>
+                        <TextBlock Text="Overview"
+                                   FontSize="22"
+                                   FontWeight="Bold"
+                                   Foreground="Black"/>
 
-                    <UniformGrid Columns="3"
-                                 Rows="1">
+                        <TextBlock Text="This is the main page for service providers. From here, providers will be able to create and manage activities."
+                                   FontSize="14"
+                                   Foreground="#555555"
+                                   TextWrapping="Wrap"/>
 
-                        <Border Background="#F4F6F8"
-                                CornerRadius="10"
-                                Padding="20"
-                                Margin="0,0,12,0">
-                            <StackPanel>
-                                <TextBlock Text="0"
-                                           FontSize="30"
-                                           FontWeight="Bold"
-                                           Foreground="Black"/>
-                                <TextBlock Text="Active Activities"
-                                           Foreground="#666666"/>
-                            </StackPanel>
-                        </Border>
+                        <UniformGrid Columns="3"
+                                     Rows="1">
 
-                        <Border Background="#F4F6F8"
-                                CornerRadius="10"
-                                Padding="20"
-                                Margin="0,0,12,0">
-                            <StackPanel>
-                                <TextBlock Text="0"
-                                           FontSize="30"
-                                           FontWeight="Bold"
-                                           Foreground="Black"/>
-                                <TextBlock Text="Bookings"
-                                           Foreground="#666666"/>
-                            </StackPanel>
-                        </Border>
+                            <Border Background="#F4F6F8"
+                                    CornerRadius="10"
+                                    Padding="20"
+                                    Margin="0,0,12,0">
+                                <StackPanel>
+                                    <TextBlock x:Name="ActiveActivitiesCountTextBlock"
+                                               Text="0"
+                                               FontSize="30"
+                                               FontWeight="Bold"
+                                               Foreground="Black"/>
+                                    <TextBlock Text="Active Activities"
+                                               Foreground="#666666"/>
+                                </StackPanel>
+                            </Border>
 
-                        <Border Background="#F4F6F8"
-                                CornerRadius="10"
+                            <Border Background="#F4F6F8"
+                                    CornerRadius="10"
+                                    Padding="20"
+                                    Margin="0,0,12,0">
+                                <StackPanel>
+                                    <TextBlock Text="0"
+                                               FontSize="30"
+                                               FontWeight="Bold"
+                                               Foreground="Black"/>
+                                    <TextBlock Text="Bookings"
+                                               Foreground="#666666"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="#F4F6F8"
+                                    CornerRadius="10"
+                                    Padding="20">
+                                <StackPanel>
+                                    <TextBlock x:Name="InactiveActivitiesCountTextBlock"
+                                               Text="0"
+                                               FontSize="30"
+                                               FontWeight="Bold"
+                                               Foreground="Black"/>
+                                    <TextBlock Text="Inactive Activities"
+                                               Foreground="#666666"/>
+                                </StackPanel>
+                            </Border>
+
+                        </UniformGrid>
+
+                        <TextBlock x:Name="DashboardMessageTextBlock"
+                                   Text="Select an option from the menu."
+                                   FontSize="14"
+                                   Foreground="#777777"/>
+
+                        <!-- Create Event Form -->
+                        <Border x:Name="CreateEventFormPanel"
+                                IsVisible="False"
+                                Background="#F4F6F8"
+                                CornerRadius="12"
                                 Padding="20">
-                            <StackPanel>
-                                <TextBlock Text="0"
-                                           FontSize="30"
+
+                            <StackPanel Spacing="12">
+
+                                <TextBlock Text="Create New Event"
+                                           FontSize="20"
                                            FontWeight="Bold"
                                            Foreground="Black"/>
-                                <TextBlock Text="Pending Requests"
-                                           Foreground="#666666"/>
+
+                                <TextBox x:Name="EventTitleTextBox"
+                                         Watermark="Title"
+                                         Height="36"/>
+
+                                <ComboBox x:Name="EventCategoryComboBox"
+                                          PlaceholderText="Select category"
+                                          Height="36"
+                                          HorizontalAlignment="Stretch">
+                                    <ComboBoxItem Content="Water Sports"/>
+                                    <ComboBoxItem Content="Mountain Activities"/>
+                                    <ComboBoxItem Content="Fitness &amp; Wellness"/>
+                                    <ComboBoxItem Content="Team Sports"/>
+                                    <ComboBoxItem Content="Outdoor Adventure"/>
+                                    <ComboBoxItem Content="Cultural Activities"/>
+                                    <ComboBoxItem Content="Creative Workshops"/>
+                                    <ComboBoxItem Content="Food &amp; Drink Experiences"/>
+                                    <ComboBoxItem Content="Kids Activities"/>
+                                    <ComboBoxItem Content="Extreme Sports"/>
+                                    <ComboBoxItem Content="Winter Sports"/>
+                                    <ComboBoxItem Content="Dance &amp; Music"/>
+                                    <ComboBoxItem Content="Educational Activities"/>
+                                    <ComboBoxItem Content="Tours &amp; Excursions"/>
+                                    <ComboBoxItem Content="Other"/>
+                                </ComboBox>
+
+                                <TextBox x:Name="EventDescriptionTextBox"
+                                         Watermark="Description"
+                                         AcceptsReturn="True"
+                                         TextWrapping="Wrap"
+                                         Height="80"/>
+
+                                <Grid ColumnDefinitions="*,*">
+                                    <TextBox x:Name="EventLatitudeTextBox"
+                                             Grid.Column="0"
+                                             Watermark="Latitude"
+                                             Height="36"
+                                             Margin="0,0,8,0"/>
+
+                                    <TextBox x:Name="EventLongitudeTextBox"
+                                             Grid.Column="1"
+                                             Watermark="Longitude"
+                                             Height="36"
+                                             Margin="8,0,0,0"/>
+                                </Grid>
+
+                                <TextBox x:Name="EventAddressTextBox"
+                                         Watermark="Address"
+                                         Height="36"/>
+
+                                <Grid ColumnDefinitions="*,*">
+                                    <DatePicker x:Name="EventDatePicker"
+                                                Grid.Column="0"
+                                                HorizontalAlignment="Stretch"
+                                                Margin="0,0,8,0"/>
+
+                                    <TextBox x:Name="EventTimeTextBox"
+                                             Grid.Column="1"
+                                             Watermark="Time e.g. 10:30"
+                                             Height="36"
+                                             Margin="8,0,0,0"/>
+                                </Grid>
+
+                                <Grid ColumnDefinitions="*,*">
+                                    <TextBox x:Name="EventPriceTextBox"
+                                             Grid.Column="0"
+                                             Watermark="Price"
+                                             Height="36"
+                                             Margin="0,0,8,0"/>
+
+                                    <TextBox x:Name="EventMaxSpaceTextBox"
+                                             Grid.Column="1"
+                                             Watermark="Max Space"
+                                             Height="36"
+                                             Margin="8,0,0,0"/>
+                                </Grid>
+
+                                <TextBox x:Name="EventGalleryTextBox"
+                                         Watermark="Gallery image paths separated by comma"
+                                         Height="36"/>
+
+                                <ComboBox x:Name="EventStatusComboBox"
+                                          PlaceholderText="Select status"
+                                          Height="36"
+                                          HorizontalAlignment="Stretch">
+                                    <ComboBoxItem Content="Active"/>
+                                    <ComboBoxItem Content="Inactive"/>
+                                </ComboBox>
+
+                                <Grid ColumnDefinitions="*,*">
+                                    <Button x:Name="SaveEventButton"
+                                            Grid.Column="0"
+                                            Content="Save Event"
+                                            Height="38"
+                                            Background="#D0D0D0"
+                                            Foreground="Black"
+                                            HorizontalContentAlignment="Center"
+                                            Margin="0,0,8,0"/>
+
+                                    <Button x:Name="CancelCreateEventButton"
+                                            Grid.Column="1"
+                                            Content="Cancel/Close"
+                                            Height="38"
+                                            Background="#E6E6E6"
+                                            Foreground="Black"
+                                            HorizontalContentAlignment="Center"
+                                            Margin="8,0,0,0"/>
+                                </Grid>
+
+                                <TextBlock x:Name="CreateEventMessageTextBlock"
+                                           Text=""
+                                           FontSize="13"
+                                           TextWrapping="Wrap"
+                                           Foreground="Red"/>
+
                             </StackPanel>
+
                         </Border>
 
-                    </UniformGrid>
+                        <!-- Provider events list -->
+                        <Border Background="#F4F6F8"
+                                CornerRadius="12"
+                                Padding="20">
 
-                    <TextBlock x:Name="DashboardMessageTextBlock"
-                               Text="Select an option from the menu."
-                               FontSize="14"
-                               Foreground="#777777"/>
+                            <StackPanel Spacing="10">
 
-                </StackPanel>
+                                <TextBlock Text="My Created Events"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           Foreground="Black"/>
+
+                                <ItemsControl x:Name="ProviderEventsItemsControl">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type models:ActivityEvent}">
+                                            <Border Background="White"
+                                                    CornerRadius="8"
+                                                    Padding="12"
+                                                    Margin="0,0,0,8">
+                                                <StackPanel Spacing="4">
+                                                    <TextBlock Text="{Binding Title}"
+                                                               FontSize="16"
+                                                               FontWeight="Bold"
+                                                               Foreground="Black"/>
+
+                                                    <TextBlock Text="{Binding Category}"
+                                                               FontSize="13"
+                                                               Foreground="#555555"/>
+
+                                                    <TextBlock Text="{Binding Address}"
+                                                               FontSize="13"
+                                                               Foreground="#555555"/>
+
+                                                    <TextBlock Text="{Binding Status}"
+                                                               FontSize="13"
+                                                               Foreground="#777777"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                            </StackPanel>
+
+                        </Border>
+
+                    </StackPanel>
+
+                </ScrollViewer>
 
             </Border>
 

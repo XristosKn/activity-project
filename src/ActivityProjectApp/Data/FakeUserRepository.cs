@@ -19,8 +19,12 @@ namespace ActivityProjectApp.Data
                 Email = "customer@test.com",
                 Phone = "6900000000",
                 EnrollmentDate = DateTime.Now,
-                Gender = "Not specified",
-                DateBirth = new DateTime(2000, 1, 1)
+                Gender = "Prefer not to say",
+                DateBirth = new DateTime(2000, 1, 1),
+
+                CurrentLatitude = null,
+                CurrentLongitude = null,
+                LocationPermissionStatus = "NotRequested"
             },
 
             new ServiceProvider
@@ -33,7 +37,7 @@ namespace ActivityProjectApp.Data
                 Email = "provider@test.com",
                 Phone = "6911111111",
                 EnrollmentDate = DateTime.Now,
-                TypeofService = "Sports"
+                TypeofService = "Water Sports, Outdoor Adventure"
             }
         };
 
@@ -58,13 +62,44 @@ namespace ActivityProjectApp.Data
 
         public void AddUser(User user)
         {
-            user.Id = _users.Count + 1;
+            user.Id = GetNextId();
+            user.EnrollmentDate = DateTime.Now;
+
             _users.Add(user);
         }
 
         public List<User> GetAllUsers()
         {
             return _users;
+        }
+
+        public List<Customer> GetAllCustomers()
+        {
+            return _users
+                .OfType<Customer>()
+                .ToList();
+        }
+
+        public List<ServiceProvider> GetAllServiceProviders()
+        {
+            return _users
+                .OfType<ServiceProvider>()
+                .ToList();
+        }
+
+        public User? GetUserById(int id)
+        {
+            return _users.FirstOrDefault(user => user.Id == id);
+        }
+
+        private int GetNextId()
+        {
+            if (_users.Count == 0)
+            {
+                return 1;
+            }
+
+            return _users.Max(user => user.Id) + 1;
         }
     }
 }

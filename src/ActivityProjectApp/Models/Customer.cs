@@ -8,6 +8,12 @@ namespace ActivityProjectApp.Models
 
         public DateTime DateBirth { get; set; }
 
+        public double? CurrentLatitude { get; set; }
+
+        public double? CurrentLongitude { get; set; }
+
+        public string LocationPermissionStatus { get; set; } = "NotRequested";
+
         public Customer()
         {
         }
@@ -22,7 +28,10 @@ namespace ActivityProjectApp.Models
             string phone,
             DateTime enrollmentDate,
             string gender,
-            DateTime dateBirth)
+            DateTime dateBirth,
+            double? currentLatitude,
+            double? currentLongitude,
+            string locationPermissionStatus)
         {
             Id = id;
             Name = name;
@@ -34,6 +43,9 @@ namespace ActivityProjectApp.Models
             EnrollmentDate = enrollmentDate;
             Gender = gender;
             DateBirth = dateBirth;
+            CurrentLatitude = currentLatitude;
+            CurrentLongitude = currentLongitude;
+            LocationPermissionStatus = locationPermissionStatus;
         }
     }
 }
