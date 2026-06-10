@@ -1,14 +1,12 @@
 using Avalonia.Controls;
-using ActivityProjectApp.Views;
 
-namespace ActivityProjectApp;
-
-public partial class MainWindow : Window
+namespace ActivityProjectApp
 {
-    public MainWindow()
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-
-        MainContent.Content = new LoginView();
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
     }
 }

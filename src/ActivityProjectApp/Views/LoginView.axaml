@@ -1,42 +1,67 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="ActivityProjectApp.Views.LoginView">
+             x:Class="ActivityProjectApp.Views.LoginView"
+             Background="#F4F6F8">
 
     <Grid Background="#F4F6F8">
 
-        <Border Width="350"
-                Padding="25"
+        <Border Width="430"
+                Padding="30"
                 Background="White"
-                CornerRadius="10"
+                CornerRadius="12"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
 
-            <StackPanel Spacing="15">
+            <StackPanel Spacing="16">
 
                 <TextBlock Text="Activity Project"
-                           FontSize="26"
+                           FontSize="28"
                            FontWeight="Bold"
+                           Foreground="Black"
                            HorizontalAlignment="Center"/>
 
-                <TextBlock Text="Login Test Screen"
+                <TextBlock Text="Login to your account"
                            FontSize="14"
-                           Foreground="Gray"
+                           Foreground="#777777"
                            HorizontalAlignment="Center"/>
 
-                <TextBox x:Name="EmailTextBox"
-                         Watermark="Email"/>
+                <TextBox x:Name="LoginIdentifierTextBox"
+                         Watermark="Username or Email"
+                         Background="White"
+                         Foreground="Black"
+                         BorderBrush="#999999"
+                         BorderThickness="1"
+                         Height="36"/>
 
-                <TextBox x:Name="PasswordTextBox"
+                <TextBox x:Name="LoginPasswordTextBox"
                          Watermark="Password"
-                         PasswordChar="*"/>
+                         PasswordChar="*"
+                         Background="White"
+                         Foreground="Black"
+                         BorderBrush="#999999"
+                         BorderThickness="1"
+                         Height="36"/>
 
-                <Button Content="Login"
+                <Button x:Name="LoginButton"
+                        Content="Login"
+                        Height="36"
+                        Background="#D0D0D0"
+                        Foreground="Black"
                         HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"
-                        Click="LoginButton_Click"/>
+                        HorizontalContentAlignment="Center"/>
 
-                <TextBlock x:Name="MessageTextBlock"
+                <Button x:Name="SignUpButton"
+                        Content="Sign Up"
+                        Height="36"
+                        Background="#D0D0D0"
+                        Foreground="Black"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"/>
+
+                <TextBlock x:Name="LoginMessageTextBlock"
                            Text=""
+                           FontSize="13"
+                           TextWrapping="Wrap"
                            Foreground="Red"
                            HorizontalAlignment="Center"/>
 
