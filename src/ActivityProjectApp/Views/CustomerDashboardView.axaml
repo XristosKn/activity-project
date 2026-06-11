@@ -1,40 +1,49 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:models="clr-namespace:ActivityProjectApp.Models"
+             xmlns:converters="clr-namespace:ActivityProjectApp.Converters"
              x:Class="ActivityProjectApp.Views.CustomerDashboardView"
-             Background="#F4F6F8">
+             Background="#F3F6FA">
+
+    <UserControl.Resources>
+        <converters:CategoryBrushConverter x:Key="CategoryBrushConverter"/>
+    </UserControl.Resources>
 
     <Grid RowDefinitions="Auto,*"
-          Background="#F4F6F8">
+          Background="#F3F6FA">
 
         <!-- Top bar -->
         <Border Grid.Row="0"
                 Background="White"
-                Padding="20"
-                BorderBrush="#DDDDDD"
+                Padding="22,18"
+                BorderBrush="#E1E5EA"
                 BorderThickness="0,0,0,1">
 
-            <DockPanel>
+            <DockPanel LastChildFill="True">
+
+                <Button x:Name="LogoutButton"
+                        DockPanel.Dock="Right"
+                        Content="Logout"
+                        Width="110"
+                        Height="38"
+                        Background="#F1F3F5"
+                        Foreground="#1F2937"
+                        HorizontalContentAlignment="Center"/>
 
                 <StackPanel DockPanel.Dock="Left"
-                            Spacing="4">
-                    <TextBlock Text="Customer Dashboard"
-                               FontSize="24"
+                            Spacing="3">
+
+                    <TextBlock Text="Activity Map"
+                               FontSize="26"
                                FontWeight="Bold"
-                               Foreground="Black"/>
+                               Foreground="#111827"/>
 
                     <TextBlock x:Name="WelcomeTextBlock"
                                Text="Welcome"
                                FontSize="14"
-                               Foreground="#666666"/>
-                </StackPanel>
+                               Foreground="#6B7280"/>
 
-                <Button x:Name="LogoutButton"
-                        Content="Logout"
-                        Width="100"
-                        Height="36"
-                        HorizontalContentAlignment="Center"
-                        DockPanel.Dock="Right"/>
+                </StackPanel>
 
             </DockPanel>
 
@@ -42,114 +51,232 @@
 
         <!-- Main content -->
         <Grid Grid.Row="1"
-              Margin="30"
+              Margin="28"
               RowDefinitions="Auto,*">
 
-            <!-- Search section -->
+            <!-- Search panel -->
             <Border Grid.Row="0"
                     Background="White"
-                    CornerRadius="12"
-                    Padding="20"
-                    Margin="0,0,0,20">
+                    CornerRadius="18"
+                    Padding="18"
+                    Margin="0,0,0,20"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="1">
 
-                <Grid ColumnDefinitions="*,Auto">
+                <Grid ColumnDefinitions="*,Auto,Auto">
 
                     <TextBox x:Name="SearchTextBox"
                              Grid.Column="0"
-                             Watermark="Search activities, categories or locations..."
-                             Height="38"
-                             Margin="0,0,12,0"/>
+                             Watermark="Search by activity, category, description or area..."
+                             Height="42"
+                             Margin="0,0,12,0"
+                             Background="#F9FAFB"
+                             Foreground="#111827"
+                             BorderBrush="#D1D5DB"/>
 
                     <Button x:Name="SearchButton"
                             Grid.Column="1"
                             Content="Search"
-                            Width="110"
-                            Height="38"
+                            Width="120"
+                            Height="42"
+                            Margin="0,0,10,0"
+                            Background="#2563EB"
+                            Foreground="White"
+                            HorizontalContentAlignment="Center"/>
+
+                    <Button x:Name="ClearSearchButton"
+                            Grid.Column="2"
+                            Content="Clear"
+                            Width="90"
+                            Height="42"
+                            Background="#F1F3F5"
+                            Foreground="#111827"
                             HorizontalContentAlignment="Center"/>
 
                 </Grid>
 
             </Border>
 
-            <!-- Map and events section -->
+            <!-- Map and list section -->
             <Grid Grid.Row="1"
-                  ColumnDefinitions="2*,*">
+                  ColumnDefinitions="2*,430">
 
-                <!-- Fake map area -->
+                <!-- Map column -->
                 <Border Grid.Column="0"
                         Background="White"
-                        CornerRadius="12"
+                        CornerRadius="20"
                         Padding="20"
-                        Margin="0,0,20,0">
+                        Margin="0,0,20,0"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1">
 
-                    <Grid RowDefinitions="Auto,*">
+                    <Grid RowDefinitions="Auto,*,Auto">
 
-                        <StackPanel Grid.Row="0"
-                                    Spacing="4"
-                                    Margin="0,0,0,12">
+                        <!-- Map header -->
+                        <Grid Grid.Row="0"
+                              ColumnDefinitions="*,Auto"
+                              Margin="0,0,0,14">
 
-                            <TextBlock Text="Activity Map"
-                                       FontSize="22"
-                                       FontWeight="Bold"
-                                       Foreground="Black"/>
+                            <StackPanel Grid.Column="0"
+                                        Spacing="4">
 
-                            <TextBlock Text="Map placeholder. Later this area can be replaced by a real map control."
-                                       FontSize="14"
-                                       Foreground="#666666"
-                                       TextWrapping="Wrap"/>
+                                <TextBlock Text="Explore Activities Near You"
+                                           FontSize="24"
+                                           FontWeight="Bold"
+                                           Foreground="#111827"/>
 
-                        </StackPanel>
+                                <TextBlock Text="Move around the map and click an activity point to preview details."
+                                           FontSize="14"
+                                           Foreground="#6B7280"
+                                           TextWrapping="Wrap"/>
 
-                        <!-- Placeholder map -->
+                            </StackPanel>
+
+                            <Border Grid.Column="1"
+                                    Background="#EFF6FF"
+                                    CornerRadius="18"
+                                    Padding="12,8"
+                                    VerticalAlignment="Center">
+
+                                <TextBlock Text="OpenStreetMap"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="#1D4ED8"/>
+
+                            </Border>
+
+                        </Grid>
+
+                        <!-- Real map area -->
                         <Border Grid.Row="1"
-                                Background="#E8EEF5"
-                                CornerRadius="12"
-                                Padding="20">
+                                Background="#DCEAF5"
+                                CornerRadius="18"
+                                ClipToBounds="True"
+                                BorderBrush="#D1D5DB"
+                                BorderThickness="1">
 
                             <Grid>
 
-                                <TextBlock Text="Digital Map Preview"
-                                           FontSize="24"
-                                           FontWeight="Bold"
-                                           Foreground="#5A6B7A"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
+                                <!-- Mapsui map is inserted here from C# -->
+                                <ContentControl x:Name="MapHost"/>
 
-                                <StackPanel HorizontalAlignment="Left"
-                                            VerticalAlignment="Top"
-                                            Margin="40,40,0,0"
+                                <!-- Map toolbar -->
+                                <Border HorizontalAlignment="Left"
+                                        VerticalAlignment="Top"
+                                        Margin="14"
+                                        Background="#F9FAFB"
+                                        CornerRadius="14"
+                                        Padding="8"
+                                        BorderBrush="#D1D5DB"
+                                        BorderThickness="1">
+
+                                    <StackPanel Spacing="8">
+
+                                        <Button x:Name="ZoomInButton"
+                                                Content="+"
+                                                Width="42"
+                                                Height="42"
+                                                FontSize="22"
+                                                FontWeight="Bold"
+                                                Background="White"
+                                                Foreground="#111827"
+                                                BorderBrush="#D1D5DB"
+                                                HorizontalContentAlignment="Center"/>
+
+                                        <Button x:Name="ZoomOutButton"
+                                                Content="-"
+                                                Width="42"
+                                                Height="42"
+                                                FontSize="22"
+                                                FontWeight="Bold"
+                                                Background="White"
+                                                Foreground="#111827"
+                                                BorderBrush="#D1D5DB"
+                                                HorizontalContentAlignment="Center"/>
+
+                                        <Button x:Name="CenterMapButton"
+                                                Content="⌖"
+                                                Width="42"
+                                                Height="42"
+                                                FontSize="18"
+                                                FontWeight="Bold"
+                                                Background="White"
+                                                Foreground="#111827"
+                                                BorderBrush="#D1D5DB"
+                                                HorizontalContentAlignment="Center"/>
+
+                                    </StackPanel>
+
+                                </Border>
+
+                                <Border HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Margin="14"
+                                        Background="#FFFFFF"
+                                        CornerRadius="14"
+                                        Padding="12,8"
+                                        BorderBrush="#D1D5DB"
+                                        BorderThickness="1">
+
+                                    <TextBlock Text="Drag map • Click activity points"
+                                               FontSize="12"
+                                               Foreground="#374151"/>
+
+                                </Border>
+
+                            </Grid>
+
+                        </Border>
+
+                        <!-- Selected event details -->
+                        <Border Grid.Row="2"
+                                x:Name="SelectedEventPanel"
+                                IsVisible="False"
+                                Background="#F9FAFB"
+                                CornerRadius="18"
+                                Padding="18"
+                                Margin="0,16,0,0"
+                                BorderBrush="#E5E7EB"
+                                BorderThickness="1">
+
+                            <Grid ColumnDefinitions="*,Auto">
+
+                                <StackPanel Grid.Column="0"
                                             Spacing="6">
-                                    <TextBlock Text="●"
-                                               FontSize="28"
-                                               Foreground="#D9534F"/>
-                                    <TextBlock Text="Water Sports"
+
+                                    <TextBlock x:Name="SelectedEventTitleTextBlock"
+                                               Text=""
+                                               FontSize="20"
+                                               FontWeight="Bold"
+                                               Foreground="#111827"/>
+
+                                    <TextBlock x:Name="SelectedEventCategoryTextBlock"
+                                               Text=""
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="#2563EB"/>
+
+                                    <TextBlock x:Name="SelectedEventAddressTextBlock"
+                                               Text=""
+                                               FontSize="14"
+                                               Foreground="#4B5563"
+                                               TextWrapping="Wrap"/>
+
+                                    <TextBlock x:Name="SelectedEventInfoTextBlock"
+                                               Text=""
                                                FontSize="13"
-                                               Foreground="Black"/>
+                                               Foreground="#6B7280"/>
+
                                 </StackPanel>
 
-                                <StackPanel HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
-                                            Margin="0,0,80,0"
-                                            Spacing="6">
-                                    <TextBlock Text="●"
-                                               FontSize="28"
-                                               Foreground="#D9534F"/>
-                                    <TextBlock Text="Fitness"
-                                               FontSize="13"
-                                               Foreground="Black"/>
-                                </StackPanel>
-
-                                <StackPanel HorizontalAlignment="Center"
-                                            VerticalAlignment="Bottom"
-                                            Margin="0,0,0,60"
-                                            Spacing="6">
-                                    <TextBlock Text="●"
-                                               FontSize="28"
-                                               Foreground="#D9534F"/>
-                                    <TextBlock Text="Outdoor"
-                                               FontSize="13"
-                                               Foreground="Black"/>
-                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        Content="View"
+                                        Width="96"
+                                        Height="38"
+                                        Background="#111827"
+                                        Foreground="White"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalAlignment="Center"/>
 
                             </Grid>
 
@@ -159,74 +286,172 @@
 
                 </Border>
 
-                <!-- Events list -->
+                <!-- Events list column -->
                 <Border Grid.Column="1"
                         Background="White"
-                        CornerRadius="12"
-                        Padding="20">
+                        CornerRadius="20"
+                        Padding="20"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1">
 
-                    <StackPanel Spacing="12">
+                    <Grid RowDefinitions="Auto,Auto,*">
 
-                        <TextBlock Text="Available Events"
-                                   FontSize="22"
-                                   FontWeight="Bold"
-                                   Foreground="Black"/>
+                        <StackPanel Grid.Row="0"
+                                    Spacing="4"
+                                    Margin="0,0,0,12">
 
-                        <TextBlock x:Name="EventsCountTextBlock"
-                                   Text="0 events found"
+                            <TextBlock Text="Available Events / Courses"
+                                       FontSize="23"
+                                       FontWeight="Bold"
+                                       Foreground="#111827"/>
+
+                            <TextBlock x:Name="EventsCountTextBlock"
+                                       Text="0 events found"
+                                       FontSize="13"
+                                       Foreground="#6B7280"/>
+
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="1"
+                                   x:Name="DashboardMessageTextBlock"
+                                   Text=""
                                    FontSize="13"
-                                   Foreground="#777777"/>
+                                   Foreground="#DC2626"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,10"/>
 
-                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer Grid.Row="2"
+                                      VerticalScrollBarVisibility="Auto">
 
-                            <ItemsControl x:Name="AvailableEventsItemsControl">
-                                <ItemsControl.ItemTemplate>
+                            <ListBox x:Name="AvailableEventsItemsControl"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    SelectionMode="Single">
+
+                                <ListBox.Styles>
+
+                                    <Style Selector="ListBoxItem">
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="Margin" Value="0,0,0,12"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+
+                                        <Setter Property="Template">
+                                            <ControlTemplate>
+                                                <ContentPresenter Content="{TemplateBinding Content}"
+                                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                Padding="{TemplateBinding Padding}"
+                                                                HorizontalContentAlignment="Stretch"
+                                                                VerticalContentAlignment="Stretch"/>
+                                            </ControlTemplate>
+                                        </Setter>
+                                    </Style>
+
+                                    <Style Selector="ListBoxItem:pointerover">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                    </Style>
+
+                                    <Style Selector="ListBoxItem:selected">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                    </Style>
+
+                                    <Style Selector="ListBoxItem:selected:pointerover">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                    </Style>
+
+                                    <!-- Default event card style -->
+                                    <Style Selector="Border.event-card">
+                                        <Setter Property="Background" Value="#F9FAFB"/>
+                                        <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                        <Setter Property="BorderThickness" Value="1"/>
+                                    </Style>
+
+                                    <!-- Hovered event card style -->
+                                    <Style Selector="ListBoxItem:pointerover Border.event-card">
+                                        <Setter Property="Background" Value="#F3F4F6"/>
+                                        <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                                    </Style>
+
+                                    <!-- Selected event card style -->
+                                    <Style Selector="ListBoxItem:selected Border.event-card">
+                                        <Setter Property="Background" Value="#E5E7EB"/>
+                                        <Setter Property="BorderBrush" Value="#9CA3AF"/>
+                                    </Style>
+
+                                </ListBox.Styles>
+
+                                <ListBox.ItemTemplate>
+
                                     <DataTemplate DataType="{x:Type models:ActivityEvent}">
-                                        <Border Background="#F4F6F8"
-                                                CornerRadius="8"
-                                                Padding="12"
-                                                Margin="0,0,0,10">
 
-                                            <StackPanel Spacing="5">
+                                        <Border Classes="event-card"
+                                                CornerRadius="14"
+                                                Padding="14">
+
+                                            <StackPanel Spacing="7">
 
                                                 <TextBlock Text="{Binding Title}"
-                                                           FontSize="16"
-                                                           FontWeight="Bold"
-                                                           Foreground="Black"/>
+                                                        FontSize="17"
+                                                        FontWeight="Bold"
+                                                        Foreground="#111827"
+                                                        TextWrapping="Wrap"/>
 
-                                                <TextBlock Text="{Binding Category}"
-                                                           FontSize="13"
-                                                           Foreground="#555555"/>
+                                                <Border Background="#EFF6FF"
+                                                        CornerRadius="12"
+                                                        Padding="8,4"
+                                                        HorizontalAlignment="Left">
+
+                                                    <TextBlock Text="{Binding Category}"
+                                                            FontSize="12"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{Binding Category, Converter={StaticResource CategoryBrushConverter}}"/>
+
+                                                </Border>
 
                                                 <TextBlock Text="{Binding Address}"
-                                                           FontSize="13"
-                                                           Foreground="#555555"
-                                                           TextWrapping="Wrap"/>
+                                                        FontSize="13"
+                                                        Foreground="#4B5563"
+                                                        TextWrapping="Wrap"/>
 
-                                                <TextBlock Text="{Binding Price}"
-                                                           FontSize="13"
-                                                           Foreground="#777777"/>
+                                                <StackPanel Orientation="Horizontal"
+                                                            Spacing="8">
 
-                                                <TextBlock Text="{Binding Status}"
-                                                           FontSize="13"
-                                                           Foreground="#777777"/>
+                                                    <TextBlock Text="Price:"
+                                                            FontSize="13"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="#374151"/>
+
+                                                    <TextBlock Text="{Binding Price}"
+                                                            FontSize="13"
+                                                            Foreground="#059669"/>
+
+                                                </StackPanel>
+
+                                                <TextBlock Text="Click to view on map"
+                                                        FontSize="12"
+                                                        FontStyle="Italic"
+                                                        Foreground="#6B7280"/>
 
                                             </StackPanel>
 
                                         </Border>
+
                                     </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+
+                                </ListBox.ItemTemplate>
+
+                            </ListBox>
 
                         </ScrollViewer>
 
-                        <TextBlock x:Name="DashboardMessageTextBlock"
-                                   Text=""
-                                   FontSize="13"
-                                   Foreground="Red"
-                                   TextWrapping="Wrap"/>
-
-                    </StackPanel>
+                    </Grid>
 
                 </Border>
 
