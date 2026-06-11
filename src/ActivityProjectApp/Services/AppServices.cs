@@ -8,6 +8,10 @@ namespace ActivityProjectApp.Services
 
         public static FakeActivityEventRepository ActivityEventRepository { get; } = new FakeActivityEventRepository();
 
+        public static FakeSavedItemRepository SavedItemRepository { get; } = new FakeSavedItemRepository();
+
+        public static FakeEnrollmentRepository EnrollmentRepository { get; } = new FakeEnrollmentRepository();
+
         public static SessionService SessionService { get; } = new SessionService();
 
         public static AuthService AuthService { get; } = new AuthService(UserRepository, SessionService);

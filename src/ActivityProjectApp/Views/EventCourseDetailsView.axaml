@@ -1,0 +1,361 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ActivityProjectApp.Views.EventCourseDetailsView"
+             Background="#F3F6FA">
+
+    <UserControl.Styles>
+
+        <!-- Save button when item is not saved yet -->
+        <Style Selector="Button.save-action">
+            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2563EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        Padding="{TemplateBinding Padding}"
+                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.save-action:pointerover">
+            <Setter Property="Background" Value="#1D4ED8"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1D4ED8"/>
+        </Style>
+
+        <Style Selector="Button.save-action:pressed">
+            <Setter Property="Background" Value="#1E40AF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1E40AF"/>
+        </Style>
+
+        <!-- Save button when item is already saved -->
+        <Style Selector="Button.save-action.saved">
+            <Setter Property="Background" Value="#DC2626"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#DC2626"/>
+        </Style>
+
+        <Style Selector="Button.save-action.saved:pointerover">
+            <Setter Property="Background" Value="#B91C1C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#B91C1C"/>
+        </Style>
+
+        <Style Selector="Button.save-action.saved:pressed">
+            <Setter Property="Background" Value="#991B1B"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#991B1B"/>
+        </Style>
+
+        <Style Selector="Button.primary-action">
+            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2563EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.primary-action:pointerover">
+            <Setter Property="Background" Value="#1D4ED8"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1D4ED8"/>
+        </Style>
+
+        <Style Selector="Button.primary-action:pressed">
+            <Setter Property="Background" Value="#1E40AF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1E40AF"/>
+        </Style>
+
+    </UserControl.Styles>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- Top bar -->
+        <Border Grid.Row="0"
+                Background="White"
+                Padding="22,18"
+                BorderBrush="#E1E5EA"
+                BorderThickness="0,0,0,1">
+
+            <DockPanel LastChildFill="True">
+
+                <Button x:Name="LogoutButton"
+                        DockPanel.Dock="Right"
+                        Content="Logout"
+                        Width="110"
+                        Height="38"
+                        Background="#F1F3F5"
+                        Foreground="#111827"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"/>
+
+                <Button x:Name="BackButton"
+                        DockPanel.Dock="Left"
+                        Content="← Back"
+                        Width="110"
+                        Height="38"
+                        Background="#F1F3F5"
+                        Foreground="#111827"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"/>
+
+                <TextBlock x:Name="PageTitleTextBlock"
+                        Text="Enrollment Details"
+                        FontSize="24"
+                        FontWeight="Bold"
+                        Foreground="#111827"
+                        VerticalAlignment="Center"
+                        Margin="18,0,0,0"/>
+
+            </DockPanel>
+
+        </Border>
+
+        <!-- Main content -->
+        <ScrollViewer Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto">
+
+            <Grid Margin="32"
+                  ColumnDefinitions="2*,1*">
+
+                <!-- Left card -->
+                <Border Grid.Column="0"
+                    Background="White"
+                    CornerRadius="22"
+                    Padding="26"
+                    Margin="0,0,24,0"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="1">
+
+                    <StackPanel Spacing="18">
+
+                        <!-- Image / video placeholder -->
+                        <Border Background="#DBEAFE"
+                                CornerRadius="20"
+                                Height="280"
+                                ClipToBounds="True">
+
+                            <Grid>
+
+                                <TextBlock x:Name="MediaPlaceholderTextBlock"
+                                           Text="Image / Video Preview"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#1D4ED8"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+
+                            </Grid>
+
+                        </Border>
+
+                        <StackPanel Spacing="8">
+
+                            <TextBlock x:Name="ItemTitleTextBlock"
+                                       Text="Title"
+                                       FontSize="30"
+                                       FontWeight="Bold"
+                                       Foreground="#111827"
+                                       TextWrapping="Wrap"/>
+
+                            <TextBlock x:Name="ItemCategoryTextBlock"
+                                       Text="Category"
+                                       FontSize="15"
+                                       FontWeight="SemiBold"
+                                       Foreground="#2563EB"/>
+
+                            <TextBlock x:Name="ItemAddressTextBlock"
+                                       Text="Address"
+                                       FontSize="15"
+                                       Foreground="#4B5563"
+                                       TextWrapping="Wrap"/>
+
+                        </StackPanel>
+
+                        <Border Background="#F9FAFB"
+                                CornerRadius="16"
+                                Padding="18"
+                                BorderBrush="#E5E7EB"
+                                BorderThickness="1">
+
+                            <StackPanel Spacing="8">
+
+                                <TextBlock Text="Description"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="#111827"/>
+
+                                <TextBlock x:Name="ItemDescriptionTextBlock"
+                                           Text="Description will appear here."
+                                           FontSize="15"
+                                           Foreground="#4B5563"
+                                           TextWrapping="Wrap"/>
+
+                            </StackPanel>
+
+                        </Border>
+
+                    </StackPanel>
+
+                </Border>
+
+                <!-- Right payment summary -->
+                <Border Grid.Column="1"
+                        Background="White"
+                        CornerRadius="22"
+                        Padding="24"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1"
+                        VerticalAlignment="Top">
+
+                    <StackPanel Spacing="18">
+
+                        <TextBlock Text="Booking Summary"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="#111827"/>
+
+                        <Border Background="#F9FAFB"
+                                CornerRadius="16"
+                                Padding="16">
+
+                            <StackPanel Spacing="10">
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Type:"
+                                               Width="120"
+                                               FontWeight="SemiBold"
+                                               Foreground="#374151"/>
+                                    <TextBlock x:Name="ItemTypeTextBlock"
+                                               Text="-"
+                                               Foreground="#4B5563"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Date:"
+                                               Width="120"
+                                               FontWeight="SemiBold"
+                                               Foreground="#374151"/>
+                                    <TextBlock x:Name="ItemDateTextBlock"
+                                               Text="-"
+                                               Foreground="#4B5563"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Time:"
+                                               Width="120"
+                                               FontWeight="SemiBold"
+                                               Foreground="#374151"/>
+                                    <TextBlock x:Name="ItemTimeTextBlock"
+                                               Text="-"
+                                               Foreground="#4B5563"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Spaces:"
+                                               Width="120"
+                                               FontWeight="SemiBold"
+                                               Foreground="#374151"/>
+                                    <TextBlock x:Name="ItemSpacesTextBlock"
+                                               Text="-"
+                                               Foreground="#4B5563"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Price:"
+                                               Width="120"
+                                               FontWeight="SemiBold"
+                                               Foreground="#374151"/>
+                                    <TextBlock x:Name="ItemPriceTextBlock"
+                                               Text="-"
+                                               FontWeight="Bold"
+                                               Foreground="#059669"/>
+                                </StackPanel>
+
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Status:"
+                                               Width="120"
+                                               FontWeight="SemiBold"
+                                               Foreground="#374151"/>
+                                    <TextBlock x:Name="EnrollmentStatusTextBlock"
+                                               Text="-"
+                                               FontWeight="SemiBold"
+                                               Foreground="#D97706"/>
+                                </StackPanel>
+
+                            </StackPanel>
+
+                        </Border>
+
+                        <TextBlock Text="By clicking Pay, you will be redirected to an external payment provider."
+                                   FontSize="13"
+                                   Foreground="#6B7280"
+                                   TextWrapping="Wrap"/>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Spacing="10">
+
+                            <Button x:Name="PayButton"
+                                    Classes="primary-action"
+                                    Content="Pay"
+                                    Width="120"
+                                    Height="44"
+                                    FontWeight="SemiBold"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"/>
+
+                            <Button x:Name="SaveButton"
+                                    Classes="save-action"
+                                    Content="Save"
+                                    Width="100"
+                                    Height="44"
+                                    FontWeight="SemiBold"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"/>
+
+                        </StackPanel>
+
+                    </StackPanel>
+
+                </Border>
+
+            </Grid>
+
+        </ScrollViewer>
+
+    </Grid>
+
+</UserControl>

@@ -65,6 +65,7 @@ namespace ActivityProjectApp.Views
             ZoomInButton.Click += ZoomInButton_Click;
             ZoomOutButton.Click += ZoomOutButton_Click;
             CenterMapButton.Click += CenterMapButton_Click;
+            EnrollButton.Click += EnrollButton_Click;
 
             AvailableEventsItemsControl.SelectionChanged += AvailableEventsItemsControl_SelectionChanged;
 
@@ -147,6 +148,38 @@ namespace ActivityProjectApp.Views
         private void CenterMapButton_Click(object? sender, RoutedEventArgs e)
         {
             RefreshMapView();
+        }
+
+        private void EnrollButton_Click(object? sender, RoutedEventArgs e)
+        {
+            if (_selectedEvent == null)
+            {
+                DashboardMessageTextBlock.Text = "Please select an event before enrolling.";
+                return;
+            }
+
+            if (_authService.GetCurrentUser() is not Customer customer)
+            {
+                DashboardMessageTextBlock.Text = "Only customers can enroll.";
+                return;
+            }
+
+            Enrollment enrollment = AppServices.EnrollmentRepository.CreateEnrollment(
+                customer.Id,
+                _selectedEvent.Id,
+                EnrollmentItemType.Event);
+
+            MainWindow? mainWindow = this.VisualRoot as MainWindow;
+
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            mainWindow.Content = new EventCourseDetailsView(
+                _selectedEvent.Id,
+                EnrollmentItemType.Event,
+                enrollment);
         }
 
         private void RefreshMapView()

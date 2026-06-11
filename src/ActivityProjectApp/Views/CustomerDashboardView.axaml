@@ -9,6 +9,107 @@
         <converters:CategoryBrushConverter x:Key="CategoryBrushConverter"/>
     </UserControl.Resources>
 
+    <UserControl.Styles>
+
+        <!-- Shared template for blue primary buttons -->
+        <Style Selector="Button.primary-action">
+            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2563EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        Padding="{TemplateBinding Padding}"
+                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.primary-action:pointerover">
+            <Setter Property="Background" Value="#1D4ED8"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1D4ED8"/>
+        </Style>
+
+        <Style Selector="Button.primary-action:pressed">
+            <Setter Property="Background" Value="#1E40AF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1E40AF"/>
+        </Style>
+
+
+        <!-- Save button when not saved -->
+        <Style Selector="Button.save-action">
+            <Setter Property="Background" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#2563EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8">
+
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        Padding="{TemplateBinding Padding}"
+                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.save-action:pointerover">
+            <Setter Property="Background" Value="#1D4ED8"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1D4ED8"/>
+        </Style>
+
+        <Style Selector="Button.save-action:pressed">
+            <Setter Property="Background" Value="#1E40AF"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#1E40AF"/>
+        </Style>
+
+
+        <!-- Save button when already saved -->
+        <Style Selector="Button.save-action.saved">
+            <Setter Property="Background" Value="#DC2626"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#DC2626"/>
+        </Style>
+
+        <Style Selector="Button.save-action.saved:pointerover">
+            <Setter Property="Background" Value="#B91C1C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#B91C1C"/>
+        </Style>
+
+        <Style Selector="Button.save-action.saved:pressed">
+            <Setter Property="Background" Value="#991B1B"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#991B1B"/>
+        </Style>
+
+    </UserControl.Styles>
+
     <Grid RowDefinitions="Auto,*"
           Background="#F3F6FA">
 
@@ -66,23 +167,23 @@
                 <Grid ColumnDefinitions="*,Auto,Auto">
 
                     <TextBox x:Name="SearchTextBox"
-                             Grid.Column="0"
-                             Watermark="Search by activity, category, description or area..."
-                             Height="42"
-                             Margin="0,0,12,0"
-                             Background="#F9FAFB"
-                             Foreground="#111827"
-                             BorderBrush="#D1D5DB"/>
+                            Grid.Column="0"
+                            Watermark="Search by activity, category, description or area..."
+                            Height="42"
+                            Margin="0,0,12,0"
+                            Background="#F9FAFB"
+                            Foreground="#111827"
+                            BorderBrush="#D1D5DB"/>
 
                     <Button x:Name="SearchButton"
+                            Classes="primary-action"
                             Grid.Column="1"
                             Content="Search"
                             Width="120"
                             Height="42"
                             Margin="0,0,10,0"
-                            Background="#2563EB"
-                            Foreground="White"
-                            HorizontalContentAlignment="Center"/>
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
 
                     <Button x:Name="ClearSearchButton"
                             Grid.Column="2"
@@ -91,7 +192,8 @@
                             Height="42"
                             Background="#F1F3F5"
                             Foreground="#111827"
-                            HorizontalContentAlignment="Center"/>
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
 
                 </Grid>
 
@@ -269,14 +371,27 @@
 
                                 </StackPanel>
 
-                                <Button Grid.Column="1"
-                                        Content="View"
-                                        Width="96"
-                                        Height="38"
-                                        Background="#111827"
-                                        Foreground="White"
-                                        HorizontalContentAlignment="Center"
-                                        VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1"
+                                            Orientation="Horizontal"
+                                            Spacing="10"
+                                            VerticalAlignment="Center">
+
+                                    <Button x:Name="EnrollButton"
+                                            Classes="primary-action"
+                                            Content="Enroll"
+                                            Width="96"
+                                            Height="38"
+                                            HorizontalContentAlignment="Center"/>
+
+                                    <Button x:Name="SaveButton"
+                                            Classes="save-action"
+                                            Content="Save"
+                                            Width="86"
+                                            Height="38"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"/>
+
+                                </StackPanel>
 
                             </Grid>
 
