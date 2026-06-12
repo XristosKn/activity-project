@@ -16,6 +16,8 @@ namespace ActivityProjectApp.Services
 
         public static FakeCourseRepository CourseRepository { get; } = new FakeCourseRepository();
 
+        public static FakeAnnouncementRepository AnnouncementRepository { get; } = new FakeAnnouncementRepository();
+
         public static SessionService SessionService { get; } = new SessionService();
 
         public static AuthService AuthService { get; } = new AuthService(UserRepository, SessionService);

@@ -13,6 +13,20 @@ namespace ActivityProjectApp.Views
     {
         private readonly AuthService _authService;
 
+        private class AnnouncementTargetItem
+        {
+            public int ItemId { get; set; }
+
+            public AnnouncementItemType ItemType { get; set; }
+
+            public string DisplayText { get; set; } = string.Empty;
+
+            public override string ToString()
+            {
+                return DisplayText;
+            }
+        }
+
         public ServiceProviderDashboardView()
         {
             InitializeComponent();
@@ -20,17 +34,29 @@ namespace ActivityProjectApp.Views
             _authService = AppServices.AuthService;
 
             LoadCurrentUser();
-            LoadProviderEvents();
+            LoadDashboardCounts();
 
             LogoutButton.Click += LogoutButton_Click;
+
             CreateEventButton.Click += CreateEventButton_Click;
             MyActivitiesButton.Click += MyActivitiesButton_Click;
-            BookingsButton.Click += BookingsButton_Click;
+            AnnouncementsButton.Click += AnnouncementsButton_Click;
+            MyAnnouncementsButton.Click += MyAnnouncementsButton_Click;
             ProfileButton.Click += ProfileButton_Click;
+
+            MyEventsSummaryButton.Click += MyEventsSummaryButton_Click;
+            MyCoursesSummaryButton.Click += MyCoursesSummaryButton_Click;
+            MyAnnouncementsSummaryButton.Click += MyAnnouncementsSummaryButton_Click;
+
             SaveEventButton.Click += SaveEventButton_Click;
             CancelCreateEventButton.Click += CancelCreateEventButton_Click;
+
+            PublishAnnouncementButton.Click += PublishAnnouncementButton_Click;
+            CancelAnnouncementButton.Click += CancelAnnouncementButton_Click;
+
             CreateItemTypeComboBox.SelectionChanged += CreateItemTypeComboBox_SelectionChanged;
             ProviderActivityFilterComboBox.SelectionChanged += ProviderActivityFilterComboBox_SelectionChanged;
+            AnnouncementItemTypeComboBox.SelectionChanged += AnnouncementItemTypeComboBox_SelectionChanged;
         }
 
         private void LoadCurrentUser()
@@ -46,6 +72,92 @@ namespace ActivityProjectApp.Views
                 WelcomeTextBlock.Text = "Welcome, Service Provider";
             }
         }
+
+        private void HideDashboardPanels()
+        {
+            CreateEventFormPanel.IsVisible = false;
+            CreateAnnouncementFormPanel.IsVisible = false;
+            ProviderActivitiesPanel.IsVisible = false;
+            ProviderAnnouncementsPanel.IsVisible = false;
+        }
+
+        private void ShowProviderActivitiesPanel(string title, int filterIndex)
+        {
+            HideDashboardPanels();
+
+            ProviderActivitiesPanel.IsVisible = true;
+            ProviderActivitiesTitleTextBlock.Text = title;
+
+            ProviderActivityFilterComboBox.SelectedIndex = filterIndex;
+
+            LoadProviderEvents();
+
+            DashboardMessageTextBlock.Text = $"Viewing {title.ToLower()}.";
+        }
+
+        private void ShowProviderAnnouncementsPanel()
+        {
+            HideDashboardPanels();
+
+            ProviderAnnouncementsPanel.IsVisible = true;
+
+            LoadProviderAnnouncements();
+
+            DashboardMessageTextBlock.Text = "Viewing your announcements.";
+        }
+
+        private void LoadDashboardCounts()
+        {
+            User? currentUser = _authService.GetCurrentUser();
+
+            if (currentUser is not ServiceProvider serviceProvider)
+            {
+                MyEventsCountTextBlock.Text = "0";
+                MyCoursesCountTextBlock.Text = "0";
+                MyAnnouncementsCountTextBlock.Text = "0";
+                return;
+            }
+
+            int eventsCount = AppServices.ActivityEventRepository
+                .GetEventsByServiceProviderId(serviceProvider.Id)
+                .Count;
+
+            int coursesCount = AppServices.CourseRepository
+                .GetCoursesByServiceProviderId(serviceProvider.Id)
+                .Count;
+
+            int announcementsCount = GetProviderAnnouncements(serviceProvider)
+                .Count;
+
+            MyEventsCountTextBlock.Text = eventsCount.ToString();
+            MyCoursesCountTextBlock.Text = coursesCount.ToString();
+            MyAnnouncementsCountTextBlock.Text = announcementsCount.ToString();
+        }
+
+        private void MyEventsSummaryButton_Click(object? sender, RoutedEventArgs e)
+        {
+            SetActiveSummaryCard(MyEventsSummaryButton);
+            ShowProviderActivitiesPanel("My Events", 1);
+        }
+
+        private void MyCoursesSummaryButton_Click(object? sender, RoutedEventArgs e)
+        {
+            SetActiveSummaryCard(MyCoursesSummaryButton);
+            ShowProviderActivitiesPanel("My Courses", 2);
+        }
+
+        private void MyAnnouncementsSummaryButton_Click(object? sender, RoutedEventArgs e)
+        {
+            SetActiveSummaryCard(MyAnnouncementsSummaryButton);
+            ShowProviderAnnouncementsPanel();
+        }
+
+        private void MyAnnouncementsButton_Click(object? sender, RoutedEventArgs e)
+        {
+            SetActiveSummaryCard(MyAnnouncementsSummaryButton);
+            ShowProviderAnnouncementsPanel();
+        }
+
         private void ProviderActivityFilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             LoadProviderEvents();
@@ -58,8 +170,6 @@ namespace ActivityProjectApp.Views
             if (currentUser is not ServiceProvider serviceProvider)
             {
                 ProviderEventsItemsControl.ItemsSource = null;
-                ActiveActivitiesCountTextBlock.Text = "0";
-                InactiveActivitiesCountTextBlock.Text = "0";
                 return;
             }
 
@@ -68,21 +178,6 @@ namespace ActivityProjectApp.Views
 
             List<Course> providerCourses = AppServices.CourseRepository
                 .GetCoursesByServiceProviderId(serviceProvider.Id);
-
-            int activeEventsCount = providerEvents
-                .Count(activityEvent => activityEvent.Status == EventStatus.Active);
-
-            int activeCoursesCount = providerCourses
-                .Count(course => course.Status == CourseStatus.Active);
-
-            int inactiveEventsCount = providerEvents
-                .Count(activityEvent => activityEvent.Status == EventStatus.Inactive);
-
-            int inactiveCoursesCount = providerCourses
-                .Count(course => course.Status == CourseStatus.Inactive);
-
-            ActiveActivitiesCountTextBlock.Text = (activeEventsCount + activeCoursesCount).ToString();
-            InactiveActivitiesCountTextBlock.Text = (inactiveEventsCount + inactiveCoursesCount).ToString();
 
             List<ProviderActivityListItem> providerActivities = new List<ProviderActivityListItem>();
 
@@ -119,7 +214,11 @@ namespace ActivityProjectApp.Views
 
         private void CreateEventButton_Click(object? sender, RoutedEventArgs e)
         {
+            SetActiveSummaryCard(null);
+            HideDashboardPanels();
+
             CreateEventFormPanel.IsVisible = true;
+
             DashboardMessageTextBlock.Text = "Fill in the form below to create a new event or course.";
             CreateEventMessageTextBlock.Text = string.Empty;
 
@@ -133,20 +232,37 @@ namespace ActivityProjectApp.Views
 
         private void MyActivitiesButton_Click(object? sender, RoutedEventArgs e)
         {
-            CreateEventFormPanel.IsVisible = false;
-            DashboardMessageTextBlock.Text = "Below you can see the events and courses created by this service provider.";
-            LoadProviderEvents();
+            SetActiveSummaryCard(null);
+            ShowProviderActivitiesPanel("My Courses / Events", 0);
         }
 
-        private void BookingsButton_Click(object? sender, RoutedEventArgs e)
+        private void AnnouncementsButton_Click(object? sender, RoutedEventArgs e)
         {
-            CreateEventFormPanel.IsVisible = false;
-            DashboardMessageTextBlock.Text = "Bookings page will be added later.";
+            SetActiveSummaryCard(null);
+            HideDashboardPanels();
+
+            CreateAnnouncementFormPanel.IsVisible = true;
+
+            DashboardMessageTextBlock.Text = "Create announcements for your events or courses.";
+            AnnouncementMessageTextBlock.Text = string.Empty;
+
+            if (AnnouncementItemTypeComboBox.SelectedItem == null)
+            {
+                AnnouncementItemTypeComboBox.SelectedIndex = 0;
+            }
+
+            if (AnnouncementStatusComboBox.SelectedItem == null)
+            {
+                AnnouncementStatusComboBox.SelectedIndex = 0;
+            }
+
+            LoadAnnouncementTargetItems();
         }
 
         private void ProfileButton_Click(object? sender, RoutedEventArgs e)
         {
-            CreateEventFormPanel.IsVisible = false;
+            SetActiveSummaryCard(null);
+            HideDashboardPanels();
 
             User? currentUser = _authService.GetCurrentUser();
 
@@ -178,6 +294,19 @@ namespace ActivityProjectApp.Views
             SaveEventButton.Content = isCourse ? "Save Course" : "Save Event";
 
             CreateEventMessageTextBlock.Text = string.Empty;
+        }
+
+        private void SaveEventButton_Click(object? sender, RoutedEventArgs e)
+        {
+            string selectedType = GetSelectedCreateItemType();
+
+            if (selectedType == "Course")
+            {
+                SaveCourseFromForm();
+                return;
+            }
+
+            SaveEventFromForm();
         }
 
         private void SaveEventFromForm()
@@ -308,6 +437,7 @@ namespace ActivityProjectApp.Views
 
             ClearCreateEventForm();
             LoadProviderEvents();
+            LoadDashboardCounts();
 
             CreateEventMessageTextBlock.Foreground = Avalonia.Media.Brushes.Green;
             CreateEventMessageTextBlock.Text = "Event created successfully.";
@@ -459,11 +589,211 @@ namespace ActivityProjectApp.Views
 
             ClearCreateEventForm();
             LoadProviderEvents();
+            LoadDashboardCounts();
 
             CreateEventMessageTextBlock.Foreground = Avalonia.Media.Brushes.Green;
             CreateEventMessageTextBlock.Text = "Course created successfully.";
 
             DashboardMessageTextBlock.Text = "The course was created successfully.";
+        }
+
+        private void AnnouncementItemTypeComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            LoadAnnouncementTargetItems();
+        }
+
+        private void LoadAnnouncementTargetItems()
+        {
+            User? currentUser = _authService.GetCurrentUser();
+
+            if (currentUser is not ServiceProvider serviceProvider)
+            {
+                AnnouncementRelatedItemComboBox.ItemsSource = null;
+                return;
+            }
+
+            AnnouncementItemType selectedType = GetSelectedAnnouncementItemType();
+
+            List<AnnouncementTargetItem> targetItems = new List<AnnouncementTargetItem>();
+
+            if (selectedType == AnnouncementItemType.Event)
+            {
+                List<ActivityEvent> providerEvents = AppServices.ActivityEventRepository
+                    .GetEventsByServiceProviderId(serviceProvider.Id);
+
+                targetItems = providerEvents
+                    .Select(activityEvent => new AnnouncementTargetItem
+                    {
+                        ItemId = activityEvent.Id,
+                        ItemType = AnnouncementItemType.Event,
+                        DisplayText = $"Event - {activityEvent.Title}"
+                    })
+                    .ToList();
+            }
+
+            if (selectedType == AnnouncementItemType.Course)
+            {
+                List<Course> providerCourses = AppServices.CourseRepository
+                    .GetCoursesByServiceProviderId(serviceProvider.Id);
+
+                targetItems = providerCourses
+                    .Select(course => new AnnouncementTargetItem
+                    {
+                        ItemId = course.Id,
+                        ItemType = AnnouncementItemType.Course,
+                        DisplayText = $"Course - {course.Title}"
+                    })
+                    .ToList();
+            }
+
+            AnnouncementRelatedItemComboBox.ItemsSource = targetItems;
+
+            if (targetItems.Count > 0)
+            {
+                AnnouncementRelatedItemComboBox.SelectedIndex = 0;
+            }
+        }
+
+        private void PublishAnnouncementButton_Click(object? sender, RoutedEventArgs e)
+        {
+            string title = AnnouncementTitleTextBox.Text?.Trim() ?? string.Empty;
+            string text = AnnouncementTextTextBox.Text?.Trim() ?? string.Empty;
+            string gallery = AnnouncementGalleryTextBox.Text?.Trim() ?? string.Empty;
+
+            AnnouncementMessageTextBlock.Foreground = Avalonia.Media.Brushes.Red;
+
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                AnnouncementMessageTextBlock.Text = "Please enter announcement title.";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(text))
+            {
+                AnnouncementMessageTextBlock.Text = "Please enter announcement text.";
+                return;
+            }
+
+            if (AnnouncementRelatedItemComboBox.SelectedItem is not AnnouncementTargetItem selectedTargetItem)
+            {
+                AnnouncementMessageTextBlock.Text = "Please select a related event or course.";
+                return;
+            }
+
+            Announcement announcement = new Announcement
+            {
+                Title = title,
+                Text = text,
+                ItemType = selectedTargetItem.ItemType,
+                ItemId = selectedTargetItem.ItemId,
+                AnnouncementDate = DateTime.Now,
+                Gallery = gallery,
+                IsActive = GetSelectedAnnouncementIsActive()
+            };
+
+            AppServices.AnnouncementRepository.AddAnnouncement(announcement);
+
+            ClearAnnouncementForm();
+            LoadDashboardCounts();
+
+            if (ProviderAnnouncementsPanel.IsVisible)
+            {
+                LoadProviderAnnouncements();
+            }
+
+            AnnouncementMessageTextBlock.Foreground = Avalonia.Media.Brushes.Green;
+            AnnouncementMessageTextBlock.Text = "Announcement published successfully.";
+
+            DashboardMessageTextBlock.Text = "The announcement was published and linked to the selected event/course.";
+        }
+
+        private void CancelAnnouncementButton_Click(object? sender, RoutedEventArgs e)
+        {
+            ClearAnnouncementForm();
+
+            CreateAnnouncementFormPanel.IsVisible = false;
+            AnnouncementMessageTextBlock.Text = string.Empty;
+
+            DashboardMessageTextBlock.Text = "Select an option from the menu.";
+        }
+
+        private void ClearAnnouncementForm()
+        {
+            AnnouncementTitleTextBox.Text = string.Empty;
+            AnnouncementTextTextBox.Text = string.Empty;
+            AnnouncementGalleryTextBox.Text = string.Empty;
+
+            AnnouncementItemTypeComboBox.SelectedIndex = 0;
+            AnnouncementStatusComboBox.SelectedIndex = 0;
+
+            LoadAnnouncementTargetItems();
+        }
+
+        private List<Announcement> GetProviderAnnouncements(ServiceProvider serviceProvider)
+        {
+            List<int> providerEventIds = AppServices.ActivityEventRepository
+                .GetEventsByServiceProviderId(serviceProvider.Id)
+                .Select(activityEvent => activityEvent.Id)
+                .ToList();
+
+            List<int> providerCourseIds = AppServices.CourseRepository
+                .GetCoursesByServiceProviderId(serviceProvider.Id)
+                .Select(course => course.Id)
+                .ToList();
+
+            return AppServices.AnnouncementRepository
+                .GetAllAnnouncements()
+                .Where(announcement =>
+                    (announcement.ItemType == AnnouncementItemType.Event &&
+                     providerEventIds.Contains(announcement.ItemId)) ||
+                    (announcement.ItemType == AnnouncementItemType.Course &&
+                     providerCourseIds.Contains(announcement.ItemId)))
+                .OrderByDescending(announcement => announcement.AnnouncementDate)
+                .ToList();
+        }
+
+        private void LoadProviderAnnouncements()
+        {
+            User? currentUser = _authService.GetCurrentUser();
+
+            if (currentUser is not ServiceProvider serviceProvider)
+            {
+                ProviderAnnouncementsItemsControl.ItemsSource = null;
+                ProviderAnnouncementsCountTextBlock.Text = "0 announcements";
+                return;
+            }
+
+            List<Announcement> announcements = GetProviderAnnouncements(serviceProvider);
+
+            ProviderAnnouncementsItemsControl.ItemsSource = announcements;
+            ProviderAnnouncementsCountTextBlock.Text = $"{announcements.Count} announcements";
+        }
+
+        private AnnouncementItemType GetSelectedAnnouncementItemType()
+        {
+            if (AnnouncementItemTypeComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                string selectedValue = selectedItem.Content?.ToString() ?? "Event";
+
+                if (selectedValue == "Course")
+                {
+                    return AnnouncementItemType.Course;
+                }
+            }
+
+            return AnnouncementItemType.Event;
+        }
+
+        private bool GetSelectedAnnouncementIsActive()
+        {
+            if (AnnouncementStatusComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                string selectedValue = selectedItem.Content?.ToString() ?? "Active";
+
+                return selectedValue == "Active";
+            }
+
+            return true;
         }
 
         private string GetSelectedEventCategory()
@@ -520,32 +850,36 @@ namespace ActivityProjectApp.Views
             EventMaxSpaceTextBox.Text = string.Empty;
             EventGalleryTextBox.Text = string.Empty;
             EventStatusComboBox.SelectedItem = null;
+
             CreateItemTypeComboBox.SelectedIndex = 0;
+
             CourseDaysTextBox.Text = string.Empty;
             CourseStartTimeTextBox.Text = string.Empty;
             CourseEndTimeTextBox.Text = string.Empty;
             CourseAgeRestrictionTextBox.Text = string.Empty;
+
             UpdateCreateFormMode();
         }
 
-        private void SaveEventButton_Click(object? sender, RoutedEventArgs e)
+        private void SetActiveSummaryCard(Button? activeButton)
         {
-            string selectedType = GetSelectedCreateItemType();
+            MyEventsSummaryButton.Classes.Remove("active");
+            MyCoursesSummaryButton.Classes.Remove("active");
+            MyAnnouncementsSummaryButton.Classes.Remove("active");
 
-            if (selectedType == "Course")
+            if (activeButton != null)
             {
-                SaveCourseFromForm();
-                return;
+                activeButton.Classes.Add("active");
             }
-
-            SaveEventFromForm();
         }
 
         private void CancelCreateEventButton_Click(object? sender, RoutedEventArgs e)
         {
             ClearCreateEventForm();
+
             CreateEventFormPanel.IsVisible = false;
             CreateEventMessageTextBlock.Text = string.Empty;
+
             DashboardMessageTextBlock.Text = "Select an option from the menu.";
         }
 

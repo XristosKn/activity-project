@@ -10,6 +10,12 @@ namespace ActivityProjectApp.Views
     public partial class CustomerProfileView : UserControl
     {
         private readonly AuthService _authService;
+        
+        private List<Announcement> _allAnnouncements = new List<Announcement>();
+
+        private int _announcementStartIndex = 0;
+
+        private const int AnnouncementsPageSize = 5;
 
         public CustomerProfileView()
         {
@@ -18,11 +24,14 @@ namespace ActivityProjectApp.Views
             _authService = AppServices.AuthService;
 
             LoadCustomerInfo();
+            LoadAnnouncements();
             LoadSavedItems();
             LoadMyEnrolledItems();
 
             BackButton.Click += BackButton_Click;
             LogoutButton.Click += LogoutButton_Click;
+            PreviousAnnouncementsButton.Click += PreviousAnnouncementsButton_Click;
+            NextAnnouncementsButton.Click += NextAnnouncementsButton_Click;
 
             SavedItemsFilterComboBox.SelectionChanged += SavedItemsFilterComboBox_SelectionChanged;
             MyItemsFilterComboBox.SelectionChanged += MyItemsFilterComboBox_SelectionChanged;
@@ -96,6 +105,64 @@ namespace ActivityProjectApp.Views
         private void MyItemsFilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             LoadMyEnrolledItems();
+        }
+
+        private void LoadAnnouncements()
+        {
+            _allAnnouncements = AppServices.AnnouncementRepository
+                .GetActiveAnnouncements()
+                .OrderByDescending(announcement => announcement.AnnouncementDate)
+                .ToList();
+
+            _announcementStartIndex = 0;
+
+            RefreshAnnouncementsCarousel();
+        }
+
+        private void RefreshAnnouncementsCarousel()
+        {
+            List<Announcement> visibleAnnouncements = _allAnnouncements
+                .Skip(_announcementStartIndex)
+                .Take(AnnouncementsPageSize)
+                .ToList();
+
+            AnnouncementsItemsControl.ItemsSource = visibleAnnouncements;
+
+            AnnouncementsCountTextBlock.Text = $"{_allAnnouncements.Count} announcements";
+
+            bool hasAnnouncements = _allAnnouncements.Count > 0;
+
+            AnnouncementsEmptyTextBlock.IsVisible = !hasAnnouncements;
+            AnnouncementsItemsControl.IsVisible = hasAnnouncements;
+
+            PreviousAnnouncementsButton.IsEnabled = _announcementStartIndex > 0;
+
+            NextAnnouncementsButton.IsEnabled =
+                _announcementStartIndex + AnnouncementsPageSize < _allAnnouncements.Count;
+        }
+
+        private void PreviousAnnouncementsButton_Click(object? sender, RoutedEventArgs e)
+        {
+            _announcementStartIndex -= AnnouncementsPageSize;
+
+            if (_announcementStartIndex < 0)
+            {
+                _announcementStartIndex = 0;
+            }
+
+            RefreshAnnouncementsCarousel();
+        }
+
+        private void NextAnnouncementsButton_Click(object? sender, RoutedEventArgs e)
+        {
+            if (_announcementStartIndex + AnnouncementsPageSize >= _allAnnouncements.Count)
+            {
+                return;
+            }
+
+            _announcementStartIndex += AnnouncementsPageSize;
+
+            RefreshAnnouncementsCarousel();
         }
 
         private void LoadMyEnrolledItems()

@@ -4,6 +4,32 @@
              x:Class="ActivityProjectApp.Views.ServiceProviderDashboardView"
              Background="#F4F6F8">
 
+    <UserControl.Styles>
+
+        <Style Selector="Button.dashboard-summary-card">
+            <Setter Property="Height" Value="120"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Background" Value="#F4F6F8"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.dashboard-summary-card:pointerover">
+            <Setter Property="Background" Value="#EEF2F7"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+        </Style>
+
+        <Style Selector="Button.dashboard-summary-card.active">
+            <Setter Property="Background" Value="#E5E7EB"/>
+            <Setter Property="BorderBrush" Value="#9CA3AF"/>
+        </Style>
+
+    </UserControl.Styles>
+
     <Grid RowDefinitions="Auto,*"
           Background="#F4F6F8">
 
@@ -18,6 +44,7 @@
 
                 <StackPanel DockPanel.Dock="Left"
                             Spacing="4">
+
                     <TextBlock Text="Service Provider Dashboard"
                                FontSize="24"
                                FontWeight="Bold"
@@ -27,6 +54,7 @@
                                Text="Welcome"
                                FontSize="14"
                                Foreground="#666666"/>
+
                 </StackPanel>
 
                 <Button x:Name="LogoutButton"
@@ -60,19 +88,25 @@
                                Foreground="Black"/>
 
                     <Button x:Name="CreateEventButton"
-                                Content="Create Event / Course"
-                                Height="40"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Left"/>
-
-                    <Button x:Name="MyActivitiesButton"
-                            Content="My Activities"
+                            Content="Create Event / Course"
                             Height="40"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"/>
 
-                    <Button x:Name="BookingsButton"
-                            Content="Bookings"
+                    <Button x:Name="MyActivitiesButton"
+                            Content="My Courses / Events"
+                            Height="40"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"/>
+
+                    <Button x:Name="AnnouncementsButton"
+                            Content="Create Announcement"
+                            Height="40"
+                            HorizontalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"/>
+
+                    <Button x:Name="MyAnnouncementsButton"
+                            Content="My Announcements"
                             Height="40"
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Left"/>
@@ -107,60 +141,95 @@
                                    Foreground="#555555"
                                    TextWrapping="Wrap"/>
 
-                        <UniformGrid Columns="3"
-                                     Rows="1">
+                        <Grid ColumnDefinitions="*,*,*"
+                            Margin="0,0,0,4">
 
-                            <Border Background="#F4F6F8"
-                                    CornerRadius="10"
-                                    Padding="20"
-                                    Margin="0,0,12,0">
-                                <StackPanel>
-                                    <TextBlock x:Name="ActiveActivitiesCountTextBlock"
-                                               Text="0"
-                                               FontSize="30"
-                                               FontWeight="Bold"
-                                               Foreground="Black"/>
-                                    <TextBlock Text="Active Activities"
-                                               Foreground="#666666"/>
+                            <Button x:Name="MyEventsSummaryButton"
+                                    Grid.Column="0"
+                                    Classes="dashboard-summary-card"
+                                    Margin="0,0,10,0">
+
+                                <StackPanel Spacing="4">
+
+                                    <TextBlock x:Name="MyEventsCountTextBlock"
+                                            Text="0"
+                                            FontSize="32"
+                                            FontWeight="Bold"
+                                            Foreground="#111827"/>
+
+                                    <TextBlock Text="My Events"
+                                            FontSize="14"
+                                            FontWeight="SemiBold"
+                                            Foreground="#4B5563"/>
+
+                                    <TextBlock Text="View all created events"
+                                            FontSize="12"
+                                            Foreground="#6B7280"/>
+
                                 </StackPanel>
-                            </Border>
 
-                            <Border Background="#F4F6F8"
-                                    CornerRadius="10"
-                                    Padding="20"
-                                    Margin="0,0,12,0">
-                                <StackPanel>
-                                    <TextBlock Text="0"
-                                               FontSize="30"
-                                               FontWeight="Bold"
-                                               Foreground="Black"/>
-                                    <TextBlock Text="Bookings"
-                                               Foreground="#666666"/>
+                            </Button>
+
+                            <Button x:Name="MyCoursesSummaryButton"
+                                    Grid.Column="1"
+                                    Classes="dashboard-summary-card"
+                                    Margin="5,0,5,0">
+
+                                <StackPanel Spacing="4">
+
+                                    <TextBlock x:Name="MyCoursesCountTextBlock"
+                                            Text="0"
+                                            FontSize="32"
+                                            FontWeight="Bold"
+                                            Foreground="#111827"/>
+
+                                    <TextBlock Text="My Courses"
+                                            FontSize="14"
+                                            FontWeight="SemiBold"
+                                            Foreground="#4B5563"/>
+
+                                    <TextBlock Text="View all created courses"
+                                            FontSize="12"
+                                            Foreground="#6B7280"/>
+
                                 </StackPanel>
-                            </Border>
 
-                            <Border Background="#F4F6F8"
-                                    CornerRadius="10"
-                                    Padding="20">
-                                <StackPanel>
-                                    <TextBlock x:Name="InactiveActivitiesCountTextBlock"
-                                               Text="0"
-                                               FontSize="30"
-                                               FontWeight="Bold"
-                                               Foreground="Black"/>
-                                    <TextBlock Text="Inactive Activities"
-                                               Foreground="#666666"/>
+                            </Button>
+
+                            <Button x:Name="MyAnnouncementsSummaryButton"
+                                    Grid.Column="2"
+                                    Classes="dashboard-summary-card"
+                                    Margin="10,0,0,0">
+
+                                <StackPanel Spacing="4">
+
+                                    <TextBlock x:Name="MyAnnouncementsCountTextBlock"
+                                            Text="0"
+                                            FontSize="32"
+                                            FontWeight="Bold"
+                                            Foreground="#111827"/>
+
+                                    <TextBlock Text="My Announcements"
+                                            FontSize="14"
+                                            FontWeight="SemiBold"
+                                            Foreground="#4B5563"/>
+
+                                    <TextBlock Text="View published announcements"
+                                            FontSize="12"
+                                            Foreground="#6B7280"/>
+
                                 </StackPanel>
-                            </Border>
 
-                        </UniformGrid>
+                            </Button>
+
+                        </Grid>
 
                         <TextBlock x:Name="DashboardMessageTextBlock"
                                    Text="Select an option from the menu."
                                    FontSize="14"
                                    Foreground="#777777"/>
 
-                        <!-- Create Event Form -->
+                        <!-- Create Event / Course Form -->
                         <Border x:Name="CreateEventFormPanel"
                                 IsVisible="False"
                                 Background="#F4F6F8"
@@ -179,17 +248,20 @@
                                          Height="36"/>
 
                                 <ComboBox x:Name="CreateItemTypeComboBox"
-                                        PlaceholderText="Select type"
-                                        Height="36"
-                                        HorizontalAlignment="Stretch">
+                                          PlaceholderText="Select type"
+                                          Height="36"
+                                          HorizontalAlignment="Stretch">
+
                                     <ComboBoxItem Content="Event"/>
                                     <ComboBoxItem Content="Course"/>
+
                                 </ComboBox>
 
                                 <ComboBox x:Name="EventCategoryComboBox"
                                           PlaceholderText="Select category"
                                           Height="36"
                                           HorizontalAlignment="Stretch">
+
                                     <ComboBoxItem Content="Water Sports"/>
                                     <ComboBoxItem Content="Mountain Activities"/>
                                     <ComboBoxItem Content="Fitness &amp; Wellness"/>
@@ -205,6 +277,7 @@
                                     <ComboBoxItem Content="Educational Activities"/>
                                     <ComboBoxItem Content="Tours &amp; Excursions"/>
                                     <ComboBoxItem Content="Other"/>
+
                                 </ComboBox>
 
                                 <TextBox x:Name="EventDescriptionTextBox"
@@ -214,6 +287,7 @@
                                          Height="80"/>
 
                                 <Grid ColumnDefinitions="*,*">
+
                                     <TextBox x:Name="EventLatitudeTextBox"
                                              Grid.Column="0"
                                              Watermark="Latitude"
@@ -225,6 +299,7 @@
                                              Watermark="Longitude"
                                              Height="36"
                                              Margin="8,0,0,0"/>
+
                                 </Grid>
 
                                 <TextBox x:Name="EventAddressTextBox"
@@ -236,16 +311,18 @@
                                             Spacing="8">
 
                                     <Grid ColumnDefinitions="*,*">
+
                                         <DatePicker x:Name="EventDatePicker"
                                                     Grid.Column="0"
                                                     HorizontalAlignment="Stretch"
                                                     Margin="0,0,8,0"/>
 
                                         <TextBox x:Name="EventTimeTextBox"
-                                                Grid.Column="1"
-                                                Watermark="Event time e.g. 10:30"
-                                                Height="36"
-                                                Margin="8,0,0,0"/>
+                                                 Grid.Column="1"
+                                                 Watermark="Event time e.g. 10:30"
+                                                 Height="36"
+                                                 Margin="8,0,0,0"/>
+
                                     </Grid>
 
                                 </StackPanel>
@@ -256,30 +333,33 @@
                                             Spacing="8">
 
                                     <TextBox x:Name="CourseDaysTextBox"
-                                            Watermark="Course days e.g. Monday, Wednesday, Friday"
-                                            Height="36"/>
+                                             Watermark="Course days e.g. Monday, Wednesday, Friday"
+                                             Height="36"/>
 
                                     <Grid ColumnDefinitions="*,*">
+
                                         <TextBox x:Name="CourseStartTimeTextBox"
-                                                Grid.Column="0"
-                                                Watermark="Start time e.g. 18:00"
-                                                Height="36"
-                                                Margin="0,0,8,0"/>
+                                                 Grid.Column="0"
+                                                 Watermark="Start time e.g. 18:00"
+                                                 Height="36"
+                                                 Margin="0,0,8,0"/>
 
                                         <TextBox x:Name="CourseEndTimeTextBox"
-                                                Grid.Column="1"
-                                                Watermark="End time e.g. 19:30"
-                                                Height="36"
-                                                Margin="8,0,0,0"/>
+                                                 Grid.Column="1"
+                                                 Watermark="End time e.g. 19:30"
+                                                 Height="36"
+                                                 Margin="8,0,0,0"/>
+
                                     </Grid>
 
                                     <TextBox x:Name="CourseAgeRestrictionTextBox"
-                                            Watermark="Age restriction e.g. All ages, 12+, 18+"
-                                            Height="36"/>
+                                             Watermark="Age restriction e.g. All ages, 12+, 18+"
+                                             Height="36"/>
 
                                 </StackPanel>
 
                                 <Grid ColumnDefinitions="*,*">
+
                                     <TextBox x:Name="EventPriceTextBox"
                                              Grid.Column="0"
                                              Watermark="Price"
@@ -291,6 +371,7 @@
                                              Watermark="Max Space"
                                              Height="36"
                                              Margin="8,0,0,0"/>
+
                                 </Grid>
 
                                 <TextBox x:Name="EventGalleryTextBox"
@@ -301,11 +382,14 @@
                                           PlaceholderText="Select status"
                                           Height="36"
                                           HorizontalAlignment="Stretch">
+
                                     <ComboBoxItem Content="Active"/>
                                     <ComboBoxItem Content="Inactive"/>
+
                                 </ComboBox>
 
                                 <Grid ColumnDefinitions="*,*">
+
                                     <Button x:Name="SaveEventButton"
                                             Grid.Column="0"
                                             Content="Save"
@@ -323,6 +407,7 @@
                                             Foreground="Black"
                                             HorizontalContentAlignment="Center"
                                             Margin="8,0,0,0"/>
+
                                 </Grid>
 
                                 <TextBlock x:Name="CreateEventMessageTextBlock"
@@ -335,36 +420,129 @@
 
                         </Border>
 
-                        <!-- Provider events list -->
-                        <Border Background="#F4F6F8"
+                        <!-- Create Announcement Form -->
+                        <Border x:Name="CreateAnnouncementFormPanel"
+                                IsVisible="False"
+                                Background="#F4F6F8"
+                                CornerRadius="12"
+                                Padding="20">
+
+                            <StackPanel Spacing="12">
+
+                                <TextBlock Text="Create Announcement"
+                                           FontSize="20"
+                                           FontWeight="Bold"
+                                           Foreground="Black"/>
+
+                                <TextBox x:Name="AnnouncementTitleTextBox"
+                                         Watermark="Announcement title"
+                                         Height="36"/>
+
+                                <TextBox x:Name="AnnouncementTextTextBox"
+                                         Watermark="Announcement text"
+                                         AcceptsReturn="True"
+                                         TextWrapping="Wrap"
+                                         Height="90"/>
+
+                                <ComboBox x:Name="AnnouncementItemTypeComboBox"
+                                          PlaceholderText="Select related type"
+                                          Height="36"
+                                          HorizontalAlignment="Stretch"
+                                          SelectedIndex="0">
+
+                                    <ComboBoxItem Content="Event"/>
+                                    <ComboBoxItem Content="Course"/>
+
+                                </ComboBox>
+
+                                <ComboBox x:Name="AnnouncementRelatedItemComboBox"
+                                          PlaceholderText="Select related event/course"
+                                          Height="36"
+                                          HorizontalAlignment="Stretch"/>
+
+                                <TextBox x:Name="AnnouncementGalleryTextBox"
+                                         Watermark="Gallery image paths separated by comma"
+                                         Height="36"/>
+
+                                <ComboBox x:Name="AnnouncementStatusComboBox"
+                                          PlaceholderText="Select status"
+                                          Height="36"
+                                          HorizontalAlignment="Stretch"
+                                          SelectedIndex="0">
+
+                                    <ComboBoxItem Content="Active"/>
+                                    <ComboBoxItem Content="Inactive"/>
+
+                                </ComboBox>
+
+                                <Grid ColumnDefinitions="*,*">
+
+                                    <Button x:Name="PublishAnnouncementButton"
+                                            Grid.Column="0"
+                                            Content="Publish"
+                                            Height="38"
+                                            Background="#D0D0D0"
+                                            Foreground="Black"
+                                            HorizontalContentAlignment="Center"
+                                            Margin="0,0,8,0"/>
+
+                                    <Button x:Name="CancelAnnouncementButton"
+                                            Grid.Column="1"
+                                            Content="Cancel/Close"
+                                            Height="38"
+                                            Background="#E6E6E6"
+                                            Foreground="Black"
+                                            HorizontalContentAlignment="Center"
+                                            Margin="8,0,0,0"/>
+
+                                </Grid>
+
+                                <TextBlock x:Name="AnnouncementMessageTextBlock"
+                                           Text=""
+                                           FontSize="13"
+                                           TextWrapping="Wrap"
+                                           Foreground="Red"/>
+
+                            </StackPanel>
+
+                        </Border>
+
+                        <!-- Provider activities list -->
+                        <Border x:Name="ProviderActivitiesPanel"
+                                IsVisible="False"
+                                Background="#F4F6F8"
                                 CornerRadius="12"
                                 Padding="20">
 
                             <StackPanel Spacing="10">
 
                                 <Grid ColumnDefinitions="*,180"
-                                    Margin="0,0,0,6">
+                                      Margin="0,0,0,6">
 
-                                    <TextBlock Grid.Column="0"
-                                            Text="My Created Activities"
-                                            FontSize="18"
-                                            FontWeight="Bold"
-                                            Foreground="Black"
-                                            VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="ProviderActivitiesTitleTextBlock"
+                                               Grid.Column="0"
+                                               Text="My Courses / Events"
+                                               FontSize="18"
+                                               FontWeight="Bold"
+                                               Foreground="Black"
+                                               VerticalAlignment="Center"/>
 
                                     <ComboBox x:Name="ProviderActivityFilterComboBox"
-                                            Grid.Column="1"
-                                            Height="34"
-                                            SelectedIndex="0"
-                                            HorizontalAlignment="Stretch">
+                                              Grid.Column="1"
+                                              Height="34"
+                                              SelectedIndex="0"
+                                              HorizontalAlignment="Stretch">
+
                                         <ComboBoxItem Content="All"/>
                                         <ComboBoxItem Content="Events"/>
                                         <ComboBoxItem Content="Courses"/>
+
                                     </ComboBox>
 
                                 </Grid>
 
                                 <ItemsControl x:Name="ProviderEventsItemsControl">
+
                                     <ItemsControl.ItemTemplate>
 
                                         <DataTemplate DataType="{x:Type models:ProviderActivityListItem}">
@@ -379,11 +557,11 @@
                                                     <Grid ColumnDefinitions="*,Auto">
 
                                                         <TextBlock Grid.Column="0"
-                                                                Text="{Binding Title}"
-                                                                FontSize="16"
-                                                                FontWeight="Bold"
-                                                                Foreground="Black"
-                                                                TextWrapping="Wrap"/>
+                                                                   Text="{Binding Title}"
+                                                                   FontSize="16"
+                                                                   FontWeight="Bold"
+                                                                   Foreground="Black"
+                                                                   TextWrapping="Wrap"/>
 
                                                         <Border Grid.Column="1"
                                                                 Background="#E5E7EB"
@@ -392,31 +570,31 @@
                                                                 Margin="8,0,0,0">
 
                                                             <TextBlock Text="{Binding ActivityType}"
-                                                                    FontSize="12"
-                                                                    FontWeight="SemiBold"
-                                                                    Foreground="#374151"/>
+                                                                       FontSize="12"
+                                                                       FontWeight="SemiBold"
+                                                                       Foreground="#374151"/>
 
                                                         </Border>
 
                                                     </Grid>
 
                                                     <TextBlock Text="{Binding Category}"
-                                                            FontSize="13"
-                                                            Foreground="#555555"/>
+                                                               FontSize="13"
+                                                               Foreground="#555555"/>
 
                                                     <TextBlock Text="{Binding Address}"
-                                                            FontSize="13"
-                                                            Foreground="#555555"
-                                                            TextWrapping="Wrap"/>
+                                                               FontSize="13"
+                                                               Foreground="#555555"
+                                                               TextWrapping="Wrap"/>
 
                                                     <TextBlock Text="{Binding ScheduleText}"
-                                                            FontSize="13"
-                                                            Foreground="#555555"/>
+                                                               FontSize="13"
+                                                               Foreground="#555555"/>
 
                                                     <TextBlock Text="{Binding Status}"
-                                                            FontSize="13"
-                                                            FontWeight="SemiBold"
-                                                            Foreground="#777777"/>
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#777777"/>
 
                                                 </StackPanel>
 
@@ -425,6 +603,99 @@
                                         </DataTemplate>
 
                                     </ItemsControl.ItemTemplate>
+
+                                </ItemsControl>
+
+                            </StackPanel>
+
+                        </Border>
+
+                        <!-- Provider announcements list -->
+                        <Border x:Name="ProviderAnnouncementsPanel"
+                                IsVisible="False"
+                                Background="#F4F6F8"
+                                CornerRadius="12"
+                                Padding="20">
+
+                            <StackPanel Spacing="10">
+
+                                <Grid ColumnDefinitions="*,Auto">
+
+                                    <TextBlock Grid.Column="0"
+                                               Text="My Announcements"
+                                               FontSize="18"
+                                               FontWeight="Bold"
+                                               Foreground="Black"
+                                               VerticalAlignment="Center"/>
+
+                                    <TextBlock x:Name="ProviderAnnouncementsCountTextBlock"
+                                               Grid.Column="1"
+                                               Text="0 announcements"
+                                               FontSize="13"
+                                               Foreground="#666666"
+                                               VerticalAlignment="Center"/>
+
+                                </Grid>
+
+                                <ItemsControl x:Name="ProviderAnnouncementsItemsControl">
+
+                                    <ItemsControl.ItemTemplate>
+
+                                        <DataTemplate DataType="{x:Type models:Announcement}">
+
+                                            <Border Background="White"
+                                                    CornerRadius="8"
+                                                    Padding="12"
+                                                    Margin="0,0,0,8">
+
+                                                <StackPanel Spacing="5">
+
+                                                    <Grid ColumnDefinitions="*,Auto">
+
+                                                        <TextBlock Grid.Column="0"
+                                                                   Text="{Binding Title}"
+                                                                   FontSize="16"
+                                                                   FontWeight="Bold"
+                                                                   Foreground="Black"
+                                                                   TextWrapping="Wrap"/>
+
+                                                        <Border Grid.Column="1"
+                                                                Background="#E5E7EB"
+                                                                CornerRadius="10"
+                                                                Padding="8,3"
+                                                                Margin="8,0,0,0">
+
+                                                            <TextBlock Text="{Binding IsActive}"
+                                                                       FontSize="12"
+                                                                       FontWeight="SemiBold"
+                                                                       Foreground="#374151"/>
+
+                                                        </Border>
+
+                                                    </Grid>
+
+                                                    <TextBlock Text="{Binding ItemType}"
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#555555"/>
+
+                                                    <TextBlock Text="{Binding Text}"
+                                                               FontSize="13"
+                                                               Foreground="#555555"
+                                                               TextWrapping="Wrap"/>
+
+                                                    <TextBlock Text="{Binding AnnouncementDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"
+                                                               FontSize="12"
+                                                               Foreground="#777777"/>
+
+                                                </StackPanel>
+
+                                            </Border>
+
+                                        </DataTemplate>
+
+                                    </ItemsControl.ItemTemplate>
+
                                 </ItemsControl>
 
                             </StackPanel>

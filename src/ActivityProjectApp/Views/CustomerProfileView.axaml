@@ -75,17 +75,108 @@
                         BorderBrush="#E5E7EB"
                         BorderThickness="1">
 
-                    <StackPanel Spacing="10">
+                    <StackPanel Spacing="12">
 
-                        <TextBlock Text="Announcements"
-                                   FontSize="22"
-                                   FontWeight="Bold"
-                                   Foreground="#111827"/>
+                        <Grid ColumnDefinitions="*,Auto,Auto,Auto">
 
-                        <TextBlock Text="Announcements will be displayed here later."
-                                   FontSize="14"
-                                   Foreground="#6B7280"
-                                   TextWrapping="Wrap"/>
+                            <TextBlock Grid.Column="0"
+                                    Text="Announcements"
+                                    FontSize="22"
+                                    FontWeight="Bold"
+                                    Foreground="#111827"
+                                    VerticalAlignment="Center"/>
+
+                            <TextBlock x:Name="AnnouncementsCountTextBlock"
+                                    Grid.Column="1"
+                                    Text="0 announcements"
+                                    FontSize="13"
+                                    Foreground="#6B7280"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,12,0"/>
+
+                            <Button x:Name="PreviousAnnouncementsButton"
+                                    Grid.Column="2"
+                                    Content="‹"
+                                    Width="38"
+                                    Height="34"
+                                    FontSize="20"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    Margin="0,0,8,0"/>
+
+                            <Button x:Name="NextAnnouncementsButton"
+                                    Grid.Column="3"
+                                    Content="›"
+                                    Width="38"
+                                    Height="34"
+                                    FontSize="20"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"/>
+
+                        </Grid>
+
+                        <TextBlock x:Name="AnnouncementsEmptyTextBlock"
+                                Text="No announcements available."
+                                FontSize="14"
+                                Foreground="#6B7280"
+                                IsVisible="False"/>
+
+                        <ItemsControl x:Name="AnnouncementsItemsControl">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                Spacing="12"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:Announcement}">
+
+                                    <Border Background="#F9FAFB"
+                                            CornerRadius="14"
+                                            Padding="14"
+                                            Width="210"
+                                            MinHeight="150"
+                                            BorderBrush="#E5E7EB"
+                                            BorderThickness="1">
+
+                                        <StackPanel Spacing="7">
+
+                                            <TextBlock Text="{Binding Title}"
+                                                    FontSize="15"
+                                                    FontWeight="Bold"
+                                                    Foreground="#111827"
+                                                    TextWrapping="Wrap"/>
+
+                                            <Border Background="#E5E7EB"
+                                                    CornerRadius="10"
+                                                    Padding="8,3"
+                                                    HorizontalAlignment="Left">
+
+                                                <TextBlock Text="{Binding ItemType}"
+                                                        FontSize="12"
+                                                        FontWeight="SemiBold"
+                                                        Foreground="#374151"/>
+
+                                            </Border>
+
+                                            <TextBlock Text="{Binding Text}"
+                                                    FontSize="13"
+                                                    Foreground="#4B5563"
+                                                    TextWrapping="Wrap"
+                                                    MaxHeight="60"/>
+
+                                            <TextBlock Text="{Binding AnnouncementDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"
+                                                    FontSize="12"
+                                                    Foreground="#6B7280"/>
+
+                                        </StackPanel>
+
+                                    </Border>
+
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
 
                     </StackPanel>
 
