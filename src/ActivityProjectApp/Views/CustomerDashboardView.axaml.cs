@@ -22,9 +22,9 @@ namespace ActivityProjectApp.Views
 
         private readonly MapControl _mapControl;
 
-        private List<ActivityEvent> _currentEvents = new List<ActivityEvent>();
+        private List<CustomerActivityListItem> _currentActivities = new List<CustomerActivityListItem>();
 
-        private ActivityEvent? _selectedEvent;
+        private CustomerActivityListItem? _selectedActivity;
 
         private bool _isViewLoaded = false;
 
@@ -95,14 +95,14 @@ namespace ActivityProjectApp.Views
 
         private void LoadAvailableEvents()
         {
-            _currentEvents = AppServices.ActivityEventRepository.GetActiveEvents();
+            _currentActivities = GetAvailableActivities(string.Empty);
 
-            AvailableEventsItemsControl.ItemsSource = _currentEvents;
-            EventsCountTextBlock.Text = $"{_currentEvents.Count} events found";
+            AvailableEventsItemsControl.ItemsSource = _currentActivities;
+            EventsCountTextBlock.Text = $"{_currentActivities.Count} activities found";
 
-            if (_currentEvents.Count == 0)
+            if (_currentActivities.Count == 0)
             {
-                DashboardMessageTextBlock.Text = "No active events are available yet.";
+                DashboardMessageTextBlock.Text = "No active events or courses are available yet.";
             }
             else
             {
@@ -112,20 +112,71 @@ namespace ActivityProjectApp.Views
             RefreshMapView();
         }
 
+        private List<CustomerActivityListItem> GetAvailableActivities(string searchText)
+        {
+            List<CustomerActivityListItem> activities = new List<CustomerActivityListItem>();
+
+            List<ActivityEvent> activeEvents = string.IsNullOrWhiteSpace(searchText)
+                ? AppServices.ActivityEventRepository.GetActiveEvents()
+                : AppServices.ActivityEventRepository.SearchActiveEvents(searchText);
+
+            List<Course> activeCourses = string.IsNullOrWhiteSpace(searchText)
+                ? AppServices.CourseRepository.GetActiveCourses()
+                : AppServices.CourseRepository.SearchActiveCourses(searchText);
+
+            activities.AddRange(activeEvents.Select(activityEvent => new CustomerActivityListItem
+            {
+                ItemId = activityEvent.Id,
+                ItemType = EnrollmentItemType.Event,
+                ActivityType = "Event",
+                Title = activityEvent.Title,
+                Category = activityEvent.Category,
+                Description = activityEvent.Description,
+                Latitude = activityEvent.Latitude,
+                Longitude = activityEvent.Longitude,
+                Address = activityEvent.Address,
+                ScheduleText = $"{activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm}",
+                Price = activityEvent.Price,
+                PriceText = $"€{activityEvent.Price}",
+                MaxSpace = activityEvent.MaxSpace,
+                ExtraInfoText = $"Event | {activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm} | €{activityEvent.Price} | Max spaces: {activityEvent.MaxSpace}"
+            }));
+
+            activities.AddRange(activeCourses.Select(course => new CustomerActivityListItem
+            {
+                ItemId = course.Id,
+                ItemType = EnrollmentItemType.Course,
+                ActivityType = "Course",
+                Title = course.Title,
+                Category = course.Category,
+                Description = course.Description,
+                Latitude = course.Latitude,
+                Longitude = course.Longitude,
+                Address = course.Address,
+                ScheduleText = $"{course.Days}, {course.StartTime:hh\\:mm} - {course.EndTime:hh\\:mm}",
+                Price = course.Price,
+                PriceText = $"€{course.Price}",
+                MaxSpace = course.MaxSpace,
+                ExtraInfoText = $"Course | {course.Days}, {course.StartTime:hh\\:mm} - {course.EndTime:hh\\:mm} | €{course.Price} | Max spaces: {course.MaxSpace} | Age: {course.AgeRestriction}"
+            }));
+
+            return activities;
+        }
+
         private void SearchButton_Click(object? sender, RoutedEventArgs e)
         {
             string searchText = SearchTextBox.Text?.Trim() ?? string.Empty;
 
-            _currentEvents = AppServices.ActivityEventRepository.SearchActiveEvents(searchText);
+            _currentActivities = GetAvailableActivities(searchText);
 
-            AvailableEventsItemsControl.ItemsSource = _currentEvents;
-            EventsCountTextBlock.Text = $"{_currentEvents.Count} events found";
+            AvailableEventsItemsControl.ItemsSource = _currentActivities;
+            EventsCountTextBlock.Text = $"{_currentActivities.Count} activities found";
 
-            if (_currentEvents.Count == 0)
+            if (_currentActivities.Count == 0)
             {
-                DashboardMessageTextBlock.Text = "No events found for your search.";
+                DashboardMessageTextBlock.Text = "No events or courses found for your search.";
                 SelectedEventPanel.IsVisible = false;
-                _selectedEvent = null;
+                _selectedActivity = null;
                 AvailableEventsItemsControl.SelectedItem = null;
             }
             else
@@ -139,8 +190,9 @@ namespace ActivityProjectApp.Views
         private void ClearSearchButton_Click(object? sender, RoutedEventArgs e)
         {
             SearchTextBox.Text = string.Empty;
-            _selectedEvent = null;
+            _selectedActivity = null;
             SelectedEventPanel.IsVisible = false;
+            AvailableEventsItemsControl.SelectedItem = null;
 
             LoadAvailableEvents();
         }
@@ -152,9 +204,9 @@ namespace ActivityProjectApp.Views
 
         private void EnrollButton_Click(object? sender, RoutedEventArgs e)
         {
-            if (_selectedEvent == null)
+            if (_selectedActivity == null)
             {
-                DashboardMessageTextBlock.Text = "Please select an event before enrolling.";
+                DashboardMessageTextBlock.Text = "Please select an event or course before enrolling.";
                 return;
             }
 
@@ -166,8 +218,8 @@ namespace ActivityProjectApp.Views
 
             Enrollment enrollment = AppServices.EnrollmentRepository.CreateEnrollment(
                 customer.Id,
-                _selectedEvent.Id,
-                EnrollmentItemType.Event);
+                _selectedActivity.ItemId,
+                _selectedActivity.ItemType);
 
             MainWindow? mainWindow = this.VisualRoot as MainWindow;
 
@@ -177,8 +229,8 @@ namespace ActivityProjectApp.Views
             }
 
             mainWindow.Content = new EventCourseDetailsView(
-                _selectedEvent.Id,
-                EnrollmentItemType.Event,
+                _selectedActivity.ItemId,
+                _selectedActivity.ItemType,
                 enrollment);
         }
 
@@ -225,20 +277,21 @@ namespace ActivityProjectApp.Views
         {
             List<IFeature> features = new List<IFeature>();
 
-            foreach (ActivityEvent activityEvent in _currentEvents)
+            foreach (CustomerActivityListItem activity in _currentActivities)
             {
                 var mercatorPoint = SphericalMercator.FromLonLat(
-                    activityEvent.Longitude,
-                    activityEvent.Latitude);
+                    activity.Longitude,
+                    activity.Latitude);
 
                 PointFeature feature = new PointFeature(
                     new MPoint(mercatorPoint.x, mercatorPoint.y));
 
-                feature["EventId"] = activityEvent.Id;
-                feature["Title"] = activityEvent.Title;
-                feature["Category"] = activityEvent.Category;
+                feature["ItemId"] = activity.ItemId;
+                feature["ItemType"] = activity.ItemType.ToString();
+                feature["Title"] = activity.Title;
+                feature["Category"] = activity.Category;
 
-                feature.Styles.Add(CreateMapPinStyle(activityEvent));
+                feature.Styles.Add(CreateMapPinStyle(activity));
 
                 features.Add(feature);
             }
@@ -246,11 +299,14 @@ namespace ActivityProjectApp.Views
             return features;
         }
 
-        private SymbolStyle CreateMapPinStyle(ActivityEvent activityEvent)
+        private SymbolStyle CreateMapPinStyle(CustomerActivityListItem activity)
         {
-            bool isSelected = _selectedEvent != null && _selectedEvent.Id == activityEvent.Id;
+            bool isSelected =
+                _selectedActivity != null &&
+                _selectedActivity.ItemId == activity.ItemId &&
+                _selectedActivity.ItemType == activity.ItemType;
 
-            Mapsui.Styles.Color categoryColor = CategoryStyleHelper.GetMapColor(activityEvent.Category);
+            Mapsui.Styles.Color categoryColor = CategoryStyleHelper.GetMapColor(activity.Category);
 
             return new SymbolStyle
             {
@@ -320,46 +376,41 @@ namespace ActivityProjectApp.Views
 
         private void MapControl_Info(object? sender, MapInfoEventArgs e)
         {
-            int? selectedEventId = TryGetSelectedEventId(e);
+            CustomerActivityListItem? selectedActivity = TryGetSelectedActivityFromMap(e);
 
-            if (selectedEventId == null)
+            if (selectedActivity == null)
             {
                 return;
             }
 
-            ActivityEvent? selectedEvent = _currentEvents
-                .FirstOrDefault(activityEvent => activityEvent.Id == selectedEventId.Value);
-
-            if (selectedEvent == null)
-            {
-                return;
-            }
-
-            SelectEvent(selectedEvent);
+            SelectActivity(selectedActivity);
 
             e.Handled = true;
         }
 
-        private int? TryGetSelectedEventId(MapInfoEventArgs e)
+        private CustomerActivityListItem? TryGetSelectedActivityFromMap(MapInfoEventArgs e)
         {
-            object? eventIdValue = e.MapInfo?.Feature?["EventId"];
+            object? itemIdValue = e.MapInfo?.Feature?["ItemId"];
+            object? itemTypeValue = e.MapInfo?.Feature?["ItemType"];
 
-            if (eventIdValue == null)
+            if (itemIdValue == null || itemTypeValue == null)
             {
                 return null;
             }
 
-            if (eventIdValue is int eventId)
+            if (!int.TryParse(itemIdValue.ToString(), out int itemId))
             {
-                return eventId;
+                return null;
             }
 
-            if (int.TryParse(eventIdValue.ToString(), out int parsedEventId))
+            if (!Enum.TryParse(itemTypeValue.ToString(), out EnrollmentItemType itemType))
             {
-                return parsedEventId;
+                return null;
             }
 
-            return null;
+            return _currentActivities.FirstOrDefault(activity =>
+                activity.ItemId == itemId &&
+                activity.ItemType == itemType);
         }
 
         private void CenterMapOnCurrentEvents()
@@ -367,10 +418,10 @@ namespace ActivityProjectApp.Views
             double centerLatitude = DefaultLatitude;
             double centerLongitude = DefaultLongitude;
 
-            if (_currentEvents.Count > 0)
+            if (_currentActivities.Count > 0)
             {
-                centerLatitude = _currentEvents.Average(activityEvent => activityEvent.Latitude);
-                centerLongitude = _currentEvents.Average(activityEvent => activityEvent.Longitude);
+                centerLatitude = _currentActivities.Average(activity => activity.Latitude);
+                centerLongitude = _currentActivities.Average(activity => activity.Longitude);
             }
 
             SetMapView(centerLatitude, centerLongitude, _currentZoomLevel);
@@ -427,38 +478,37 @@ namespace ActivityProjectApp.Views
 
         private void AvailableEventsItemsControl_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
-            if (AvailableEventsItemsControl.SelectedItem is not ActivityEvent selectedEvent)
+            if (AvailableEventsItemsControl.SelectedItem is not CustomerActivityListItem selectedActivity)
             {
                 return;
             }
 
-            SelectEvent(selectedEvent);
+            SelectActivity(selectedActivity);
         }
-        private void SelectEvent(ActivityEvent activityEvent)
+        private void SelectActivity(CustomerActivityListItem activity)
         {
-            _selectedEvent = activityEvent;
+            _selectedActivity = activity;
 
-            if (AvailableEventsItemsControl.SelectedItem != activityEvent)
+            if (AvailableEventsItemsControl.SelectedItem != activity)
             {
-                AvailableEventsItemsControl.SelectedItem = activityEvent;
+                AvailableEventsItemsControl.SelectedItem = activity;
             }
 
             SelectedEventPanel.IsVisible = true;
 
-            SelectedEventTitleTextBlock.Text = activityEvent.Title;
+            SelectedEventTitleTextBlock.Text = activity.Title;
 
-            SelectedEventCategoryTextBlock.Text = activityEvent.Category;
+            SelectedEventCategoryTextBlock.Text = $"{activity.ActivityType} • {activity.Category}";
             SelectedEventCategoryTextBlock.Foreground =
-                CategoryStyleHelper.GetAvaloniaBrush(activityEvent.Category);
+                CategoryStyleHelper.GetAvaloniaBrush(activity.Category);
 
-            SelectedEventAddressTextBlock.Text = activityEvent.Address;
+            SelectedEventAddressTextBlock.Text = activity.Address;
 
-            SelectedEventInfoTextBlock.Text =
-                $"{activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm} | €{activityEvent.Price} | Max spaces: {activityEvent.MaxSpace}";
+            SelectedEventInfoTextBlock.Text = activity.ExtraInfoText;
 
-            DashboardMessageTextBlock.Text = $"Selected event: {activityEvent.Title}";
+            DashboardMessageTextBlock.Text = $"Selected {activity.ActivityType.ToLower()}: {activity.Title}";
 
-            SetMapView(activityEvent.Latitude, activityEvent.Longitude, _currentZoomLevel);
+            SetMapView(activity.Latitude, activity.Longitude, _currentZoomLevel);
 
             UpdateActivityEventLayer();
         }

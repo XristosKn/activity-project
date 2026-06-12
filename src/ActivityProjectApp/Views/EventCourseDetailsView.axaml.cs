@@ -15,6 +15,7 @@ namespace ActivityProjectApp.Views
         private readonly Enrollment _enrollment;
 
         private AppActivityEvent? _activityEvent;
+        private Course? _course;
 
         public EventCourseDetailsView(
             int itemId,
@@ -48,7 +49,7 @@ namespace ActivityProjectApp.Views
                 return;
             }
 
-            LoadCourseDetailsPlaceholder();
+            LoadCourseDetails();
         }
 
         private void LoadEventDetails()
@@ -82,25 +83,48 @@ namespace ActivityProjectApp.Views
             EnrollmentStatusTextBlock.Text = _enrollment.Status.ToString();
         }
 
-        private void LoadCourseDetailsPlaceholder()
+        private void LoadCourseDetails()
         {
+            _course = AppServices.CourseRepository
+                .GetAllCourses()
+                .FirstOrDefault(course => course.Id == _itemId);
+
+            if (_course == null)
+            {
+                PageTitleTextBlock.Text = "Item not found";
+                ItemTitleTextBlock.Text = "The selected course could not be found.";
+                ItemCategoryTextBlock.Text = "Course";
+                ItemAddressTextBlock.Text = "-";
+                ItemDescriptionTextBlock.Text = "No course information is available.";
+
+                ItemTypeTextBlock.Text = "Course";
+                ItemDateTextBlock.Text = "-";
+                ItemTimeTextBlock.Text = "-";
+                ItemSpacesTextBlock.Text = "-";
+                ItemPriceTextBlock.Text = "-";
+                EnrollmentStatusTextBlock.Text = "-";
+
+                PayButton.IsEnabled = false;
+                return;
+            }
+
             PageTitleTextBlock.Text = "Course Enrollment Details";
             MediaPlaceholderTextBlock.Text = "Course Image / Video Preview";
 
-            ItemTitleTextBlock.Text = "Course details will be available later.";
-            ItemCategoryTextBlock.Text = "Course";
-            ItemAddressTextBlock.Text = "-";
-            ItemDescriptionTextBlock.Text = "Course support will be added in a later step.";
+            ItemTitleTextBlock.Text = _course.Title;
+            ItemCategoryTextBlock.Text = _course.Category;
+            ItemAddressTextBlock.Text = _course.Address;
+            ItemDescriptionTextBlock.Text = _course.Description;
 
             ItemTypeTextBlock.Text = "Course";
-            ItemDateTextBlock.Text = "-";
-            ItemTimeTextBlock.Text = "-";
-            ItemSpacesTextBlock.Text = "-";
-            ItemPriceTextBlock.Text = "-";
+            ItemDateTextBlock.Text = _course.Days;
+            ItemTimeTextBlock.Text = $"{_course.StartTime:hh\\:mm} - {_course.EndTime:hh\\:mm}";
+            ItemSpacesTextBlock.Text = _course.MaxSpace.ToString();
+            ItemPriceTextBlock.Text = $"€{_course.Price}";
 
             EnrollmentStatusTextBlock.Text = _enrollment.Status.ToString();
 
-            PayButton.IsEnabled = false;
+            PayButton.IsEnabled = true;
         }
 
         private void BackButton_Click(object? sender, RoutedEventArgs e)
@@ -128,7 +152,19 @@ namespace ActivityProjectApp.Views
 
         private string CreateExternalPaymentUrl()
         {
-            return $"https://example-payment-provider.com/pay?enrollmentId={_enrollment.Id}&itemId={_itemId}&itemType={_itemType}";
+            decimal amount = 0;
+
+            if (_itemType == EnrollmentItemType.Event && _activityEvent != null)
+            {
+                amount = _activityEvent.Price;
+            }
+
+            if (_itemType == EnrollmentItemType.Course && _course != null)
+            {
+                amount = _course.Price;
+            }
+
+            return $"https://example-payment-provider.com/pay?enrollmentId={_enrollment.Id}&itemId={_itemId}&itemType={_itemType}&amount={amount}";
         }
 
         private void NavigateBackToCustomerDashboard()
