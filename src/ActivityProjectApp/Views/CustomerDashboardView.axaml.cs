@@ -67,6 +67,7 @@ namespace ActivityProjectApp.Views
             ZoomOutButton.Click += ZoomOutButton_Click;
             CenterMapButton.Click += CenterMapButton_Click;
             EnrollButton.Click += EnrollButton_Click;
+            SaveButton.Click += SaveButton_Click;
 
             AvailableEventsItemsControl.SelectionChanged += AvailableEventsItemsControl_SelectionChanged;
 
@@ -195,6 +196,7 @@ namespace ActivityProjectApp.Views
             SelectedEventPanel.IsVisible = false;
             AvailableEventsItemsControl.SelectedItem = null;
 
+            UpdateSaveButtonState();
             LoadAvailableEvents();
         }
 
@@ -203,6 +205,15 @@ namespace ActivityProjectApp.Views
             RefreshMapView();
         }
 
+        private SavedItemType ConvertToSavedItemType(EnrollmentItemType itemType)
+        {
+            if (itemType == EnrollmentItemType.Course)
+            {
+                return SavedItemType.Course;
+            }
+
+            return SavedItemType.Event;
+        }
         private void EnrollButton_Click(object? sender, RoutedEventArgs e)
         {
             if (_selectedActivity == null)
@@ -511,7 +522,87 @@ namespace ActivityProjectApp.Views
 
             SetMapView(activity.Latitude, activity.Longitude, _currentZoomLevel);
 
+            UpdateSaveButtonState();
+
             UpdateActivityEventLayer();
+        }
+
+        private void SaveButton_Click(object? sender, RoutedEventArgs e)
+        {
+            if (_selectedActivity == null)
+            {
+                DashboardMessageTextBlock.Text = "Please select an event or course before saving.";
+                return;
+            }
+
+            if (_authService.GetCurrentUser() is not Customer customer)
+            {
+                DashboardMessageTextBlock.Text = "Only customers can save items.";
+                return;
+            }
+
+            SavedItemType savedItemType = ConvertToSavedItemType(_selectedActivity.ItemType);
+
+            bool alreadySaved = AppServices.SavedItemRepository.IsItemSaved(
+                customer.Id,
+                _selectedActivity.ItemId,
+                savedItemType);
+
+            if (alreadySaved)
+            {
+                AppServices.SavedItemRepository.RemoveSavedItem(
+                    customer.Id,
+                    _selectedActivity.ItemId,
+                    savedItemType);
+
+                DashboardMessageTextBlock.Text = $"{_selectedActivity.Title} removed from saved items.";
+            }
+            else
+            {
+                AppServices.SavedItemRepository.SaveItem(
+                    customer.Id,
+                    _selectedActivity.ItemId,
+                    savedItemType);
+
+                DashboardMessageTextBlock.Text = $"{_selectedActivity.Title} saved successfully.";
+            }
+
+            UpdateSaveButtonState();
+        }
+
+        private void UpdateSaveButtonState()
+        {
+            if (_selectedActivity == null)
+            {
+                SaveButton.Content = "Save";
+                SaveButton.Classes.Remove("saved");
+                return;
+            }
+
+            if (_authService.GetCurrentUser() is not Customer customer)
+            {
+                SaveButton.Content = "Save";
+                SaveButton.Classes.Remove("saved");
+                return;
+            }
+
+            SavedItemType savedItemType = ConvertToSavedItemType(_selectedActivity.ItemType);
+
+            bool isSaved = AppServices.SavedItemRepository.IsItemSaved(
+                customer.Id,
+                _selectedActivity.ItemId,
+                savedItemType);
+
+            if (isSaved)
+            {
+                SaveButton.Content = "Saved";
+                SaveButton.Classes.Add("saved");
+            }
+            else
+            {
+                SaveButton.Content = "Save";
+                SaveButton.Classes.Remove("saved");
+            }
         }
 
         private void ProfileButton_Click(object? sender, RoutedEventArgs e)
