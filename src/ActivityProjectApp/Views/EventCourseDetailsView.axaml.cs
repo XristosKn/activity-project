@@ -1,10 +1,11 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using ActivityProjectApp.Models;
 using ActivityProjectApp.Services;
-using System.Diagnostics;
-using AppActivityEvent = ActivityProjectApp.Models.ActivityEvent;
 using System.Linq;
+
+using AppActivityEvent = ActivityProjectApp.Models.ActivityEvent;
 
 namespace ActivityProjectApp.Views
 {
@@ -39,6 +40,8 @@ namespace ActivityProjectApp.Views
             BackButton.Click += BackButton_Click;
             PayButton.Click += PayButton_Click;
             LogoutButton.Click += LogoutButton_Click;
+
+            AppServices.PaymentSimulationService.PaymentStatusChanged += PaymentSimulationService_PaymentStatusChanged;
         }
 
         private void LoadItemDetails()
@@ -81,6 +84,8 @@ namespace ActivityProjectApp.Views
             ItemPriceTextBlock.Text = $"€{_activityEvent.Price}";
 
             EnrollmentStatusTextBlock.Text = _enrollment.Status.ToString();
+
+            UpdatePaymentUiByStatus();
         }
 
         private void LoadCourseDetails()
@@ -124,6 +129,42 @@ namespace ActivityProjectApp.Views
 
             EnrollmentStatusTextBlock.Text = _enrollment.Status.ToString();
 
+            UpdatePaymentUiByStatus();
+        }
+
+        private void PaymentSimulationService_PaymentStatusChanged(int enrollmentId, EnrollmentStatus status)
+        {
+            if (enrollmentId != _enrollment.Id)
+            {
+                return;
+            }
+
+            Dispatcher.UIThread.Post(() =>
+            {
+                _enrollment.Status = status;
+                EnrollmentStatusTextBlock.Text = status.ToString();
+
+                UpdatePaymentUiByStatus();
+            });
+        }
+
+        private void UpdatePaymentUiByStatus()
+        {
+            if (_enrollment.Status == EnrollmentStatus.Confirmed)
+            {
+                EnrollmentStatusTextBlock.Foreground = Avalonia.Media.Brushes.Green;
+                PayButton.IsEnabled = false;
+                return;
+            }
+
+            if (_enrollment.Status == EnrollmentStatus.Cancelled)
+            {
+                EnrollmentStatusTextBlock.Foreground = Avalonia.Media.Brushes.Red;
+                PayButton.IsEnabled = false;
+                return;
+            }
+
+            EnrollmentStatusTextBlock.Foreground = Avalonia.Media.Brushes.Orange;
             PayButton.IsEnabled = true;
         }
 
@@ -134,37 +175,13 @@ namespace ActivityProjectApp.Views
 
         private void PayButton_Click(object? sender, RoutedEventArgs e)
         {
-            AppServices.EnrollmentRepository.MarkAsPaid(_enrollment.Id);
-
-            _enrollment.Status = EnrollmentStatus.Paid;
-            EnrollmentStatusTextBlock.Text = _enrollment.Status.ToString();
-
-            string paymentUrl = CreateExternalPaymentUrl();
-
-            ProcessStartInfo processStartInfo = new ProcessStartInfo
-            {
-                FileName = paymentUrl,
-                UseShellExecute = true
-            };
-
-            Process.Start(processStartInfo);
+            AppServices.PaymentSimulationService.OpenPaymentPage(_enrollment.Id);
         }
 
-        private string CreateExternalPaymentUrl()
+        private void LogoutButton_Click(object? sender, RoutedEventArgs e)
         {
-            decimal amount = 0;
-
-            if (_itemType == EnrollmentItemType.Event && _activityEvent != null)
-            {
-                amount = _activityEvent.Price;
-            }
-
-            if (_itemType == EnrollmentItemType.Course && _course != null)
-            {
-                amount = _course.Price;
-            }
-
-            return $"https://example-payment-provider.com/pay?enrollmentId={_enrollment.Id}&itemId={_itemId}&itemType={_itemType}&amount={amount}";
+            AppServices.AuthService.Logout();
+            NavigateToLogin();
         }
 
         private void NavigateBackToCustomerDashboard()
@@ -189,12 +206,6 @@ namespace ActivityProjectApp.Views
             }
 
             mainWindow.Content = new LoginView();
-        }
-
-        private void LogoutButton_Click(object? sender, RoutedEventArgs e)
-        {
-            AppServices.AuthService.Logout();
-            NavigateToLogin();
         }
     }
 }

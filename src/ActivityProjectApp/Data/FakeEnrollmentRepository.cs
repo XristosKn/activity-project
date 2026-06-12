@@ -67,7 +67,7 @@ namespace ActivityProjectApp.Data
             return enrollment;
         }
 
-        public void MarkAsPaid(int enrollmentId)
+        public void MarkAsConfirmed(int enrollmentId)
         {
             Enrollment? enrollment = _enrollments
                 .FirstOrDefault(item => item.Id == enrollmentId);
@@ -77,7 +77,7 @@ namespace ActivityProjectApp.Data
                 return;
             }
 
-            enrollment.Status = EnrollmentStatus.Paid;
+            enrollment.Status = EnrollmentStatus.Confirmed;
         }
 
         public void CancelEnrollment(int enrollmentId)
@@ -92,5 +92,5 @@ namespace ActivityProjectApp.Data
 
             enrollment.Status = EnrollmentStatus.Cancelled;
         }
-    }
+            }
 }

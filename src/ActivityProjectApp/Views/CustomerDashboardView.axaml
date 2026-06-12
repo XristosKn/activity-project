@@ -122,15 +122,29 @@
 
             <DockPanel LastChildFill="True">
 
-                <Button x:Name="LogoutButton"
-                        DockPanel.Dock="Right"
-                        Content="Logout"
-                        Width="110"
-                        Height="38"
-                        Background="#F1F3F5"
-                        Foreground="#1F2937"
-                        HorizontalContentAlignment="Center"/>
+                <StackPanel DockPanel.Dock="Right"
+                            Orientation="Horizontal"
+                            Spacing="10">
 
+                    <Button x:Name="ProfileButton"
+                            Content="Profile"
+                            Width="110"
+                            Height="38"
+                            Background="#F1F3F5"
+                            Foreground="#1F2937"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+
+                    <Button x:Name="LogoutButton"
+                            Content="Logout"
+                            Width="110"
+                            Height="38"
+                            Background="#F1F3F5"
+                            Foreground="#1F2937"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
+
+                </StackPanel>
                 <StackPanel DockPanel.Dock="Left"
                             Spacing="3">
 

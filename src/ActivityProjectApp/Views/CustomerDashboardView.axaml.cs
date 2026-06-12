@@ -62,6 +62,7 @@ namespace ActivityProjectApp.Views
             SearchButton.Click += SearchButton_Click;
             ClearSearchButton.Click += ClearSearchButton_Click;
             LogoutButton.Click += LogoutButton_Click;
+            ProfileButton.Click += ProfileButton_Click;
             ZoomInButton.Click += ZoomInButton_Click;
             ZoomOutButton.Click += ZoomOutButton_Click;
             CenterMapButton.Click += CenterMapButton_Click;
@@ -513,6 +514,17 @@ namespace ActivityProjectApp.Views
             UpdateActivityEventLayer();
         }
 
+        private void ProfileButton_Click(object? sender, RoutedEventArgs e)
+        {
+            MainWindow? mainWindow = this.VisualRoot as MainWindow;
+
+            if (mainWindow == null)
+            {
+                return;
+            }
+
+            mainWindow.Content = new CustomerProfileView();
+        }
         private void LogoutButton_Click(object? sender, RoutedEventArgs e)
         {
             _authService.Logout();

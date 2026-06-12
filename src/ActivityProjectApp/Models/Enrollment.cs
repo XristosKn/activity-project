@@ -11,7 +11,7 @@ namespace ActivityProjectApp.Models
     public enum EnrollmentStatus
     {
         PendingPayment,
-        Paid,
+        Confirmed,
         Cancelled
     }
 
@@ -25,8 +25,8 @@ namespace ActivityProjectApp.Models
 
         public EnrollmentItemType ItemType { get; set; }
 
-        public EnrollmentStatus Status { get; set; }
-
         public DateTime EnrollmentDate { get; set; }
+
+        public EnrollmentStatus Status { get; set; }
     }
 }

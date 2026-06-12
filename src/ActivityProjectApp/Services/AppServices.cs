@@ -12,6 +12,8 @@ namespace ActivityProjectApp.Services
 
         public static FakeEnrollmentRepository EnrollmentRepository { get; } = new FakeEnrollmentRepository();
 
+        public static PaymentSimulationService PaymentSimulationService { get; } = new PaymentSimulationService();
+
         public static FakeCourseRepository CourseRepository { get; } = new FakeCourseRepository();
 
         public static SessionService SessionService { get; } = new SessionService();
