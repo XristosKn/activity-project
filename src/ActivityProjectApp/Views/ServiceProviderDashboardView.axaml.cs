@@ -13,20 +13,6 @@ namespace ActivityProjectApp.Views
     {
         private readonly AuthService _authService;
 
-        private class AnnouncementTargetItem
-        {
-            public int ItemId { get; set; }
-
-            public AnnouncementItemType ItemType { get; set; }
-
-            public string DisplayText { get; set; } = string.Empty;
-
-            public override string ToString()
-            {
-                return DisplayText;
-            }
-        }
-
         public ServiceProviderDashboardView()
         {
             InitializeComponent();
@@ -58,7 +44,7 @@ namespace ActivityProjectApp.Views
 
             CreateItemTypeComboBox.SelectionChanged += CreateItemTypeComboBox_SelectionChanged;
             ProviderActivityFilterComboBox.SelectionChanged += ProviderActivityFilterComboBox_SelectionChanged;
-            AnnouncementItemTypeComboBox.SelectionChanged += AnnouncementItemTypeComboBox_SelectionChanged;
+            AnnouncementTargetModeComboBox.SelectionChanged += AnnouncementTargetModeComboBox_SelectionChanged;
         }
 
         private void LoadCurrentUser()
@@ -249,9 +235,9 @@ namespace ActivityProjectApp.Views
             DashboardMessageTextBlock.Text = "Create announcements for your events or courses.";
             AnnouncementMessageTextBlock.Text = string.Empty;
 
-            if (AnnouncementItemTypeComboBox.SelectedItem == null)
+            if (AnnouncementTargetModeComboBox.SelectedItem == null)
             {
-                AnnouncementItemTypeComboBox.SelectedIndex = 0;
+                AnnouncementTargetModeComboBox.SelectedIndex = 0;
             }
 
             if (AnnouncementStatusComboBox.SelectedItem == null)
@@ -452,7 +438,8 @@ namespace ActivityProjectApp.Views
                 Time = time,
                 Price = price,
                 MaxSpace = maxSpace,
-                Gallery = gallery,
+                MainImagePath = string.Empty,
+                Gallery = string.Empty,
                 ServiceProviderId = serviceProvider.Id,
                 Status = status
             };
@@ -626,56 +613,75 @@ namespace ActivityProjectApp.Views
             LoadAnnouncementTargetItems();
         }
 
+        private void AnnouncementTargetModeComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            LoadAnnouncementTargetItems();
+        }
+
         private void LoadAnnouncementTargetItems()
         {
             User? currentUser = _authService.GetCurrentUser();
 
             if (currentUser is not ServiceProvider serviceProvider)
             {
-                AnnouncementRelatedItemComboBox.ItemsSource = null;
+                AnnouncementTargetItemsControl.ItemsSource = null;
                 return;
             }
 
-            AnnouncementItemType selectedType = GetSelectedAnnouncementItemType();
+            string selectedMode = GetSelectedAnnouncementTargetMode();
 
-            List<AnnouncementTargetItem> targetItems = new List<AnnouncementTargetItem>();
+            bool isCustomSelection = selectedMode == "Custom Selection";
 
-            if (selectedType == AnnouncementItemType.Event)
+            AnnouncementTargetItemsControl.IsEnabled = isCustomSelection;
+            AnnouncementTargetsPanel.Opacity = isCustomSelection ? 1.0 : 0.65;
+
+            AnnouncementTargetsHelpTextBlock.Text = isCustomSelection
+                ? "Manually select one or more events/courses for this announcement."
+                : "Targets are selected automatically based on the option above.";
+
+            List<AnnouncementTargetSelectionItem> targetItems = new List<AnnouncementTargetSelectionItem>();
+
+            List<ActivityEvent> providerEvents = AppServices.ActivityEventRepository
+                .GetEventsByServiceProviderId(serviceProvider.Id);
+
+            List<Course> providerCourses = AppServices.CourseRepository
+                .GetCoursesByServiceProviderId(serviceProvider.Id);
+
+            targetItems.AddRange(providerEvents.Select(activityEvent => new AnnouncementTargetSelectionItem
             {
-                List<ActivityEvent> providerEvents = AppServices.ActivityEventRepository
-                    .GetEventsByServiceProviderId(serviceProvider.Id);
+                ItemId = activityEvent.Id,
+                ItemType = AnnouncementItemType.Event,
+                DisplayText = $"Event - {activityEvent.Title}",
+                IsSelected = selectedMode == "All Events and Courses" || selectedMode == "All Events"
+            }));
 
-                targetItems = providerEvents
-                    .Select(activityEvent => new AnnouncementTargetItem
-                    {
-                        ItemId = activityEvent.Id,
-                        ItemType = AnnouncementItemType.Event,
-                        DisplayText = $"Event - {activityEvent.Title}"
-                    })
-                    .ToList();
+            targetItems.AddRange(providerCourses.Select(course => new AnnouncementTargetSelectionItem
+            {
+                ItemId = course.Id,
+                ItemType = AnnouncementItemType.Course,
+                DisplayText = $"Course - {course.Title}",
+                IsSelected = selectedMode == "All Events and Courses" || selectedMode == "All Courses"
+            }));
+
+            if (selectedMode == "Custom Selection")
+            {
+                foreach (AnnouncementTargetSelectionItem targetItem in targetItems)
+                {
+                    targetItem.IsSelected = false;
+                }
             }
 
-            if (selectedType == AnnouncementItemType.Course)
-            {
-                List<Course> providerCourses = AppServices.CourseRepository
-                    .GetCoursesByServiceProviderId(serviceProvider.Id);
+            AnnouncementTargetItemsControl.ItemsSource = targetItems;
+        }
 
-                targetItems = providerCourses
-                    .Select(course => new AnnouncementTargetItem
-                    {
-                        ItemId = course.Id,
-                        ItemType = AnnouncementItemType.Course,
-                        DisplayText = $"Course - {course.Title}"
-                    })
-                    .ToList();
+        private string GetSelectedAnnouncementTargetMode()
+        {
+            if (AnnouncementTargetModeComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                return selectedItem.Content?.ToString() ?? "All Events and Courses";
             }
 
-            AnnouncementRelatedItemComboBox.ItemsSource = targetItems;
-
-            if (targetItems.Count > 0)
-            {
-                AnnouncementRelatedItemComboBox.SelectedIndex = 0;
-            }
+            return "All Events and Courses";
         }
 
         private void PublishAnnouncementButton_Click(object? sender, RoutedEventArgs e)
@@ -698,9 +704,19 @@ namespace ActivityProjectApp.Views
                 return;
             }
 
-            if (AnnouncementRelatedItemComboBox.SelectedItem is not AnnouncementTargetItem selectedTargetItem)
+            List<AnnouncementTarget> targets = GetSelectedAnnouncementTargets();
+
+            if (targets.Count == 0)
             {
-                AnnouncementMessageTextBlock.Text = "Please select a related event or course.";
+                AnnouncementMessageTextBlock.Text = "Please select at least one related event or course.";
+                return;
+            }
+
+            User? currentUser = _authService.GetCurrentUser();
+
+            if (currentUser is not ServiceProvider serviceProvider)
+            {
+                AnnouncementMessageTextBlock.Text = "Only service providers can create announcements.";
                 return;
             }
 
@@ -708,14 +724,13 @@ namespace ActivityProjectApp.Views
             {
                 Title = title,
                 Text = text,
-                ItemType = selectedTargetItem.ItemType,
-                ItemId = selectedTargetItem.ItemId,
                 AnnouncementDate = DateTime.Now,
                 Gallery = gallery,
-                IsActive = GetSelectedAnnouncementIsActive()
+                IsActive = GetSelectedAnnouncementIsActive(),
+                ServiceProviderId = serviceProvider.Id
             };
 
-            AppServices.AnnouncementRepository.AddAnnouncement(announcement);
+            AppServices.AnnouncementRepository.AddAnnouncement(announcement, targets);
 
             ClearAnnouncementForm();
             LoadDashboardCounts();
@@ -728,9 +743,29 @@ namespace ActivityProjectApp.Views
             AnnouncementMessageTextBlock.Foreground = Avalonia.Media.Brushes.Green;
             AnnouncementMessageTextBlock.Text = "Announcement published successfully.";
 
-            DashboardMessageTextBlock.Text = "The announcement was published and linked to the selected event/course.";
+            DashboardMessageTextBlock.Text = "The announcement was published and linked to the selected events/courses.";
         }
 
+        private List<AnnouncementTarget> GetSelectedAnnouncementTargets()
+        {
+            List<AnnouncementTarget> targets = new List<AnnouncementTarget>();
+
+            if (AnnouncementTargetItemsControl.ItemsSource is not IEnumerable<AnnouncementTargetSelectionItem> targetItems)
+            {
+                return targets;
+            }
+
+            targets = targetItems
+                .Where(targetItem => targetItem.IsSelected)
+                .Select(targetItem => new AnnouncementTarget
+                {
+                    ItemId = targetItem.ItemId,
+                    ItemType = targetItem.ItemType
+                })
+                .ToList();
+
+            return targets;
+        }
         private void CancelAnnouncementButton_Click(object? sender, RoutedEventArgs e)
         {
             ClearAnnouncementForm();
@@ -747,7 +782,7 @@ namespace ActivityProjectApp.Views
             AnnouncementTextTextBox.Text = string.Empty;
             AnnouncementGalleryTextBox.Text = string.Empty;
 
-            AnnouncementItemTypeComboBox.SelectedIndex = 0;
+            AnnouncementTargetModeComboBox.SelectedIndex = 0;
             AnnouncementStatusComboBox.SelectedIndex = 0;
 
             LoadAnnouncementTargetItems();
@@ -755,23 +790,9 @@ namespace ActivityProjectApp.Views
 
         private List<Announcement> GetProviderAnnouncements(ServiceProvider serviceProvider)
         {
-            List<int> providerEventIds = AppServices.ActivityEventRepository
-                .GetEventsByServiceProviderId(serviceProvider.Id)
-                .Select(activityEvent => activityEvent.Id)
-                .ToList();
-
-            List<int> providerCourseIds = AppServices.CourseRepository
-                .GetCoursesByServiceProviderId(serviceProvider.Id)
-                .Select(course => course.Id)
-                .ToList();
-
             return AppServices.AnnouncementRepository
                 .GetAllAnnouncements()
-                .Where(announcement =>
-                    (announcement.ItemType == AnnouncementItemType.Event &&
-                     providerEventIds.Contains(announcement.ItemId)) ||
-                    (announcement.ItemType == AnnouncementItemType.Course &&
-                     providerCourseIds.Contains(announcement.ItemId)))
+                .Where(announcement => announcement.ServiceProviderId == serviceProvider.Id)
                 .OrderByDescending(announcement => announcement.AnnouncementDate)
                 .ToList();
         }
@@ -793,20 +814,6 @@ namespace ActivityProjectApp.Views
             ProviderAnnouncementsCountTextBlock.Text = $"{announcements.Count} announcements";
         }
 
-        private AnnouncementItemType GetSelectedAnnouncementItemType()
-        {
-            if (AnnouncementItemTypeComboBox.SelectedItem is ComboBoxItem selectedItem)
-            {
-                string selectedValue = selectedItem.Content?.ToString() ?? "Event";
-
-                if (selectedValue == "Course")
-                {
-                    return AnnouncementItemType.Course;
-                }
-            }
-
-            return AnnouncementItemType.Event;
-        }
 
         private bool GetSelectedAnnouncementIsActive()
         {

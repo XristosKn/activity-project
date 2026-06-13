@@ -7,10 +7,10 @@ namespace ActivityProjectApp.Services
 {
     public class AuthService
     {
-        private readonly FakeUserRepository _userRepository;
+        private readonly DatabaseUserRepository _userRepository;
         private readonly SessionService _sessionService;
 
-        public AuthService(FakeUserRepository userRepository, SessionService sessionService)
+        public AuthService(DatabaseUserRepository userRepository, SessionService sessionService)
         {
             _userRepository = userRepository;
             _sessionService = sessionService;

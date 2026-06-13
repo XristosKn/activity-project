@@ -4,19 +4,19 @@ namespace ActivityProjectApp.Services
 {
     public static class AppServices
     {
-        public static FakeUserRepository UserRepository { get; } = new FakeUserRepository();
+        public static DatabaseUserRepository UserRepository { get; } = new DatabaseUserRepository();
 
-        public static FakeActivityEventRepository ActivityEventRepository { get; } = new FakeActivityEventRepository();
+        public static DatabaseActivityEventRepository ActivityEventRepository { get; } = new DatabaseActivityEventRepository();
 
-        public static FakeSavedItemRepository SavedItemRepository { get; } = new FakeSavedItemRepository();
+        public static DatabaseSavedItemRepository SavedItemRepository { get; } = new DatabaseSavedItemRepository();
 
-        public static FakeEnrollmentRepository EnrollmentRepository { get; } = new FakeEnrollmentRepository();
+        public static DatabaseEnrollmentRepository EnrollmentRepository { get; } = new DatabaseEnrollmentRepository();
 
         public static PaymentSimulationService PaymentSimulationService { get; } = new PaymentSimulationService();
 
-        public static FakeCourseRepository CourseRepository { get; } = new FakeCourseRepository();
+        public static DatabaseCourseRepository CourseRepository { get; } = new DatabaseCourseRepository();
 
-        public static FakeAnnouncementRepository AnnouncementRepository { get; } = new FakeAnnouncementRepository();
+        public static DatabaseAnnouncementRepository AnnouncementRepository { get; } = new DatabaseAnnouncementRepository();
 
         public static SessionService SessionService { get; } = new SessionService();
 

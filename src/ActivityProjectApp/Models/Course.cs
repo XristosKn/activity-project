@@ -36,10 +36,12 @@ namespace ActivityProjectApp.Models
 
         public string AgeRestriction { get; set; } = string.Empty;
 
+        public string MainImagePath { get; set; } = string.Empty;
+
         public string Gallery { get; set; } = string.Empty;
 
         public int ServiceProviderId { get; set; }
 
-        public CourseStatus Status { get; set; }
+        public CourseStatus Status { get; set; } = CourseStatus.Active;
     }
 }

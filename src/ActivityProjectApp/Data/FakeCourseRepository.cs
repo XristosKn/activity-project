@@ -32,7 +32,8 @@ namespace ActivityProjectApp.Data
                 Price = 45,
                 MaxSpace = 20,
                 AgeRestriction = "16+",
-                Gallery = "",
+                MainImagePath = "Assets/CourseImages/kickboxing_main.jpg",
+                Gallery = "Assets/CourseImages/kickboxing_1.jpg;Assets/CourseImages/kickboxing_2.jpg",
                 ServiceProviderId = 2,
                 Status = CourseStatus.Active
             });
@@ -51,7 +52,8 @@ namespace ActivityProjectApp.Data
                 Price = 55,
                 MaxSpace = 15,
                 AgeRestriction = "12+",
-                Gallery = "",
+                MainImagePath = "Assets/CourseImages/swimming_main.jpg",
+                Gallery = "Assets/CourseImages/swimming_1.jpg;Assets/CourseImages/swimming_2.jpg",
                 ServiceProviderId = 2,
                 Status = CourseStatus.Active
             });

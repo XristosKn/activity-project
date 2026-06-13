@@ -1,98 +1,49 @@
+using ActivityProjectApp.Database;
 using ActivityProjectApp.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ActivityProjectApp.Data
 {
-    public class FakeAnnouncementRepository
+    public class DatabaseAnnouncementRepository
     {
-        private readonly List<Announcement> _announcements = new List<Announcement>();
-        private readonly List<AnnouncementTarget> _announcementTargets = new List<AnnouncementTarget>();
-
-        private int _nextAnnouncementId = 1;
-        private int _nextTargetId = 1;
-
-        public FakeAnnouncementRepository()
-        {
-            SeedAnnouncements();
-        }
-
-        private void SeedAnnouncements()
-        {
-            Announcement firstAnnouncement = new Announcement
-            {
-                Title = "New equipment available",
-                Text = "New training equipment has been added for this activity.",
-                AnnouncementDate = DateTime.Now,
-                Gallery = string.Empty,
-                IsActive = true,
-                ServiceProviderId = 2
-            };
-
-            AddAnnouncement(firstAnnouncement, new List<AnnouncementTarget>
-            {
-                new AnnouncementTarget
-                {
-                    ItemId = 1,
-                    ItemType = AnnouncementItemType.Event
-                }
-            });
-
-            Announcement secondAnnouncement = new Announcement
-            {
-                Title = "Schedule update",
-                Text = "The course schedule has been updated for the upcoming week.",
-                AnnouncementDate = DateTime.Now,
-                Gallery = string.Empty,
-                IsActive = true,
-                ServiceProviderId = 2
-            };
-
-            AddAnnouncement(secondAnnouncement, new List<AnnouncementTarget>
-            {
-                new AnnouncementTarget
-                {
-                    ItemId = 1,
-                    ItemType = AnnouncementItemType.Course
-                }
-            });
-        }
-
         public void AddAnnouncement(Announcement announcement)
         {
-            announcement.Id = _nextAnnouncementId;
-            _nextAnnouncementId++;
+            using AppDbContext dbContext = new AppDbContext();
 
-            _announcements.Add(announcement);
+            dbContext.Announcements.Add(announcement);
+            dbContext.SaveChanges();
         }
 
         public void AddAnnouncement(Announcement announcement, List<AnnouncementTarget> targets)
         {
-            announcement.Id = _nextAnnouncementId;
-            _nextAnnouncementId++;
+            using AppDbContext dbContext = new AppDbContext();
 
-            _announcements.Add(announcement);
+            dbContext.Announcements.Add(announcement);
+            dbContext.SaveChanges();
 
             foreach (AnnouncementTarget target in targets)
             {
-                target.Id = _nextTargetId;
-                _nextTargetId++;
-
                 target.AnnouncementId = announcement.Id;
-
-                _announcementTargets.Add(target);
+                dbContext.AnnouncementTargets.Add(target);
             }
+
+            dbContext.SaveChanges();
         }
 
         public List<Announcement> GetAllAnnouncements()
         {
-            return _announcements.ToList();
+            using AppDbContext dbContext = new AppDbContext();
+
+            return dbContext.Announcements
+                .ToList();
         }
 
         public List<Announcement> GetActiveAnnouncements()
         {
-            return _announcements
+            using AppDbContext dbContext = new AppDbContext();
+
+            return dbContext.Announcements
                 .Where(announcement => announcement.IsActive)
                 .OrderByDescending(announcement => announcement.AnnouncementDate)
                 .ToList();
@@ -100,21 +51,25 @@ namespace ActivityProjectApp.Data
 
         public List<AnnouncementTarget> GetTargetsByAnnouncementId(int announcementId)
         {
-            return _announcementTargets
+            using AppDbContext dbContext = new AppDbContext();
+
+            return dbContext.AnnouncementTargets
                 .Where(target => target.AnnouncementId == announcementId)
                 .ToList();
         }
 
         public List<Announcement> GetAnnouncementsByItem(int itemId, AnnouncementItemType itemType)
         {
-            List<int> announcementIds = _announcementTargets
+            using AppDbContext dbContext = new AppDbContext();
+
+            List<int> announcementIds = dbContext.AnnouncementTargets
                 .Where(target =>
                     target.ItemId == itemId &&
                     target.ItemType == itemType)
                 .Select(target => target.AnnouncementId)
                 .ToList();
 
-            return _announcements
+            return dbContext.Announcements
                 .Where(announcement =>
                     announcementIds.Contains(announcement.Id) &&
                     announcement.IsActive)
@@ -124,13 +79,15 @@ namespace ActivityProjectApp.Data
 
         public List<Announcement> GetAnnouncementsByItemType(AnnouncementItemType itemType)
         {
-            List<int> announcementIds = _announcementTargets
+            using AppDbContext dbContext = new AppDbContext();
+
+            List<int> announcementIds = dbContext.AnnouncementTargets
                 .Where(target => target.ItemType == itemType)
                 .Select(target => target.AnnouncementId)
                 .Distinct()
                 .ToList();
 
-            return _announcements
+            return dbContext.Announcements
                 .Where(announcement =>
                     announcementIds.Contains(announcement.Id) &&
                     announcement.IsActive)
@@ -140,7 +97,9 @@ namespace ActivityProjectApp.Data
 
         public void DeactivateAnnouncement(int announcementId)
         {
-            Announcement? announcement = _announcements
+            using AppDbContext dbContext = new AppDbContext();
+
+            Announcement? announcement = dbContext.Announcements
                 .FirstOrDefault(item => item.Id == announcementId);
 
             if (announcement == null)
@@ -149,11 +108,14 @@ namespace ActivityProjectApp.Data
             }
 
             announcement.IsActive = false;
+            dbContext.SaveChanges();
         }
 
         public void ActivateAnnouncement(int announcementId)
         {
-            Announcement? announcement = _announcements
+            using AppDbContext dbContext = new AppDbContext();
+
+            Announcement? announcement = dbContext.Announcements
                 .FirstOrDefault(item => item.Id == announcementId);
 
             if (announcement == null)
@@ -162,6 +124,7 @@ namespace ActivityProjectApp.Data
             }
 
             announcement.IsActive = true;
+            dbContext.SaveChanges();
         }
     }
 }

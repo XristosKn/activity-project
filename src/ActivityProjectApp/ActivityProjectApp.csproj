@@ -20,5 +20,10 @@
     </PackageReference>
     <PackageReference Include="Mapsui.Avalonia" Version="4.1.0" />
     <AvaloniaResource Include="Assets/**" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
   </ItemGroup>
 </Project>

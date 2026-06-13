@@ -40,6 +40,7 @@ namespace ActivityProjectApp.Views
 
             SavedItemsFilterComboBox.SelectionChanged += SavedItemsFilterComboBox_SelectionChanged;
             MyItemsFilterComboBox.SelectionChanged += MyItemsFilterComboBox_SelectionChanged;
+            SavedItemsControl.AddHandler(Button.ClickEvent, SavedItemsControl_ButtonClick, RoutingStrategies.Bubble);
 
             ShowProfileMainContent();
         }
@@ -296,6 +297,57 @@ namespace ActivityProjectApp.Views
 
             SavedItemsControl.ItemsSource = filteredItems;
             SavedItemsCountTextBlock.Text = $"{filteredItems.Count} saved";
+        }
+
+        private void SavedItemsControl_ButtonClick(object? sender, RoutedEventArgs e)
+        {
+            if (e.Source is not Button button)
+            {
+                return;
+            }
+
+            if (!button.Classes.Contains("unsave-button"))
+            {
+                return;
+            }
+
+            if (button.Tag is not CustomerProfileItem savedItem)
+            {
+                return;
+            }
+
+            UnsaveCustomerProfileItem(savedItem);
+
+            e.Handled = true;
+        }
+
+        private void UnsaveCustomerProfileItem(CustomerProfileItem savedItem)
+        {
+            User? currentUser = AppServices.AuthService.GetCurrentUser();
+
+            if (currentUser is not Customer customer)
+            {
+                return;
+            }
+
+            SavedItemType savedItemType = ConvertToSavedItemType(savedItem.ItemType);
+
+            AppServices.SavedItemRepository.RemoveSavedItem(
+                customer.Id,
+                savedItem.ItemId,
+                savedItemType);
+
+            LoadSavedItems();
+        }
+
+        private SavedItemType ConvertToSavedItemType(EnrollmentItemType itemType)
+        {
+            if (itemType == EnrollmentItemType.Course)
+            {
+                return SavedItemType.Course;
+            }
+
+            return SavedItemType.Event;
         }
 
         private void RefreshMyItems()

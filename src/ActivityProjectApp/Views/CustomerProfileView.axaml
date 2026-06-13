@@ -53,6 +53,26 @@
             <Setter Property="BorderBrush" Value="#CBD5E1"/>
         </Style>
 
+        <Style Selector="Button.unsave-button">
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Background" Value="#FEE2E2"/>
+            <Setter Property="Foreground" Value="#B91C1C"/>
+            <Setter Property="BorderBrush" Value="#FECACA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.unsave-button:pointerover">
+            <Setter Property="Background" Value="#FECACA"/>
+            <Setter Property="BorderBrush" Value="#FCA5A5"/>
+        </Style>
+
         <Style Selector="Button.settings-option-button">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Background" Value="#F8FAFC"/>
@@ -217,7 +237,7 @@
                                                     Padding="8,3"
                                                     HorizontalAlignment="Left">
 
-                                                <TextBlock Text="{Binding ItemType}"
+                                                <TextBlock Text="Announcement"
                                                            FontSize="12"
                                                            FontWeight="SemiBold"
                                                            Foreground="#374151"/>
@@ -297,27 +317,36 @@
 
                                         <StackPanel Spacing="6">
 
-                                            <Grid ColumnDefinitions="*,Auto">
+                                            <Grid ColumnDefinitions="*,Auto,Auto">
 
                                                 <TextBlock Grid.Column="0"
-                                                           Text="{Binding Title}"
-                                                           FontSize="16"
-                                                           FontWeight="Bold"
-                                                           Foreground="#111827"
-                                                           TextWrapping="Wrap"/>
+                                                        Text="{Binding Title}"
+                                                        FontSize="16"
+                                                        FontWeight="Bold"
+                                                        Foreground="#111827"
+                                                        TextWrapping="Wrap"
+                                                        VerticalAlignment="Center"/>
 
                                                 <Border Grid.Column="1"
                                                         Background="#E5E7EB"
                                                         CornerRadius="10"
                                                         Padding="8,3"
-                                                        Margin="8,0,0,0">
+                                                        Margin="8,0,8,0"
+                                                        VerticalAlignment="Center">
 
                                                     <TextBlock Text="{Binding ItemTypeText}"
-                                                               FontSize="12"
-                                                               FontWeight="SemiBold"
-                                                               Foreground="#374151"/>
+                                                            FontSize="12"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="#374151"/>
 
                                                 </Border>
+
+                                                <Button Grid.Column="2"
+                                                        Classes="unsave-button"
+                                                        Content="×"
+                                                        Tag="{Binding}"
+                                                        ToolTip.Tip="Remove from saved"
+                                                        VerticalAlignment="Top"/>
 
                                             </Grid>
 

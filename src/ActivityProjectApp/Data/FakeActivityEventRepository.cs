@@ -22,11 +22,8 @@ namespace ActivityProjectApp.Data
                 Time = new TimeSpan(10, 30, 0),
                 Price = 25.00m,
                 MaxSpace = 12,
-                Gallery = new List<string>
-                {
-                    "kayak_1.jpg",
-                    "kayak_2.jpg"
-                },
+                MainImagePath = "Assets/EventImages/kayak_main.jpg",
+                Gallery = "Assets/EventImages/kayak_1.jpg;Assets/EventImages/kayak_2.jpg",
                 ServiceProviderId = 2,
                 Status = EventStatus.Active
             },
@@ -44,10 +41,8 @@ namespace ActivityProjectApp.Data
                 Time = new TimeSpan(18, 0, 0),
                 Price = 15.00m,
                 MaxSpace = 20,
-                Gallery = new List<string>
-                {
-                    "fitness_1.jpg"
-                },
+                MainImagePath = "Assets/EventImages/fitness_main.jpg",
+                Gallery = "Assets/EventImages/fitness_1.jpg",
                 ServiceProviderId = 2,
                 Status = EventStatus.Active
             }

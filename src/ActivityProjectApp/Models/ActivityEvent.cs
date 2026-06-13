@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace ActivityProjectApp.Models
 {
@@ -33,7 +32,9 @@ namespace ActivityProjectApp.Models
 
         public int MaxSpace { get; set; }
 
-        public List<string> Gallery { get; set; } = new List<string>();
+        public string MainImagePath { get; set; } = string.Empty;
+
+        public string Gallery { get; set; } = string.Empty;
 
         public int ServiceProviderId { get; set; }
 
@@ -55,7 +56,8 @@ namespace ActivityProjectApp.Models
             TimeSpan time,
             decimal price,
             int maxSpace,
-            List<string> gallery,
+            string mainImagePath,
+            string gallery,
             int serviceProviderId,
             EventStatus status)
         {
@@ -70,6 +72,7 @@ namespace ActivityProjectApp.Models
             Time = time;
             Price = price;
             MaxSpace = maxSpace;
+            MainImagePath = mainImagePath;
             Gallery = gallery;
             ServiceProviderId = serviceProviderId;
             Status = status;

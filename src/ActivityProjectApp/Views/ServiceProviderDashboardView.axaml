@@ -28,6 +28,24 @@
             <Setter Property="CornerRadius" Value="10"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
             <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+
+                        <ContentPresenter Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        Padding="{TemplateBinding Padding}"
+                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+
+                    </Border>
+                </ControlTemplate>
+            </Setter>
         </Style>
 
         <Style Selector="Button.menu-button:pointerover">
@@ -445,7 +463,7 @@
 
                                     <Button x:Name="SaveEventButton"
                                             Grid.Column="0"
-                                            Content="Save"
+                                            Content="Publish"
                                             Height="38"
                                             Background="#D0D0D0"
                                             Foreground="Black"
@@ -497,21 +515,64 @@
                                          TextWrapping="Wrap"
                                          Height="90"/>
 
-                                <ComboBox x:Name="AnnouncementItemTypeComboBox"
-                                          PlaceholderText="Select related type"
-                                          Height="36"
-                                          HorizontalAlignment="Stretch"
-                                          SelectedIndex="0">
+                                <ComboBox x:Name="AnnouncementTargetModeComboBox"
+                                        PlaceholderText="Select announcement audience"
+                                        Height="36"
+                                        HorizontalAlignment="Stretch"
+                                        SelectedIndex="0">
 
-                                    <ComboBoxItem Content="Event"/>
-                                    <ComboBoxItem Content="Course"/>
+                                    <ComboBoxItem Content="All Events and Courses"/>
+                                    <ComboBoxItem Content="All Events"/>
+                                    <ComboBoxItem Content="All Courses"/>
+                                    <ComboBoxItem Content="Custom Selection"/>
 
                                 </ComboBox>
 
-                                <ComboBox x:Name="AnnouncementRelatedItemComboBox"
-                                          PlaceholderText="Select related event/course"
-                                          Height="36"
-                                          HorizontalAlignment="Stretch"/>
+                                <Border x:Name="AnnouncementTargetsPanel"
+                                        Background="White"
+                                        CornerRadius="10"
+                                        Padding="12"
+                                        BorderBrush="#E5E7EB"
+                                        BorderThickness="1">
+
+                                    <StackPanel Spacing="8">
+
+                                        <TextBlock Text="Select related events/courses"
+                                                FontSize="13"
+                                                FontWeight="SemiBold"
+                                                Foreground="#374151"/>
+
+                                        <TextBlock x:Name="AnnouncementTargetsHelpTextBlock"
+                                                Text="Targets are selected automatically based on the option above."
+                                                FontSize="12"
+                                                Foreground="#6B7280"
+                                                TextWrapping="Wrap"/>
+
+                                        <ScrollViewer MaxHeight="180"
+                                                    VerticalScrollBarVisibility="Auto">
+
+                                            <ItemsControl x:Name="AnnouncementTargetItemsControl">
+
+                                                <ItemsControl.ItemTemplate>
+
+                                                    <DataTemplate DataType="{x:Type models:AnnouncementTargetSelectionItem}">
+
+                                                        <CheckBox Content="{Binding DisplayText}"
+                                                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                                Margin="0,0,0,6"
+                                                                VerticalContentAlignment="Center"/>
+
+                                                    </DataTemplate>
+
+                                                </ItemsControl.ItemTemplate>
+
+                                            </ItemsControl>
+
+                                        </ScrollViewer>
+
+                                    </StackPanel>
+
+                                </Border>
 
                                 <TextBox x:Name="AnnouncementGalleryTextBox"
                                          Watermark="Gallery image paths separated by comma"
@@ -731,7 +792,7 @@
 
                                                     </Grid>
 
-                                                    <TextBlock Text="{Binding ItemType}"
+                                                    <TextBlock Text="Announcement"
                                                                FontSize="13"
                                                                FontWeight="SemiBold"
                                                                Foreground="#555555"/>
