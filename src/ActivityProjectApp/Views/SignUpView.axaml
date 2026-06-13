@@ -3,168 +3,532 @@
              x:Class="ActivityProjectApp.Views.SignUpView"
              Background="#F4F6F8">
 
-    <Grid Background="#F4F6F8">
+    <UserControl.Styles>
 
-        <Border Width="500"
-                Padding="30"
-                Background="White"
-                CornerRadius="12"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+        <Style Selector="TextBlock.brand-title">
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#1E3A8A"/>
+        </Style>
 
-            <StackPanel Spacing="14">
+        <Style Selector="TextBlock.page-title">
+            <Setter Property="FontSize" Value="25"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#111827"/>
+        </Style>
 
-                <TextBlock Text="Create Account"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           Foreground="Black"
-                           HorizontalAlignment="Center"/>
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+        </Style>
 
-                <TextBlock Text="Choose your account type and complete the form"
-                           FontSize="14"
-                           Foreground="#777777"
-                           HorizontalAlignment="Center"/>
+        <Style Selector="TextBlock.field-label">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#374151"/>
+        </Style>
 
-                <!-- Account type -->
-                <ComboBox x:Name="AccountTypeComboBox"
-                          PlaceholderText="Select account type"
-                          Height="36"
-                          HorizontalAlignment="Stretch">
-                    <ComboBoxItem Content="Customer"/>
-                    <ComboBoxItem Content="Service Provider"/>
-                </ComboBox>
+        <Style Selector="TextBlock.helper-text">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
 
-                <!-- Common user fields -->
-                <TextBox x:Name="NameTextBox"
-                         Watermark="Name"
-                         Height="36"/>
+        <Style Selector="TextBox.signup-input">
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Padding" Value="12,8"/>
+                <Setter Property="Background" Value="#F9FAFB"/>
+                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-                <TextBox x:Name="LastNameTextBox"
-                         Watermark="Last Name"
-                         Height="36"/>
+        <Style Selector="ComboBox.signup-input">
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Padding" Value="12,0"/>
+                <Setter Property="Background" Value="#F9FAFB"/>
+                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="DatePicker.signup-input">
+                <Setter Property="Height" Value="40"/>
+                <Setter Property="FontSize" Value="14"/>
+                <Setter Property="Padding" Value="12,8"/>
+                <Setter Property="Background" Value="#F9FAFB"/>
+                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                <Setter Property="BorderThickness" Value="1"/>
+        </Style>
 
-                <TextBox x:Name="UsernameTextBox"
-                         Watermark="Username"
-                         Height="36"/>
+        <Style Selector="Button.primary-button">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Background" Value="#1E3A8A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-                <TextBox x:Name="EmailTextBox"
-                         Watermark="Email"
-                         Height="36"/>
+        <Style Selector="Button.primary-button:pointerover">
+            <Setter Property="Background" Value="#1D4ED8"/>
+        </Style>
 
-                <TextBox x:Name="PhoneTextBox"
-                         Watermark="Phone"
-                         Height="36"/>
+        <Style Selector="Button.secondary-button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="Foreground" Value="#1E3A8A"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-                <TextBox x:Name="PasswordTextBox"
-                         Watermark="Password"
-                         PasswordChar="*"
-                         Height="36"/>
+        <Style Selector="Button.secondary-button:pointerover">
+            <Setter Property="Background" Value="#EEF2F7"/>
+            <Setter Property="BorderBrush" Value="#94A3B8"/>
+        </Style>
 
-                <TextBox x:Name="ConfirmPasswordTextBox"
-                         Watermark="Confirm Password"
-                         PasswordChar="*"
-                         Height="36"/>
+        <Style Selector="Border.form-section">
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Padding" Value="18"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
 
-                <!-- Customer extra fields -->
-                <StackPanel x:Name="CustomerFieldsPanel"
-                            Spacing="10"
-                            IsVisible="False">
+        <Style Selector="Border.info-card">
+            <Setter Property="Background" Value="#EEF2FF"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Padding" Value="16"/>
+            <Setter Property="BorderBrush" Value="#DBEAFE"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
 
-                    <TextBlock Text="Customer Details"
-                               FontSize="16"
-                               FontWeight="SemiBold"
-                               Foreground="Black"/>
+    </UserControl.Styles>
 
-                    <ComboBox x:Name="GenderComboBox"
-                              PlaceholderText="Select gender"
-                              Height="36"
-                              HorizontalAlignment="Stretch">
-                        <ComboBoxItem Content="Male"/>
-                        <ComboBoxItem Content="Female"/>
-                        <ComboBoxItem Content="Other"/>
-                    </ComboBox>
+    <Grid>
 
-                    <DatePicker x:Name="DateOfBirthPicker"
-                                HorizontalAlignment="Stretch"/>
+        <!-- Background image -->
+        <Image Source="avares://ActivityProjectApp/Assets/background.png"
+               Stretch="UniformToFill"
+               Opacity="0.82"/>
 
-                </StackPanel>
+        <!-- Soft overlay -->
+        <Border Background="#F4F6F8"
+                Opacity="0.38"/>
 
-                <!-- Service Provider extra fields -->
-                <StackPanel x:Name="ServiceProviderFieldsPanel"
-                            Spacing="10"
-                            IsVisible="False">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
 
-                    <TextBlock Text="Service Provider Details"
-                               FontSize="16"
-                               FontWeight="SemiBold"
-                               Foreground="Black"/>
+            <Grid Margin="36"
+                  HorizontalAlignment="Center"
+                  MaxWidth="980">
 
-                    <TextBlock Text="Select one or more types of service"
-                            FontSize="13"
-                            Foreground="#555555"/>
+                <Border Background="White"
+                        CornerRadius="24"
+                        Padding="30"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1">
 
-                    <ScrollViewer Height="190"
-                                VerticalScrollBarVisibility="Auto"
-                                BorderBrush="#999999"
-                                BorderThickness="1">
+                    <Grid ColumnDefinitions="300,*">
 
-                        <StackPanel x:Name="TypeOfServiceCheckBoxPanel"
-                                    Spacing="6"
-                                    Margin="8">
+                        <!-- Left information panel -->
+                        <Border Grid.Column="0"
+                                Background="#F8FAFC"
+                                CornerRadius="20"
+                                Padding="24"
+                                BorderBrush="#E5E7EB"
+                                BorderThickness="1"
+                                Margin="0,0,26,0">
 
-                            <CheckBox Content="Water Sports"/>
-                            <CheckBox Content="Mountain Activities"/>
-                            <CheckBox Content="Fitness &amp; Wellness"/>
-                            <CheckBox Content="Team Sports"/>
-                            <CheckBox Content="Outdoor Adventure"/>
-                            <CheckBox Content="Cultural Activities"/>
-                            <CheckBox Content="Creative Workshops"/>
-                            <CheckBox Content="Food &amp; Drink Experiences"/>
-                            <CheckBox Content="Kids Activities"/>
-                            <CheckBox Content="Extreme Sports"/>
-                            <CheckBox Content="Winter Sports"/>
-                            <CheckBox Content="Dance &amp; Music"/>
-                            <CheckBox Content="Educational Activities"/>
-                            <CheckBox Content="Tours &amp; Excursions"/>
-                            <CheckBox Content="Other"/>
+                            <StackPanel Spacing="18">
+
+                                <StackPanel Spacing="6">
+
+                                    <TextBlock Text="Activity Project"
+                                               Classes="brand-title"/>
+
+                                    <TextBlock Text="Create your account and start using the platform."
+                                               Classes="helper-text"/>
+
+                                </StackPanel>
+
+                                <Border Classes="info-card">
+
+                                    <StackPanel Spacing="5">
+
+                                        <TextBlock Text="For Customers"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   Foreground="#1E3A8A"/>
+
+                                        <TextBlock Text="Explore activities, save favorites and enroll in events or courses."
+                                                   FontSize="13"
+                                                   Foreground="#4B5563"
+                                                   TextWrapping="Wrap"/>
+
+                                    </StackPanel>
+
+                                </Border>
+
+                                <Border Classes="info-card">
+
+                                    <StackPanel Spacing="5">
+
+                                        <TextBlock Text="For Service Providers"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   Foreground="#1E3A8A"/>
+
+                                        <TextBlock Text="Create events, manage courses and publish announcements."
+                                                   FontSize="13"
+                                                   Foreground="#4B5563"
+                                                   TextWrapping="Wrap"/>
+
+                                    </StackPanel>
+
+                                </Border>
+
+                                <TextBlock Text="Already have an account?"
+                                           FontSize="13"
+                                           Foreground="#6B7280"
+                                           Margin="0,10,0,0"/>
+
+                                <Button x:Name="BackToLoginButton"
+                                        Classes="secondary-button"
+                                        Content="Back to Login"/>
+
+                            </StackPanel>
+
+                        </Border>
+
+                        <!-- Right form panel -->
+                        <StackPanel Grid.Column="1"
+                                    Spacing="16">
+
+                            <StackPanel Spacing="5">
+
+                                <TextBlock Text="Create Account"
+                                           Classes="page-title"/>
+
+                                <TextBlock Text="Fill in the required information below to register as a customer or service provider."
+                                           Classes="helper-text"/>
+
+                            </StackPanel>
+
+                            <!-- Account type -->
+                            <Border Classes="form-section">
+
+                                <StackPanel Spacing="10">
+
+                                    <TextBlock Text="Account Type"
+                                               Classes="section-title"/>
+
+                                    <StackPanel Spacing="7">
+
+                                        <TextBlock Text="Register as"
+                                                   Classes="field-label"/>
+
+                                        <ComboBox x:Name="AccountTypeComboBox"
+                                                  Classes="signup-input"
+                                                  PlaceholderText="Select account type"
+                                                  HorizontalAlignment="Stretch">
+
+                                            <ComboBoxItem Content="Customer"/>
+                                            <ComboBoxItem Content="Service Provider"/>
+
+                                        </ComboBox>
+
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </Border>
+
+                            <!-- Basic information -->
+                            <Border Classes="form-section">
+
+                                <StackPanel Spacing="12">
+
+                                    <TextBlock Text="Basic Information"
+                                               Classes="section-title"/>
+
+                                    <Grid ColumnDefinitions="*,*">
+
+                                        <StackPanel Grid.Column="0"
+                                                    Spacing="7"
+                                                    Margin="0,0,8,0">
+
+                                            <TextBlock Text="Name"
+                                                       Classes="field-label"/>
+
+                                            <TextBox x:Name="NameTextBox"
+                                                     Classes="signup-input"
+                                                     Watermark="Enter your name"/>
+
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1"
+                                                    Spacing="7"
+                                                    Margin="8,0,0,0">
+
+                                            <TextBlock Text="Last Name"
+                                                       Classes="field-label"/>
+
+                                            <TextBox x:Name="LastNameTextBox"
+                                                     Classes="signup-input"
+                                                     Watermark="Enter your last name"/>
+
+                                        </StackPanel>
+
+                                    </Grid>
+
+                                    <Grid ColumnDefinitions="*,*">
+
+                                        <StackPanel Grid.Column="0"
+                                                    Spacing="7"
+                                                    Margin="0,0,8,0">
+
+                                            <TextBlock Text="Username"
+                                                       Classes="field-label"/>
+
+                                            <TextBox x:Name="UsernameTextBox"
+                                                     Classes="signup-input"
+                                                     Watermark="Choose a username"/>
+
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1"
+                                                    Spacing="7"
+                                                    Margin="8,0,0,0">
+
+                                            <TextBlock Text="Email"
+                                                       Classes="field-label"/>
+
+                                            <TextBox x:Name="EmailTextBox"
+                                                     Classes="signup-input"
+                                                     Watermark="Enter your email"/>
+
+                                        </StackPanel>
+
+                                    </Grid>
+
+                                    <StackPanel Spacing="7">
+
+                                        <TextBlock Text="Phone"
+                                                   Classes="field-label"/>
+
+                                        <TextBox x:Name="PhoneTextBox"
+                                                 Classes="signup-input"
+                                                 Watermark="Enter your phone number"/>
+
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </Border>
+
+                            <!-- Security -->
+                            <Border Classes="form-section">
+
+                                <StackPanel Spacing="12">
+
+                                    <TextBlock Text="Security"
+                                               Classes="section-title"/>
+
+                                    <Grid ColumnDefinitions="*,*">
+
+                                        <StackPanel Grid.Column="0"
+                                                    Spacing="7"
+                                                    Margin="0,0,8,0">
+
+                                            <TextBlock Text="Password"
+                                                       Classes="field-label"/>
+
+                                            <TextBox x:Name="PasswordTextBox"
+                                                     Classes="signup-input"
+                                                     Watermark="Enter password"
+                                                     PasswordChar="●"/>
+
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1"
+                                                    Spacing="7"
+                                                    Margin="8,0,0,0">
+
+                                            <TextBlock Text="Confirm Password"
+                                                       Classes="field-label"/>
+
+                                            <TextBox x:Name="ConfirmPasswordTextBox"
+                                                     Classes="signup-input"
+                                                     Watermark="Confirm password"
+                                                     PasswordChar="●"/>
+
+                                        </StackPanel>
+
+                                    </Grid>
+
+                                </StackPanel>
+
+                            </Border>
+
+                            <!-- Customer fields -->
+                            <Border x:Name="CustomerFieldsPanel"
+                                    Classes="form-section"
+                                    IsVisible="False">
+
+                                <StackPanel Spacing="12">
+
+                                    <TextBlock Text="Customer Details"
+                                               Classes="section-title"/>
+
+                                    <Grid ColumnDefinitions="*,*">
+
+                                        <StackPanel Grid.Column="0"
+                                                    Spacing="7"
+                                                    Margin="0,0,8,0">
+
+                                            <TextBlock Text="Gender"
+                                                       Classes="field-label"/>
+
+                                            <ComboBox x:Name="GenderComboBox"
+                                                      Classes="signup-input"
+                                                      PlaceholderText="Select gender"
+                                                      HorizontalAlignment="Stretch">
+
+                                                <ComboBoxItem Content="Male"/>
+                                                <ComboBoxItem Content="Female"/>
+                                                <ComboBoxItem Content="Other"/>
+
+                                            </ComboBox>
+
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1"
+                                                    Spacing="7"
+                                                    Margin="8,0,0,0">
+
+                                            <TextBlock Text="Date of Birth"
+                                                       Classes="field-label"/>
+
+                                            <DatePicker x:Name="DateOfBirthPicker"
+                                                        Classes="signup-input"
+                                                        HorizontalAlignment="Stretch"/>
+
+                                        </StackPanel>
+
+                                    </Grid>
+
+                                </StackPanel>
+
+                            </Border>
+
+                            <!-- Service provider fields -->
+                            <Border x:Name="ServiceProviderFieldsPanel"
+                                    Classes="form-section"
+                                    IsVisible="False">
+
+                                <StackPanel Spacing="12">
+
+                                    <TextBlock Text="Service Provider Details"
+                                               Classes="section-title"/>
+
+                                    <TextBlock Text="Select one or more types of services that your organization provides."
+                                               FontSize="13"
+                                               Foreground="#6B7280"
+                                               TextWrapping="Wrap"/>
+
+                                    <WrapPanel x:Name="TypeOfServiceCheckBoxPanel"
+                                               Orientation="Horizontal">
+
+                                        <CheckBox Content="Water Sports"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Mountain Activities"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Fitness &amp; Wellness"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Team Sports"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Outdoor Adventure"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Cultural Activities"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Creative Workshops"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Food &amp; Drink Experiences"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Kids Activities"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Extreme Sports"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Winter Sports"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Dance &amp; Music"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Educational Activities"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Tours &amp; Excursions"
+                                                  Margin="0,0,16,8"/>
+
+                                        <CheckBox Content="Other"
+                                                  Margin="0,0,16,8"/>
+
+                                    </WrapPanel>
+
+                                </StackPanel>
+
+                            </Border>
+
+                            <!-- Actions -->
+                            <StackPanel Spacing="10">
+
+                                <Button x:Name="CreateAccountButton"
+                                        Classes="primary-button"
+                                        Content="Create Account"/>
+
+                                <TextBlock x:Name="SignUpMessageTextBlock"
+                                           Text=""
+                                           FontSize="13"
+                                           TextWrapping="Wrap"
+                                           TextAlignment="Center"
+                                           Foreground="Red"/>
+
+                                <TextBlock Text="By creating an account, you will be able to access the platform based on your selected account type."
+                                           FontSize="12"
+                                           Foreground="#9CA3AF"
+                                           TextAlignment="Center"
+                                           TextWrapping="Wrap"/>
+
+                            </StackPanel>
 
                         </StackPanel>
 
-                    </ScrollViewer>
+                    </Grid>
 
-                    <TextBlock Text="More service provider fields will be added later."
-                               FontSize="12"
-                               Foreground="#777777"
-                               TextWrapping="Wrap"/>
+                </Border>
 
-                </StackPanel>
+            </Grid>
 
-                <Button x:Name="CreateAccountButton"
-                        Content="Create Account"
-                        Height="36"
-                        Background="#D0D0D0"
-                        Foreground="Black"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"/>
-
-                <Button x:Name="BackToLoginButton"
-                        Content="Back to Login"
-                        Height="36"
-                        Background="#E6E6E6"
-                        Foreground="Black"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"/>
-
-                <TextBlock x:Name="SignUpMessageTextBlock"
-                           Text=""
-                           FontSize="13"
-                           TextWrapping="Wrap"
-                           Foreground="Red"
-                           HorizontalAlignment="Center"/>
-
-            </StackPanel>
-
-        </Border>
+        </ScrollViewer>
 
     </Grid>
 

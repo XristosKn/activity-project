@@ -10,6 +10,59 @@
     </UserControl.Resources>
 
     <UserControl.Styles>
+        <!-- Section titles -->
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="25"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#1E3A8A"/>
+        </Style>
+
+        <Style Selector="TextBlock.subsection-title">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#1E3A8A"/>
+        </Style>
+
+        <Style Selector="TextBlock.panel-description">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <!-- Secondary button -->
+        <Style Selector="Button.secondary-action">
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.secondary-action:pointerover">
+            <Setter Property="Background" Value="#EEF2F7"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+        </Style>
+
+        <!-- Small map buttons -->
+        <Style Selector="Button.map-tool-button">
+            <Setter Property="Width" Value="42"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.map-tool-button:pointerover">
+            <Setter Property="Background" Value="#EEF2F7"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+        </Style>
 
         <!-- Shared template for blue primary buttons -->
         <Style Selector="Button.primary-action">
@@ -116,51 +169,47 @@
         <!-- Top bar -->
         <Border Grid.Row="0"
                 Background="White"
-                Padding="22,18"
-                BorderBrush="#E1E5EA"
+                Padding="24,18"
+                BorderBrush="#E5E7EB"
                 BorderThickness="0,0,0,1">
 
-            <DockPanel LastChildFill="True">
+            <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel DockPanel.Dock="Right"
-                            Orientation="Horizontal"
-                            Spacing="10">
-
-                    <Button x:Name="ProfileButton"
-                            Content="Profile"
-                            Width="110"
-                            Height="38"
-                            Background="#F1F3F5"
-                            Foreground="#1F2937"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"/>
-
-                    <Button x:Name="LogoutButton"
-                            Content="Logout"
-                            Width="110"
-                            Height="38"
-                            Background="#F1F3F5"
-                            Foreground="#1F2937"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"/>
-
-                </StackPanel>
-                <StackPanel DockPanel.Dock="Left"
-                            Spacing="3">
+                <StackPanel Grid.Column="0"
+                            Spacing="4">
 
                     <TextBlock Text="Activity Map"
-                               FontSize="26"
-                               FontWeight="Bold"
-                               Foreground="#111827"/>
+                            FontSize="28"
+                            FontWeight="Bold"
+                            Foreground="#1E3A8A"/>
 
                     <TextBlock x:Name="WelcomeTextBlock"
-                               Text="Welcome"
-                               FontSize="14"
-                               Foreground="#6B7280"/>
+                            Text="Welcome"
+                            FontSize="14"
+                            Foreground="#6B7280"/>
 
                 </StackPanel>
 
-            </DockPanel>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalAlignment="Center">
+
+                    <Button x:Name="ProfileButton"
+                            Classes="secondary-action"
+                            Content="Profile"
+                            Width="110"
+                            Height="38"/>
+
+                    <Button x:Name="LogoutButton"
+                            Classes="secondary-action"
+                            Content="Logout"
+                            Width="110"
+                            Height="38"/>
+
+                </StackPanel>
+
+            </Grid>
 
         </Border>
 
@@ -173,43 +222,49 @@
             <Border Grid.Row="0"
                     Background="White"
                     CornerRadius="18"
-                    Padding="18"
+                    Padding="20"
                     Margin="0,0,0,20"
                     BorderBrush="#E5E7EB"
                     BorderThickness="1">
 
-                <Grid ColumnDefinitions="*,Auto,Auto">
+                <StackPanel Spacing="12">
 
-                    <TextBox x:Name="SearchTextBox"
-                            Grid.Column="0"
-                            Watermark="Search by activity, category, description or area..."
-                            Height="42"
-                            Margin="0,0,12,0"
-                            Background="#F9FAFB"
-                            Foreground="#111827"
-                            BorderBrush="#D1D5DB"/>
+                    <TextBlock Text="Search Activities"
+                            Classes="subsection-title"/>
 
-                    <Button x:Name="SearchButton"
-                            Classes="primary-action"
-                            Grid.Column="1"
-                            Content="Search"
-                            Width="120"
-                            Height="42"
-                            Margin="0,0,10,0"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"/>
+                    <Grid ColumnDefinitions="*,Auto,Auto">
 
-                    <Button x:Name="ClearSearchButton"
-                            Grid.Column="2"
-                            Content="Clear"
-                            Width="90"
-                            Height="42"
-                            Background="#F1F3F5"
-                            Foreground="#111827"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"/>
+                        <TextBox x:Name="SearchTextBox"
+                                Grid.Column="0"
+                                Watermark="Search by activity, category, description or area..."
+                                Height="42"
+                                Margin="0,0,12,0"
+                                Background="#F9FAFB"
+                                Foreground="#111827"
+                                BorderBrush="#D1D5DB"
+                                Padding="12,8"
+                                VerticalContentAlignment="Center"/>
 
-                </Grid>
+                        <Button x:Name="SearchButton"
+                                Classes="primary-action"
+                                Grid.Column="1"
+                                Content="Search"
+                                Width="120"
+                                Height="42"
+                                Margin="0,0,10,0"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"/>
+
+                        <Button x:Name="ClearSearchButton"
+                                Classes="secondary-action"
+                                Grid.Column="2"
+                                Content="Clear"
+                                Width="90"
+                                Height="42"/>
+
+                    </Grid>
+
+                </StackPanel>
 
             </Border>
 
@@ -220,7 +275,7 @@
                 <!-- Map column -->
                 <Border Grid.Column="0"
                         Background="White"
-                        CornerRadius="20"
+                        CornerRadius="18"
                         Padding="20"
                         Margin="0,0,20,0"
                         BorderBrush="#E5E7EB"
@@ -237,14 +292,10 @@
                                         Spacing="4">
 
                                 <TextBlock Text="Explore Activities Near You"
-                                           FontSize="24"
-                                           FontWeight="Bold"
-                                           Foreground="#111827"/>
+                                            Classes="section-title"/>
 
                                 <TextBlock Text="Move around the map and click an activity point to preview details."
-                                           FontSize="14"
-                                           Foreground="#6B7280"
-                                           TextWrapping="Wrap"/>
+                                           Classes="panel-description"/>
 
                             </StackPanel>
 
@@ -289,37 +340,22 @@
                                     <StackPanel Spacing="8">
 
                                         <Button x:Name="ZoomInButton"
+                                                Classes="map-tool-button"
                                                 Content="+"
-                                                Width="42"
-                                                Height="42"
                                                 FontSize="22"
-                                                FontWeight="Bold"
-                                                Background="White"
-                                                Foreground="#111827"
-                                                BorderBrush="#D1D5DB"
-                                                HorizontalContentAlignment="Center"/>
+                                                FontWeight="Bold"/>
 
                                         <Button x:Name="ZoomOutButton"
+                                                Classes="map-tool-button"
                                                 Content="-"
-                                                Width="42"
-                                                Height="42"
                                                 FontSize="22"
-                                                FontWeight="Bold"
-                                                Background="White"
-                                                Foreground="#111827"
-                                                BorderBrush="#D1D5DB"
-                                                HorizontalContentAlignment="Center"/>
+                                                FontWeight="Bold"/>
 
                                         <Button x:Name="CenterMapButton"
+                                                Classes="map-tool-button"
                                                 Content="⌖"
-                                                Width="42"
-                                                Height="42"
                                                 FontSize="18"
-                                                FontWeight="Bold"
-                                                Background="White"
-                                                Foreground="#111827"
-                                                BorderBrush="#D1D5DB"
-                                                HorizontalContentAlignment="Center"/>
+                                                FontWeight="Bold"/>
 
                                     </StackPanel>
 
@@ -348,7 +384,7 @@
                         <Border Grid.Row="2"
                                 x:Name="SelectedEventPanel"
                                 IsVisible="False"
-                                Background="#F9FAFB"
+                                Background="#F8FAFC"
                                 CornerRadius="18"
                                 Padding="18"
                                 Margin="0,16,0,0"
@@ -361,10 +397,10 @@
                                             Spacing="6">
 
                                     <TextBlock x:Name="SelectedEventTitleTextBlock"
-                                               Text=""
-                                               FontSize="20"
-                                               FontWeight="Bold"
-                                               Foreground="#111827"/>
+                                                Text=""
+                                                FontSize="21"
+                                                FontWeight="Bold"
+                                                Foreground="#1E3A8A"/>
 
                                     <TextBlock x:Name="SelectedEventCategoryTextBlock"
                                                Text=""
@@ -418,7 +454,7 @@
                 <!-- Events list column -->
                 <Border Grid.Column="1"
                         Background="White"
-                        CornerRadius="20"
+                        CornerRadius="18"
                         Padding="20"
                         BorderBrush="#E5E7EB"
                         BorderThickness="1">
@@ -430,9 +466,7 @@
                                     Margin="0,0,0,12">
 
                             <TextBlock Text="Available Events / Courses"
-                                       FontSize="23"
-                                       FontWeight="Bold"
-                                       Foreground="#111827"/>
+                                        Classes="section-title"/>
 
                             <TextBlock x:Name="EventsCountTextBlock"
                                        Text="0 events found"
@@ -532,7 +566,7 @@
                                                             Text="{Binding Title}"
                                                             FontSize="17"
                                                             FontWeight="Bold"
-                                                            Foreground="#111827"
+                                                            Foreground="#1E3A8A"
                                                             TextWrapping="Wrap"/>
 
                                                     <Border Grid.Column="1"
@@ -586,7 +620,7 @@
 
                                                 </StackPanel>
 
-                                                <TextBlock Text="Click to view on map"
+                                                <TextBlock Text="Click to preview on map"
                                                         FontSize="12"
                                                         FontStyle="Italic"
                                                         Foreground="#6B7280"/>

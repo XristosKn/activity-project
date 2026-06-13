@@ -3,71 +3,422 @@
              x:Class="ActivityProjectApp.Views.LoginView"
              Background="#F4F6F8">
 
-    <Grid Background="#F4F6F8">
+    <UserControl.Styles>
 
-        <Border Width="430"
-                Padding="30"
-                Background="White"
-                CornerRadius="12"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+        <Style Selector="TextBlock.brand-title">
+            <Setter Property="FontSize" Value="32"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#1E3A8A"/>
+        </Style>
 
-            <StackPanel Spacing="16">
+        <Style Selector="TextBlock.page-title">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#111827"/>
+        </Style>
 
-                <TextBlock Text="Activity Project"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           Foreground="Black"
-                           HorizontalAlignment="Center"/>
+        <Style Selector="TextBlock.helper-text">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
 
-                <TextBlock Text="Login to your account"
-                           FontSize="14"
-                           Foreground="#777777"
-                           HorizontalAlignment="Center"/>
+        <Style Selector="TextBox.login-input">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-                <TextBox x:Name="LoginIdentifierTextBox"
-                         Watermark="Username or Email"
-                         Background="White"
-                         Foreground="Black"
-                         BorderBrush="#999999"
-                         BorderThickness="1"
-                         Height="36"/>
+        <Style Selector="Button.primary-button">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Background" Value="#1E3A8A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-                <TextBox x:Name="LoginPasswordTextBox"
-                         Watermark="Password"
-                         PasswordChar="*"
-                         Background="White"
-                         Foreground="Black"
-                         BorderBrush="#999999"
-                         BorderThickness="1"
-                         Height="36"/>
+        <Style Selector="Button.primary-button:pointerover">
+            <Setter Property="Background" Value="#1D4ED8"/>
+        </Style>
 
-                <Button x:Name="LoginButton"
-                        Content="Login"
-                        Height="36"
-                        Background="#D0D0D0"
-                        Foreground="Black"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"/>
+        <Style Selector="Button.secondary-button">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="Foreground" Value="#1E3A8A"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-                <Button x:Name="SignUpButton"
-                        Content="Sign Up"
-                        Height="36"
-                        Background="#D0D0D0"
-                        Foreground="Black"
-                        HorizontalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"/>
+        <Style Selector="Button.secondary-button:pointerover">
+            <Setter Property="Background" Value="#EEF2F7"/>
+            <Setter Property="BorderBrush" Value="#94A3B8"/>
+        </Style>
 
-                <TextBlock x:Name="LoginMessageTextBlock"
-                           Text=""
-                           FontSize="13"
-                           TextWrapping="Wrap"
-                           Foreground="Red"
-                           HorizontalAlignment="Center"/>
+        <Style Selector="Border.carousel-card">
+            <Setter Property="Width" Value="340"/>
+            <Setter Property="Height" Value="120"/>
+            <Setter Property="Background" Value="#EEF2FF"/>
+            <Setter Property="CornerRadius" Value="22"/>
+            <Setter Property="Padding" Value="18"/>
+            <Setter Property="BorderBrush" Value="#DBEAFE"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Opacity" Value="0.82"/>
+        </Style>
+
+    </UserControl.Styles>
+
+    <Grid>
+
+        <Image Source="avares://ActivityProjectApp/Assets/background.png"
+                Stretch="UniformToFill"
+                Opacity="0.55"/>
+        
+        <!-- Soft overlay so the login form remains readable -->
+        <Border Background="#F4F6F8"
+                Opacity="0.35"/>
+
+
+        <!-- Full-width moving carousel background -->
+        <Border Height="280"
+                Background="#F8FAFC"
+                CornerRadius="0"
+                Opacity="0.82"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Margin="0,120,0,0"
+                BorderBrush="#E5E7EB"
+                BorderThickness="0,1,0,1"
+                ClipToBounds="True"
+                IsHitTestVisible="False">
+
+            <Canvas x:Name="CarouselCanvas"
+                    Height="280"
+                    HorizontalAlignment="Stretch">
+
+                <Border x:Name="CarouselCardOne"
+                        Classes="carousel-card"
+                        Canvas.Left="-390"
+                        Canvas.Top="80">
+
+                    <StackPanel Spacing="5">
+
+                        <TextBlock Text="Discover Activities"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="#1E3A8A"/>
+
+                        <TextBlock Text="Find events and courses near your location."
+                                   FontSize="13"
+                                   Foreground="#4B5563"
+                                   TextWrapping="Wrap"/>
+
+                    </StackPanel>
+
+                </Border>
+
+                <Border x:Name="CarouselCardTwo"
+                        Classes="carousel-card"
+                        Canvas.Left="0"
+                        Canvas.Top="80">
+
+                    <StackPanel Spacing="5">
+
+                        <TextBlock Text="Save Favorites"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="#1E3A8A"/>
+
+                        <TextBlock Text="Keep interesting activities in your profile."
+                                   FontSize="13"
+                                   Foreground="#4B5563"
+                                   TextWrapping="Wrap"/>
+
+                    </StackPanel>
+
+                </Border>
+
+                <Border x:Name="CarouselCardThree"
+                        Classes="carousel-card"
+                        Canvas.Left="390"
+                        Canvas.Top="80">
+
+                    <StackPanel Spacing="5">
+
+                        <TextBlock Text="Enroll Easily"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="#1E3A8A"/>
+
+                        <TextBlock Text="Join courses, events and experiences quickly."
+                                   FontSize="13"
+                                   Foreground="#4B5563"
+                                   TextWrapping="Wrap"/>
+
+                    </StackPanel>
+
+                </Border>
+
+                <Border x:Name="CarouselCardFour"
+                        Classes="carousel-card"
+                        Canvas.Left="780"
+                        Canvas.Top="80">
+
+                    <StackPanel Spacing="5">
+
+                        <TextBlock Text="Provider Tools"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="#1E3A8A"/>
+
+                        <TextBlock Text="Create events, courses and announcements."
+                                   FontSize="13"
+                                   Foreground="#4B5563"
+                                   TextWrapping="Wrap"/>
+
+                    </StackPanel>
+
+                </Border>
+
+                <Border x:Name="CarouselCardFive"
+                        Classes="carousel-card"
+                        Canvas.Left="1170"
+                        Canvas.Top="80">
+
+                    <StackPanel Spacing="5">
+
+                        <TextBlock Text="Stay Updated"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="#1E3A8A"/>
+
+                        <TextBlock Text="Follow announcements for your selected activities."
+                                   FontSize="13"
+                                   Foreground="#4B5563"
+                                   TextWrapping="Wrap"/>
+
+                    </StackPanel>
+
+                </Border>
+
+            </Canvas>
+
+        </Border>
+
+        <!-- Main login content -->
+        <Grid HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Width="440">
+
+            <StackPanel Spacing="18"
+                        Width="440"
+                        HorizontalAlignment="Center">
+
+                <!-- Brand header -->
+                <StackPanel Spacing="6"
+                            Width="440"
+                            HorizontalAlignment="Center">
+
+                    <TextBlock Text="Activity Project"
+                               Classes="brand-title"
+                               Width="440"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"/>
+
+                    <TextBlock Text="Find activities, events and courses near you."
+                               Width="440"
+                               FontSize="14"
+                               Foreground="#6B7280"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"/>
+
+                </StackPanel>
+
+                <!-- Login card -->
+                <Border Background="White"
+                        CornerRadius="22"
+                        Padding="32"
+                        BorderBrush="#E5E7EB"
+                        BorderThickness="1"
+                        Margin="0,88,0,0"
+                        Height="560">
+
+                    <StackPanel Spacing="17">
+
+                        <StackPanel Spacing="5">
+
+                            <TextBlock Text="Welcome back"
+                                       Classes="page-title"
+                                       TextAlignment="Center"/>
+
+                            <TextBlock Text="Login to continue to your dashboard."
+                                       Classes="helper-text"
+                                       TextAlignment="Center"/>
+
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+
+                            <TextBlock Text="Username or Email"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       Foreground="#374151"/>
+
+                            <TextBox x:Name="LoginIdentifierTextBox"
+                                     Classes="login-input"
+                                     Watermark="Enter your username or email"/>
+
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+
+                            <TextBlock Text="Password"
+                                       FontSize="13"
+                                       FontWeight="SemiBold"
+                                       Foreground="#374151"/>
+
+                            <TextBox x:Name="LoginPasswordTextBox"
+                                     Classes="login-input"
+                                     Watermark="Enter your password"
+                                     PasswordChar="●"/>
+
+                        </StackPanel>
+
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <CheckBox Grid.Column="0"
+                                      Content="Remember me"
+                                      Foreground="#4B5563"
+                                      FontSize="13"
+                                      VerticalAlignment="Center"/>
+
+                            <Button x:Name="ForgotPasswordButton"
+                                    Grid.Column="1"
+                                    Content="Forgot password?"
+                                    Background="Transparent"
+                                    Foreground="#1E3A8A"
+                                    BorderThickness="0"
+                                    Padding="0"
+                                    FontSize="13"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"/>
+
+                        </Grid>
+
+                        <Button x:Name="LoginButton"
+                                Classes="primary-button"
+                                Content="Login"/>
+
+                        <!-- Forgot password panel -->
+                        <Border x:Name="ForgotPasswordPanel"
+                                IsVisible="False"
+                                Background="#F9FAFB"
+                                CornerRadius="12"
+                                Padding="10"
+                                BorderBrush="#E5E7EB"
+                                BorderThickness="1">
+
+                            <StackPanel Spacing="6">
+
+                                <TextBlock Text="Reset your password"
+                                        FontSize="14"
+                                        FontWeight="Bold"
+                                        Foreground="#111827"
+                                        TextAlignment="Center"/>
+
+                                <TextBlock Text="Enter your email to receive reset instructions."
+                                        FontSize="11"
+                                        Foreground="#6B7280"
+                                        TextAlignment="Center"
+                                        TextWrapping="Wrap"/>
+
+                                <TextBox x:Name="ResetEmailTextBox"
+                                        Classes="login-input"
+                                        Height="36"
+                                        FontSize="13"
+                                        Watermark="Enter your email"/>
+
+                                <Grid ColumnDefinitions="*,*">
+
+                                    <Button x:Name="SendPasswordResetButton"
+                                            Grid.Column="0"
+                                            Content="Send reset link"
+                                            Classes="primary-button"
+                                            Height="34"
+                                            FontSize="12"
+                                            Margin="0,0,6,0"/>
+
+                                    <Button x:Name="CancelForgotPasswordButton"
+                                            Grid.Column="1"
+                                            Content="Cancel"
+                                            Classes="secondary-button"
+                                            Height="34"
+                                            FontSize="12"
+                                            Margin="6,0,0,0"/>
+
+                                </Grid>
+
+                                <TextBlock x:Name="ResetPasswordMessageTextBlock"
+                                        Text=""
+                                        FontSize="12"
+                                        TextWrapping="Wrap"
+                                        TextAlignment="Center"
+                                        Foreground="Red"/>
+
+                            </StackPanel>
+
+                        </Border>
+
+                        <TextBlock x:Name="LoginMessageTextBlock"
+                                Text=""
+                                FontSize="13"
+                                TextWrapping="Wrap"
+                                Foreground="Red"
+                                TextAlignment="Center"/>
+
+                        <StackPanel x:Name="SignUpSectionPanel"
+                                    Spacing="8">
+
+                            <Border Height="1"
+                                    Background="#E5E7EB"
+                                    Margin="0,2,0,0"/>
+
+                            <TextBlock Text="If you're not a member, click below to create an account."
+                                    FontSize="13"
+                                    Foreground="#6B7280"
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap"/>
+
+                            <Button x:Name="SignUpButton"
+                                    Classes="secondary-button"
+                                    Content="Sign up"/>
+
+                        </StackPanel>
+
+                    </StackPanel>
+
+                </Border>
+
+                <TextBlock Text="Customers and service providers can access their workspace from the same login page."
+                           FontSize="12"
+                           Foreground="#9CA3AF"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
 
             </StackPanel>
 
-        </Border>
+        </Grid>
 
     </Grid>
 

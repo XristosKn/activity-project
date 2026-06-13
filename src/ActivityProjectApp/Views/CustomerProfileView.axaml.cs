@@ -9,19 +9,22 @@ namespace ActivityProjectApp.Views
 {
     public partial class CustomerProfileView : UserControl
     {
-        private readonly AuthService _authService;
-        
+        private List<CustomerProfileItem> _allSavedItems = new List<CustomerProfileItem>();
+        private List<CustomerProfileItem> _allMyItems = new List<CustomerProfileItem>();
+
         private List<Announcement> _allAnnouncements = new List<Announcement>();
-
         private int _announcementStartIndex = 0;
-
         private const int AnnouncementsPageSize = 5;
 
         public CustomerProfileView()
         {
             InitializeComponent();
 
-            _authService = AppServices.AuthService;
+            if (AppServices.AuthService.GetCurrentUser() is not Customer)
+            {
+                NavigateToLogin();
+                return;
+            }
 
             LoadCustomerInfo();
             LoadAnnouncements();
@@ -29,82 +32,29 @@ namespace ActivityProjectApp.Views
             LoadMyEnrolledItems();
 
             BackButton.Click += BackButton_Click;
+            SettingsButton.Click += SettingsButton_Click;
             LogoutButton.Click += LogoutButton_Click;
+
             PreviousAnnouncementsButton.Click += PreviousAnnouncementsButton_Click;
             NextAnnouncementsButton.Click += NextAnnouncementsButton_Click;
 
             SavedItemsFilterComboBox.SelectionChanged += SavedItemsFilterComboBox_SelectionChanged;
             MyItemsFilterComboBox.SelectionChanged += MyItemsFilterComboBox_SelectionChanged;
+
+            ShowProfileMainContent();
         }
 
         private void LoadCustomerInfo()
         {
-            User? currentUser = _authService.GetCurrentUser();
+            User? currentUser = AppServices.AuthService.GetCurrentUser();
 
             if (currentUser is Customer customer)
             {
                 CustomerInfoTextBlock.Text = $"{customer.Name} {customer.LastName} | {customer.Email}";
-            }
-            else
-            {
-                CustomerInfoTextBlock.Text = "Customer profile";
-            }
-        }
-
-        private void LoadSavedItems()
-        {
-            User? currentUser = _authService.GetCurrentUser();
-
-            if (currentUser is not Customer customer)
-            {
-                SavedItemsControl.ItemsSource = null;
-                SavedItemsCountTextBlock.Text = "0 saved";
                 return;
             }
 
-            List<SavedItem> savedItems = AppServices.SavedItemRepository
-                .GetSavedItemsByCustomerId(customer.Id);
-
-            List<CustomerProfileItem> profileItems = new List<CustomerProfileItem>();
-
-            foreach (SavedItem savedItem in savedItems)
-            {
-                CustomerProfileItem? profileItem = BuildProfileItemFromSavedItem(savedItem);
-
-                if (profileItem != null)
-                {
-                    profileItems.Add(profileItem);
-                }
-            }
-
-            string selectedFilter = GetSelectedSavedItemsFilter();
-
-            if (selectedFilter == "Events")
-            {
-                profileItems = profileItems
-                    .Where(item => item.ItemType == EnrollmentItemType.Event)
-                    .ToList();
-            }
-
-            if (selectedFilter == "Courses")
-            {
-                profileItems = profileItems
-                    .Where(item => item.ItemType == EnrollmentItemType.Course)
-                    .ToList();
-            }
-
-            SavedItemsControl.ItemsSource = profileItems;
-            SavedItemsCountTextBlock.Text = $"{profileItems.Count} saved";
-        }
-
-        private void SavedItemsFilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            LoadSavedItems();
-        }
-
-        private void MyItemsFilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            LoadMyEnrolledItems();
+            CustomerInfoTextBlock.Text = "Profile overview";
         }
 
         private void LoadAnnouncements()
@@ -127,7 +77,6 @@ namespace ActivityProjectApp.Views
                 .ToList();
 
             AnnouncementsItemsControl.ItemsSource = visibleAnnouncements;
-
             AnnouncementsCountTextBlock.Text = $"{_allAnnouncements.Count} announcements";
 
             bool hasAnnouncements = _allAnnouncements.Count > 0;
@@ -136,7 +85,6 @@ namespace ActivityProjectApp.Views
             AnnouncementsItemsControl.IsVisible = hasAnnouncements;
 
             PreviousAnnouncementsButton.IsEnabled = _announcementStartIndex > 0;
-
             NextAnnouncementsButton.IsEnabled =
                 _announcementStartIndex + AnnouncementsPageSize < _allAnnouncements.Count;
         }
@@ -165,55 +113,31 @@ namespace ActivityProjectApp.Views
             RefreshAnnouncementsCarousel();
         }
 
-        private void LoadMyEnrolledItems()
+        private void LoadSavedItems()
         {
-            User? currentUser = _authService.GetCurrentUser();
+            User? currentUser = AppServices.AuthService.GetCurrentUser();
 
             if (currentUser is not Customer customer)
             {
-                MyItemsControl.ItemsSource = null;
-                MyItemsCountTextBlock.Text = "0 enrolled";
+                _allSavedItems = new List<CustomerProfileItem>();
+                SavedItemsControl.ItemsSource = _allSavedItems;
+                SavedItemsCountTextBlock.Text = "0 saved";
                 return;
             }
 
-            List<Enrollment> enrollments = AppServices.EnrollmentRepository
-                .GetEnrollmentsByCustomerId(customer.Id)
-                .Where(enrollment => enrollment.Status == EnrollmentStatus.Confirmed)
+            List<SavedItem> savedItems = AppServices.SavedItemRepository
+                .GetSavedItemsByCustomerId(customer.Id);
+
+            _allSavedItems = savedItems
+                .Select(ConvertSavedItemToCustomerProfileItem)
+                .Where(item => item != null)
+                .Select(item => item!)
                 .ToList();
 
-            List<CustomerProfileItem> profileItems = new List<CustomerProfileItem>();
-
-            foreach (Enrollment enrollment in enrollments)
-            {
-                CustomerProfileItem? profileItem = BuildProfileItemFromEnrollment(enrollment);
-
-                if (profileItem != null)
-                {
-                    profileItems.Add(profileItem);
-                }
-            }
-
-            string selectedFilter = GetSelectedMyItemsFilter();
-
-            if (selectedFilter == "Events")
-            {
-                profileItems = profileItems
-                    .Where(item => item.ItemType == EnrollmentItemType.Event)
-                    .ToList();
-            }
-
-            if (selectedFilter == "Courses")
-            {
-                profileItems = profileItems
-                    .Where(item => item.ItemType == EnrollmentItemType.Course)
-                    .ToList();
-            }
-
-            MyItemsControl.ItemsSource = profileItems;
-            MyItemsCountTextBlock.Text = $"{profileItems.Count} enrolled";
+            RefreshSavedItems();
         }
 
-        private CustomerProfileItem? BuildProfileItemFromSavedItem(SavedItem savedItem)
+        private CustomerProfileItem? ConvertSavedItemToCustomerProfileItem(SavedItem savedItem)
         {
             if (savedItem.ItemType == SavedItemType.Event)
             {
@@ -264,7 +188,33 @@ namespace ActivityProjectApp.Views
             return null;
         }
 
-        private CustomerProfileItem? BuildProfileItemFromEnrollment(Enrollment enrollment)
+        private void LoadMyEnrolledItems()
+        {
+            User? currentUser = AppServices.AuthService.GetCurrentUser();
+
+            if (currentUser is not Customer customer)
+            {
+                _allMyItems = new List<CustomerProfileItem>();
+                MyItemsControl.ItemsSource = _allMyItems;
+                MyItemsCountTextBlock.Text = "0 enrolled";
+                return;
+            }
+
+            List<Enrollment> confirmedEnrollments = AppServices.EnrollmentRepository
+                .GetEnrollmentsByCustomerId(customer.Id)
+                .Where(enrollment => enrollment.Status == EnrollmentStatus.Confirmed)
+                .ToList();
+
+            _allMyItems = confirmedEnrollments
+                .Select(ConvertEnrollmentToCustomerProfileItem)
+                .Where(item => item != null)
+                .Select(item => item!)
+                .ToList();
+
+            RefreshMyItems();
+        }
+
+        private CustomerProfileItem? ConvertEnrollmentToCustomerProfileItem(Enrollment enrollment)
         {
             if (enrollment.ItemType == EnrollmentItemType.Event)
             {
@@ -315,6 +265,62 @@ namespace ActivityProjectApp.Views
             return null;
         }
 
+        private void SavedItemsFilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            RefreshSavedItems();
+        }
+
+        private void MyItemsFilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            RefreshMyItems();
+        }
+
+        private void RefreshSavedItems()
+        {
+            string selectedFilter = GetSelectedSavedItemsFilter();
+
+            List<CustomerProfileItem> filteredItems = _allSavedItems;
+
+            if (selectedFilter == "Events")
+            {
+                filteredItems = _allSavedItems
+                    .Where(item => item.ItemType == EnrollmentItemType.Event)
+                    .ToList();
+            }
+            else if (selectedFilter == "Courses")
+            {
+                filteredItems = _allSavedItems
+                    .Where(item => item.ItemType == EnrollmentItemType.Course)
+                    .ToList();
+            }
+
+            SavedItemsControl.ItemsSource = filteredItems;
+            SavedItemsCountTextBlock.Text = $"{filteredItems.Count} saved";
+        }
+
+        private void RefreshMyItems()
+        {
+            string selectedFilter = GetSelectedMyItemsFilter();
+
+            List<CustomerProfileItem> filteredItems = _allMyItems;
+
+            if (selectedFilter == "Events")
+            {
+                filteredItems = _allMyItems
+                    .Where(item => item.ItemType == EnrollmentItemType.Event)
+                    .ToList();
+            }
+            else if (selectedFilter == "Courses")
+            {
+                filteredItems = _allMyItems
+                    .Where(item => item.ItemType == EnrollmentItemType.Course)
+                    .ToList();
+            }
+
+            MyItemsControl.ItemsSource = filteredItems;
+            MyItemsCountTextBlock.Text = $"{filteredItems.Count} enrolled";
+        }
+
         private string GetSelectedSavedItemsFilter()
         {
             if (SavedItemsFilterComboBox.SelectedItem is ComboBoxItem selectedItem)
@@ -335,8 +341,37 @@ namespace ActivityProjectApp.Views
             return "All";
         }
 
+        private void ShowProfileMainContent()
+        {
+            AnnouncementsSectionPanel.IsVisible = true;
+            SavedItemsSectionPanel.IsVisible = true;
+            MyItemsSectionPanel.IsVisible = true;
+
+            SettingsSectionPanel.IsVisible = false;
+        }
+
+        private void ShowSettingsContent()
+        {
+            AnnouncementsSectionPanel.IsVisible = false;
+            SavedItemsSectionPanel.IsVisible = false;
+            MyItemsSectionPanel.IsVisible = false;
+
+            SettingsSectionPanel.IsVisible = true;
+        }
+
+        private void SettingsButton_Click(object? sender, RoutedEventArgs e)
+        {
+            ShowSettingsContent();
+        }
+
         private void BackButton_Click(object? sender, RoutedEventArgs e)
         {
+            if (SettingsSectionPanel.IsVisible)
+            {
+                ShowProfileMainContent();
+                return;
+            }
+
             MainWindow? mainWindow = this.VisualRoot as MainWindow;
 
             if (mainWindow == null)
@@ -349,8 +384,12 @@ namespace ActivityProjectApp.Views
 
         private void LogoutButton_Click(object? sender, RoutedEventArgs e)
         {
-            _authService.Logout();
+            AppServices.AuthService.Logout();
+            NavigateToLogin();
+        }
 
+        private void NavigateToLogin()
+        {
             MainWindow? mainWindow = this.VisualRoot as MainWindow;
 
             if (mainWindow == null)

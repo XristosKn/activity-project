@@ -2,51 +2,111 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:models="clr-namespace:ActivityProjectApp.Models"
              x:Class="ActivityProjectApp.Views.CustomerProfileView"
-             Background="#F3F6FA">
+             Background="#F4F6F8">
+
+    <UserControl.Styles>
+
+        <Style Selector="TextBlock.section-title">
+            <Setter Property="FontSize" Value="25"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#1E3A8A"/>
+        </Style>
+
+        <Style Selector="TextBlock.subsection-title">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+        </Style>
+
+        <Style Selector="Button.topbar-button">
+            <Setter Property="Width" Value="110"/>
+            <Setter Property="Height" Value="38"/>
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.topbar-button:pointerover">
+            <Setter Property="Background" Value="#EEF2F7"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+        </Style>
+
+        <Style Selector="Button.carousel-button">
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.carousel-button:pointerover">
+            <Setter Property="Background" Value="#EEF2F7"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+        </Style>
+
+        <Style Selector="Button.settings-option-button">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="Foreground" Value="#1F2937"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="14,0"/>
+        </Style>
+
+        <Style Selector="Button.settings-option-button:pointerover">
+            <Setter Property="Background" Value="#EEF2F7"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+        </Style>
+
+        <Style Selector="Border.profile-section">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="CornerRadius" Value="18"/>
+            <Setter Property="Padding" Value="24"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="Border.profile-card">
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="14"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+    </UserControl.Styles>
 
     <Grid RowDefinitions="Auto,*"
-          Background="#F3F6FA">
+          Background="#F4F6F8">
 
         <!-- Top bar -->
         <Border Grid.Row="0"
                 Background="White"
-                Padding="22,18"
-                BorderBrush="#E1E5EA"
+                Padding="24,18"
+                BorderBrush="#E5E7EB"
                 BorderThickness="0,0,0,1">
 
-            <DockPanel LastChildFill="True">
+            <Grid ColumnDefinitions="*,Auto">
 
-                <StackPanel DockPanel.Dock="Right"
-                            Orientation="Horizontal"
-                            Spacing="10">
-
-                    <Button x:Name="BackButton"
-                            Content="Back"
-                            Width="110"
-                            Height="38"
-                            Background="#F1F3F5"
-                            Foreground="#1F2937"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"/>
-
-                    <Button x:Name="LogoutButton"
-                            Content="Logout"
-                            Width="110"
-                            Height="38"
-                            Background="#F1F3F5"
-                            Foreground="#1F2937"
-                            HorizontalContentAlignment="Center"
-                            VerticalContentAlignment="Center"/>
-
-                </StackPanel>
-
-                <StackPanel DockPanel.Dock="Left"
-                            Spacing="3">
+                <StackPanel Grid.Column="0"
+                            Spacing="4">
 
                     <TextBlock Text="Customer Profile"
-                               FontSize="26"
+                               FontSize="28"
                                FontWeight="Bold"
-                               Foreground="#111827"/>
+                               Foreground="#1E3A8A"/>
 
                     <TextBlock x:Name="CustomerInfoTextBlock"
                                Text="Profile overview"
@@ -55,7 +115,26 @@
 
                 </StackPanel>
 
-            </DockPanel>
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            Spacing="10"
+                            VerticalAlignment="Center">
+
+                    <Button x:Name="BackButton"
+                            Classes="topbar-button"
+                            Content="Back"/>
+
+                    <Button x:Name="SettingsButton"
+                            Classes="topbar-button"
+                            Content="Settings"/>
+
+                    <Button x:Name="LogoutButton"
+                            Classes="topbar-button"
+                            Content="Logout"/>
+
+                </StackPanel>
+
+            </Grid>
 
         </Border>
 
@@ -63,65 +142,53 @@
         <ScrollViewer Grid.Row="1"
                       VerticalScrollBarVisibility="Auto">
 
-            <Grid Margin="28"
-                  RowDefinitions="Auto,Auto,Auto">
+            <Grid Margin="30"
+                  RowDefinitions="Auto,Auto,Auto,Auto">
 
                 <!-- Announcements -->
-                <Border Grid.Row="0"
-                        Background="White"
-                        CornerRadius="20"
-                        Padding="22"
-                        Margin="0,0,0,20"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
+                <Border x:Name="AnnouncementsSectionPanel"
+                        Grid.Row="0"
+                        Classes="profile-section"
+                        Margin="0,0,0,22">
 
-                    <StackPanel Spacing="12">
+                    <StackPanel Spacing="14">
 
                         <Grid ColumnDefinitions="*,Auto,Auto,Auto">
 
                             <TextBlock Grid.Column="0"
-                                    Text="Announcements"
-                                    FontSize="22"
-                                    FontWeight="Bold"
-                                    Foreground="#111827"
-                                    VerticalAlignment="Center"/>
+                                       Text="Announcements"
+                                       Classes="section-title"
+                                       VerticalAlignment="Center"/>
 
                             <TextBlock x:Name="AnnouncementsCountTextBlock"
-                                    Grid.Column="1"
-                                    Text="0 announcements"
-                                    FontSize="13"
-                                    Foreground="#6B7280"
-                                    VerticalAlignment="Center"
-                                    Margin="0,0,12,0"/>
+                                       Grid.Column="1"
+                                       Text="0 announcements"
+                                       FontSize="13"
+                                       Foreground="#6B7280"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,12,0"/>
 
                             <Button x:Name="PreviousAnnouncementsButton"
                                     Grid.Column="2"
+                                    Classes="carousel-button"
                                     Content="‹"
-                                    Width="38"
-                                    Height="34"
-                                    FontSize="20"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
                                     Margin="0,0,8,0"/>
 
                             <Button x:Name="NextAnnouncementsButton"
                                     Grid.Column="3"
-                                    Content="›"
-                                    Width="38"
-                                    Height="34"
-                                    FontSize="20"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"/>
+                                    Classes="carousel-button"
+                                    Content="›"/>
 
                         </Grid>
 
                         <TextBlock x:Name="AnnouncementsEmptyTextBlock"
-                                Text="No announcements available."
-                                FontSize="14"
-                                Foreground="#6B7280"
-                                IsVisible="False"/>
+                                   Text="No announcements available."
+                                   FontSize="14"
+                                   Foreground="#6B7280"
+                                   IsVisible="False"/>
 
                         <ItemsControl x:Name="AnnouncementsItemsControl">
+
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <StackPanel Orientation="Horizontal"
@@ -130,23 +197,20 @@
                             </ItemsControl.ItemsPanel>
 
                             <ItemsControl.ItemTemplate>
+
                                 <DataTemplate DataType="{x:Type models:Announcement}">
 
-                                    <Border Background="#F9FAFB"
-                                            CornerRadius="14"
-                                            Padding="14"
-                                            Width="210"
-                                            MinHeight="150"
-                                            BorderBrush="#E5E7EB"
-                                            BorderThickness="1">
+                                    <Border Classes="profile-card"
+                                            Width="220"
+                                            MinHeight="160">
 
-                                        <StackPanel Spacing="7">
+                                        <StackPanel Spacing="8">
 
                                             <TextBlock Text="{Binding Title}"
-                                                    FontSize="15"
-                                                    FontWeight="Bold"
-                                                    Foreground="#111827"
-                                                    TextWrapping="Wrap"/>
+                                                       FontSize="15"
+                                                       FontWeight="Bold"
+                                                       Foreground="#111827"
+                                                       TextWrapping="Wrap"/>
 
                                             <Border Background="#E5E7EB"
                                                     CornerRadius="10"
@@ -154,28 +218,30 @@
                                                     HorizontalAlignment="Left">
 
                                                 <TextBlock Text="{Binding ItemType}"
-                                                        FontSize="12"
-                                                        FontWeight="SemiBold"
-                                                        Foreground="#374151"/>
+                                                           FontSize="12"
+                                                           FontWeight="SemiBold"
+                                                           Foreground="#374151"/>
 
                                             </Border>
 
                                             <TextBlock Text="{Binding Text}"
-                                                    FontSize="13"
-                                                    Foreground="#4B5563"
-                                                    TextWrapping="Wrap"
-                                                    MaxHeight="60"/>
+                                                       FontSize="13"
+                                                       Foreground="#4B5563"
+                                                       TextWrapping="Wrap"
+                                                       MaxHeight="62"/>
 
                                             <TextBlock Text="{Binding AnnouncementDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"
-                                                    FontSize="12"
-                                                    Foreground="#6B7280"/>
+                                                       FontSize="12"
+                                                       Foreground="#6B7280"/>
 
                                         </StackPanel>
 
                                     </Border>
 
                                 </DataTemplate>
+
                             </ItemsControl.ItemTemplate>
+
                         </ItemsControl>
 
                     </StackPanel>
@@ -183,57 +249,53 @@
                 </Border>
 
                 <!-- Saved items -->
-                <Border Grid.Row="1"
-                        Background="White"
-                        CornerRadius="20"
-                        Padding="22"
-                        Margin="0,0,0,20"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
+                <Border x:Name="SavedItemsSectionPanel"
+                        Grid.Row="1"
+                        Classes="profile-section"
+                        Margin="0,0,0,22">
 
-                    <StackPanel Spacing="12">
+                    <StackPanel Spacing="14">
 
                         <Grid ColumnDefinitions="*,Auto,Auto"
-                            Margin="0,0,0,4">
+                              Margin="0,0,0,4">
 
                             <TextBlock Grid.Column="0"
-                                    Text="Saved Events / Courses"
-                                    FontSize="22"
-                                    FontWeight="Bold"
-                                    Foreground="#111827"
-                                    VerticalAlignment="Center"/>
+                                       Text="Saved Events / Courses"
+                                       Classes="section-title"
+                                       VerticalAlignment="Center"/>
 
                             <TextBlock x:Name="SavedItemsCountTextBlock"
-                                    Grid.Column="1"
-                                    Text="0 saved"
-                                    FontSize="13"
-                                    Foreground="#6B7280"
-                                    VerticalAlignment="Center"
-                                    Margin="0,0,12,0"/>
+                                       Grid.Column="1"
+                                       Text="0 saved"
+                                       FontSize="13"
+                                       Foreground="#6B7280"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,12,0"/>
 
                             <ComboBox x:Name="SavedItemsFilterComboBox"
-                                    Grid.Column="2"
-                                    Width="150"
-                                    Height="34"
-                                    SelectedIndex="0">
+                                      Grid.Column="2"
+                                      Width="150"
+                                      Height="34"
+                                      SelectedIndex="0">
+
                                 <ComboBoxItem Content="All"/>
                                 <ComboBoxItem Content="Events"/>
                                 <ComboBoxItem Content="Courses"/>
+
                             </ComboBox>
 
                         </Grid>
 
                         <ItemsControl x:Name="SavedItemsControl">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type models:CustomerProfileItem}">
-                                    <Border Background="#F9FAFB"
-                                            CornerRadius="14"
-                                            Padding="14"
-                                            Margin="0,0,0,10"
-                                            BorderBrush="#E5E7EB"
-                                            BorderThickness="1">
 
-                                        <StackPanel Spacing="5">
+                            <ItemsControl.ItemTemplate>
+
+                                <DataTemplate DataType="{x:Type models:CustomerProfileItem}">
+
+                                    <Border Classes="profile-card"
+                                            Margin="0,0,0,10">
+
+                                        <StackPanel Spacing="6">
 
                                             <Grid ColumnDefinitions="*,Auto">
 
@@ -270,8 +332,11 @@
                                         </StackPanel>
 
                                     </Border>
+
                                 </DataTemplate>
+
                             </ItemsControl.ItemTemplate>
+
                         </ItemsControl>
 
                     </StackPanel>
@@ -279,41 +344,38 @@
                 </Border>
 
                 <!-- My enrolled items -->
-                <Border Grid.Row="2"
-                        Background="White"
-                        CornerRadius="20"
-                        Padding="22"
-                        BorderBrush="#E5E7EB"
-                        BorderThickness="1">
+                <Border x:Name="MyItemsSectionPanel"
+                        Grid.Row="2"
+                        Classes="profile-section">
 
-                    <StackPanel Spacing="12">
+                    <StackPanel Spacing="14">
 
                         <Grid ColumnDefinitions="*,Auto,Auto"
-                            Margin="0,0,0,4">
+                              Margin="0,0,0,4">
 
                             <TextBlock Grid.Column="0"
-                                    Text="My Events / Courses"
-                                    FontSize="22"
-                                    FontWeight="Bold"
-                                    Foreground="#111827"
-                                    VerticalAlignment="Center"/>
+                                       Text="My Events / Courses"
+                                       Classes="section-title"
+                                       VerticalAlignment="Center"/>
 
                             <TextBlock x:Name="MyItemsCountTextBlock"
-                                    Grid.Column="1"
-                                    Text="0 enrolled"
-                                    FontSize="13"
-                                    Foreground="#6B7280"
-                                    VerticalAlignment="Center"
-                                    Margin="0,0,12,0"/>
+                                       Grid.Column="1"
+                                       Text="0 enrolled"
+                                       FontSize="13"
+                                       Foreground="#6B7280"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,12,0"/>
 
                             <ComboBox x:Name="MyItemsFilterComboBox"
-                                    Grid.Column="2"
-                                    Width="150"
-                                    Height="34"
-                                    SelectedIndex="0">
+                                      Grid.Column="2"
+                                      Width="150"
+                                      Height="34"
+                                      SelectedIndex="0">
+
                                 <ComboBoxItem Content="All"/>
                                 <ComboBoxItem Content="Events"/>
                                 <ComboBoxItem Content="Courses"/>
+
                             </ComboBox>
 
                         </Grid>
@@ -323,16 +385,15 @@
                                    Foreground="#6B7280"/>
 
                         <ItemsControl x:Name="MyItemsControl">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate DataType="{x:Type models:CustomerProfileItem}">
-                                    <Border Background="#F9FAFB"
-                                            CornerRadius="14"
-                                            Padding="14"
-                                            Margin="0,0,0,10"
-                                            BorderBrush="#E5E7EB"
-                                            BorderThickness="1">
 
-                                        <StackPanel Spacing="5">
+                            <ItemsControl.ItemTemplate>
+
+                                <DataTemplate DataType="{x:Type models:CustomerProfileItem}">
+
+                                    <Border Classes="profile-card"
+                                            Margin="0,0,0,10">
+
+                                        <StackPanel Spacing="6">
 
                                             <Grid ColumnDefinitions="*,Auto">
 
@@ -374,9 +435,82 @@
                                         </StackPanel>
 
                                     </Border>
+
                                 </DataTemplate>
+
                             </ItemsControl.ItemTemplate>
+
                         </ItemsControl>
+
+                    </StackPanel>
+
+                </Border>
+
+                <!-- Settings -->
+                <Border x:Name="SettingsSectionPanel"
+                        Grid.Row="3"
+                        Classes="profile-section"
+                        IsVisible="False">
+
+                    <StackPanel Spacing="16">
+
+                        <TextBlock Text="Settings"
+                                   Classes="section-title"/>
+
+                        <TextBlock Text="Manage your account preferences and personal information."
+                                   FontSize="14"
+                                   Foreground="#6B7280"
+                                   TextWrapping="Wrap"/>
+
+                        <Border Background="#F9FAFB"
+                                CornerRadius="14"
+                                Padding="16"
+                                BorderBrush="#E5E7EB"
+                                BorderThickness="1">
+
+                            <StackPanel Spacing="12">
+
+                                <TextBlock Text="Account Settings"
+                                           Classes="subsection-title"/>
+
+                                <Button Content="Change Password"
+                                        Classes="settings-option-button"/>
+
+                                <Button Content="Change Email"
+                                        Classes="settings-option-button"/>
+
+                                <Button Content="Update Phone Number"
+                                        Classes="settings-option-button"/>
+
+                            </StackPanel>
+
+                        </Border>
+
+                        <Border Background="#F9FAFB"
+                                CornerRadius="14"
+                                Padding="16"
+                                BorderBrush="#E5E7EB"
+                                BorderThickness="1">
+
+                            <StackPanel Spacing="12">
+
+                                <TextBlock Text="Profile Preferences"
+                                           Classes="subsection-title"/>
+
+                                <Button Content="Update Personal Information"
+                                        Classes="settings-option-button"/>
+
+                                <Button Content="Location &amp; Privacy Settings"
+                                        Classes="settings-option-button"/>
+
+                                <TextBlock Text="These settings are placeholders and will be implemented later."
+                                           FontSize="13"
+                                           Foreground="#6B7280"
+                                           TextWrapping="Wrap"/>
+
+                            </StackPanel>
+
+                        </Border>
 
                     </StackPanel>
 

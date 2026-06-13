@@ -19,5 +19,6 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Mapsui.Avalonia" Version="4.1.0" />
+    <AvaloniaResource Include="Assets/**" />
   </ItemGroup>
 </Project>

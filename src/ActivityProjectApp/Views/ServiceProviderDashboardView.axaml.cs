@@ -42,7 +42,9 @@ namespace ActivityProjectApp.Views
             MyActivitiesButton.Click += MyActivitiesButton_Click;
             AnnouncementsButton.Click += AnnouncementsButton_Click;
             MyAnnouncementsButton.Click += MyAnnouncementsButton_Click;
-            ProfileButton.Click += ProfileButton_Click;
+            SettingsButton.Click += SettingsButton_Click;
+            ProfileSettingsButton.Click += ProfileSettingsButton_Click;
+            ManagementSettingsButton.Click += ManagementSettingsButton_Click;
 
             MyEventsSummaryButton.Click += MyEventsSummaryButton_Click;
             MyCoursesSummaryButton.Click += MyCoursesSummaryButton_Click;
@@ -79,6 +81,7 @@ namespace ActivityProjectApp.Views
             CreateAnnouncementFormPanel.IsVisible = false;
             ProviderActivitiesPanel.IsVisible = false;
             ProviderAnnouncementsPanel.IsVisible = false;
+            SettingsPanel.IsVisible = false;
         }
 
         private void ShowProviderActivitiesPanel(string title, int filterIndex)
@@ -259,24 +262,27 @@ namespace ActivityProjectApp.Views
             LoadAnnouncementTargetItems();
         }
 
-        private void ProfileButton_Click(object? sender, RoutedEventArgs e)
+        private void SettingsButton_Click(object? sender, RoutedEventArgs e)
         {
             SetActiveSummaryCard(null);
             HideDashboardPanels();
 
-            User? currentUser = _authService.GetCurrentUser();
+            SettingsPanel.IsVisible = true;
 
-            if (currentUser is ServiceProvider serviceProvider)
-            {
-                DashboardMessageTextBlock.Text =
-                    $"Profile: {serviceProvider.Name} {serviceProvider.LastName} | Services: {serviceProvider.TypeofService}";
-            }
-            else
-            {
-                DashboardMessageTextBlock.Text = "Profile information is not available.";
-            }
+            ShowProfileSettings();
+
+            DashboardMessageTextBlock.Text = "Manage your account and activity settings.";
         }
 
+        private void ProfileSettingsButton_Click(object? sender, RoutedEventArgs e)
+        {
+            ShowProfileSettings();
+        }
+
+        private void ManagementSettingsButton_Click(object? sender, RoutedEventArgs e)
+        {
+            ShowManagementSettings();
+        }
         private void CreateItemTypeComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             UpdateCreateFormMode();
@@ -307,6 +313,24 @@ namespace ActivityProjectApp.Views
             }
 
             SaveEventFromForm();
+        }
+
+        private void ShowProfileSettings()
+        {
+            ProfileSettingsContentPanel.IsVisible = true;
+            ManagementSettingsContentPanel.IsVisible = false;
+
+            ProfileSettingsButton.Classes.Add("active");
+            ManagementSettingsButton.Classes.Remove("active");
+        }
+
+        private void ShowManagementSettings()
+        {
+            ProfileSettingsContentPanel.IsVisible = false;
+            ManagementSettingsContentPanel.IsVisible = true;
+
+            ManagementSettingsButton.Classes.Add("active");
+            ProfileSettingsButton.Classes.Remove("active");
         }
 
         private void SaveEventFromForm()
