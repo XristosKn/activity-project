@@ -12,6 +12,15 @@ namespace ActivityProjectApp.Views
     public partial class ServiceProviderDashboardView : UserControl
     {
         private readonly AuthService _authService;
+        private bool _isEditMode = false;
+        private int _editingItemId = 0;
+        private string _editingActivityType = string.Empty;
+        private ProviderActivityListItem? _pendingDeleteItem = null;
+        
+
+        private bool _isAnnouncementEditMode = false;
+        private int _editingAnnouncementId = 0;
+        private Announcement? _pendingDeleteAnnouncement = null;
 
         public ServiceProviderDashboardView()
         {
@@ -45,6 +54,12 @@ namespace ActivityProjectApp.Views
             CreateItemTypeComboBox.SelectionChanged += CreateItemTypeComboBox_SelectionChanged;
             ProviderActivityFilterComboBox.SelectionChanged += ProviderActivityFilterComboBox_SelectionChanged;
             AnnouncementTargetModeComboBox.SelectionChanged += AnnouncementTargetModeComboBox_SelectionChanged;
+
+            ProviderEventsItemsControl.AddHandler(Button.ClickEvent, ProviderEventsItemsControl_ButtonClick, RoutingStrategies.Bubble);
+            ProviderAnnouncementsItemsControl.AddHandler(Button.ClickEvent, ProviderAnnouncementsItemsControl_ButtonClick, RoutingStrategies.Bubble);
+
+            ConfirmDeleteButton.Click += ConfirmDeleteButton_Click;
+            CancelDeleteButton.Click += CancelDeleteButton_Click;
         }
 
         private void LoadCurrentUser()
@@ -176,6 +191,7 @@ namespace ActivityProjectApp.Views
             {
                 providerActivities.AddRange(providerEvents.Select(activityEvent => new ProviderActivityListItem
                 {
+                    ItemId = activityEvent.Id,
                     ActivityType = "Event",
                     Title = activityEvent.Title,
                     Category = activityEvent.Category,
@@ -189,6 +205,7 @@ namespace ActivityProjectApp.Views
             {
                 providerActivities.AddRange(providerCourses.Select(course => new ProviderActivityListItem
                 {
+                    ItemId = course.Id,
                     ActivityType = "Course",
                     Title = course.Title,
                     Category = course.Category,
@@ -205,6 +222,10 @@ namespace ActivityProjectApp.Views
         {
             SetActiveSummaryCard(null);
             HideDashboardPanels();
+            _isEditMode = false;
+            _editingItemId = 0;
+            _editingActivityType = string.Empty;
+            CreateItemTypeComboBox.IsEnabled = true;
 
             CreateEventFormPanel.IsVisible = true;
 
@@ -229,6 +250,10 @@ namespace ActivityProjectApp.Views
         {
             SetActiveSummaryCard(null);
             HideDashboardPanels();
+
+            _isAnnouncementEditMode = false;
+            _editingAnnouncementId = 0;
+            PublishAnnouncementButton.Content = "Publish";
 
             CreateAnnouncementFormPanel.IsVisible = true;
 
@@ -290,7 +315,9 @@ namespace ActivityProjectApp.Views
 
         private void SaveEventButton_Click(object? sender, RoutedEventArgs e)
         {
-            string selectedType = GetSelectedCreateItemType();
+            string selectedType = _isEditMode
+                ? _editingActivityType
+                : GetSelectedCreateItemType();
 
             if (selectedType == "Course")
             {
@@ -300,7 +327,6 @@ namespace ActivityProjectApp.Views
 
             SaveEventFromForm();
         }
-
         private void ShowProfileSettings()
         {
             ProfileSettingsContentPanel.IsVisible = true;
@@ -428,6 +454,7 @@ namespace ActivityProjectApp.Views
 
             ActivityEvent activityEvent = new ActivityEvent
             {
+                Id = _isEditMode ? _editingItemId : 0,
                 Title = title,
                 Category = category,
                 Description = description,
@@ -439,21 +466,31 @@ namespace ActivityProjectApp.Views
                 Price = price,
                 MaxSpace = maxSpace,
                 MainImagePath = string.Empty,
-                Gallery = string.Empty,
+                Gallery = galleryText,
                 ServiceProviderId = serviceProvider.Id,
                 Status = status
             };
 
-            AppServices.ActivityEventRepository.AddEvent(activityEvent);
+            if (_isEditMode)
+            {
+                AppServices.ActivityEventRepository.UpdateEvent(activityEvent);
+            }
+            else
+            {
+                AppServices.ActivityEventRepository.AddEvent(activityEvent);
+            }
 
             ClearCreateEventForm();
             LoadProviderEvents();
             LoadDashboardCounts();
 
-            CreateEventMessageTextBlock.Foreground = Avalonia.Media.Brushes.Green;
-            CreateEventMessageTextBlock.Text = "Event created successfully.";
+            CreateEventMessageTextBlock.Text = _isEditMode
+            ? "Event updated successfully."
+            : "Event created successfully.";
 
-            DashboardMessageTextBlock.Text = "The event was created and added to your events list.";
+        DashboardMessageTextBlock.Text = _isEditMode
+            ? "The event was updated successfully."
+            : "The event was created and added to your events list.";
         }
 
         private void SaveCourseFromForm()
@@ -579,6 +616,7 @@ namespace ActivityProjectApp.Views
 
             Course course = new Course
             {
+                Id = _isEditMode ? _editingItemId : 0,
                 Title = title,
                 Category = category,
                 Description = description,
@@ -591,21 +629,32 @@ namespace ActivityProjectApp.Views
                 Price = price,
                 MaxSpace = maxSpace,
                 AgeRestriction = ageRestriction,
+                MainImagePath = string.Empty,
                 Gallery = galleryText,
                 ServiceProviderId = serviceProvider.Id,
                 Status = status
             };
 
-            AppServices.CourseRepository.AddCourse(course);
+            if (_isEditMode)
+            {
+                AppServices.CourseRepository.UpdateCourse(course);
+            }
+            else
+            {
+                AppServices.CourseRepository.AddCourse(course);
+            }
 
             ClearCreateEventForm();
             LoadProviderEvents();
             LoadDashboardCounts();
 
-            CreateEventMessageTextBlock.Foreground = Avalonia.Media.Brushes.Green;
-            CreateEventMessageTextBlock.Text = "Course created successfully.";
+            CreateEventMessageTextBlock.Text = _isEditMode
+            ? "Course updated successfully."
+            : "Course created successfully.";
 
-            DashboardMessageTextBlock.Text = "The course was created successfully.";
+        DashboardMessageTextBlock.Text = _isEditMode
+            ? "The course was updated successfully."
+            : "The course was created successfully.";
         }
 
         private void AnnouncementItemTypeComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -616,6 +665,186 @@ namespace ActivityProjectApp.Views
         private void AnnouncementTargetModeComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
         {
             LoadAnnouncementTargetItems();
+        }
+
+        private void ProviderEventsItemsControl_ButtonClick(object? sender, RoutedEventArgs e)
+        {
+            if (e.Source is not Button button)
+            {
+                return;
+            }
+
+            if (button.Tag is not ProviderActivityListItem activityItem)
+            {
+                return;
+            }
+
+            if (button.Classes.Contains("edit-activity-button"))
+            {
+                OpenEditActivityForm(activityItem);
+                e.Handled = true;
+                return;
+            }
+
+            if (button.Classes.Contains("delete-activity-button"))
+            {
+                ShowDeleteConfirmation(activityItem);
+                e.Handled = true;
+            }
+        }
+
+        private void OpenEditActivityForm(ProviderActivityListItem activityItem)
+        {
+            HideDashboardPanels();
+
+            CreateEventFormPanel.IsVisible = true;
+            DeleteConfirmationPanel.IsVisible = false;
+
+            _isEditMode = true;
+            _editingItemId = activityItem.ItemId;
+            _editingActivityType = activityItem.ActivityType;
+
+            CreateItemTypeComboBox.IsEnabled = false;
+
+            if (activityItem.ActivityType == "Event")
+            {
+                ActivityEvent? activityEvent = AppServices.ActivityEventRepository.GetEventById(activityItem.ItemId);
+
+                if (activityEvent == null)
+                {
+                    DashboardMessageTextBlock.Text = "The selected event could not be found.";
+                    return;
+                }
+
+                CreateItemTypeComboBox.SelectedIndex = 0;
+                UpdateCreateFormMode();
+
+                EventTitleTextBox.Text = activityEvent.Title;
+                SelectComboBoxItemByContent(EventCategoryComboBox, activityEvent.Category);
+                EventDescriptionTextBox.Text = activityEvent.Description;
+                EventLatitudeTextBox.Text = activityEvent.Latitude.ToString(CultureInfo.InvariantCulture);
+                EventLongitudeTextBox.Text = activityEvent.Longitude.ToString(CultureInfo.InvariantCulture);
+                EventAddressTextBox.Text = activityEvent.Address;
+                EventDatePicker.SelectedDate = activityEvent.Date;
+                EventTimeTextBox.Text = activityEvent.Time.ToString(@"hh\:mm");
+                EventPriceTextBox.Text = activityEvent.Price.ToString(CultureInfo.InvariantCulture);
+                EventMaxSpaceTextBox.Text = activityEvent.MaxSpace.ToString();
+                EventGalleryTextBox.Text = activityEvent.Gallery;
+                SelectComboBoxItemByContent(EventStatusComboBox, activityEvent.Status.ToString());
+
+                SaveEventButton.Content = "Update Event";
+                CreateEventMessageTextBlock.Text = string.Empty;
+                DashboardMessageTextBlock.Text = "Editing selected event.";
+
+                return;
+            }
+
+            if (activityItem.ActivityType == "Course")
+            {
+                Course? course = AppServices.CourseRepository.GetCourseById(activityItem.ItemId);
+
+                if (course == null)
+                {
+                    DashboardMessageTextBlock.Text = "The selected course could not be found.";
+                    return;
+                }
+
+                CreateItemTypeComboBox.SelectedIndex = 1;
+                UpdateCreateFormMode();
+
+                EventTitleTextBox.Text = course.Title;
+                SelectComboBoxItemByContent(EventCategoryComboBox, course.Category);
+                EventDescriptionTextBox.Text = course.Description;
+                EventLatitudeTextBox.Text = course.Latitude.ToString(CultureInfo.InvariantCulture);
+                EventLongitudeTextBox.Text = course.Longitude.ToString(CultureInfo.InvariantCulture);
+                EventAddressTextBox.Text = course.Address;
+                CourseDaysTextBox.Text = course.Days;
+                CourseStartTimeTextBox.Text = course.StartTime.ToString(@"hh\:mm");
+                CourseEndTimeTextBox.Text = course.EndTime.ToString(@"hh\:mm");
+                EventPriceTextBox.Text = course.Price.ToString(CultureInfo.InvariantCulture);
+                EventMaxSpaceTextBox.Text = course.MaxSpace.ToString();
+                CourseAgeRestrictionTextBox.Text = course.AgeRestriction;
+                EventGalleryTextBox.Text = course.Gallery;
+                SelectComboBoxItemByContent(EventStatusComboBox, course.Status.ToString());
+
+                SaveEventButton.Content = "Update Course";
+                CreateEventMessageTextBlock.Text = string.Empty;
+                DashboardMessageTextBlock.Text = "Editing selected course.";
+            }
+        }
+
+        private void ShowDeleteConfirmation(ProviderActivityListItem activityItem)
+        {
+            _pendingDeleteItem = activityItem;
+
+            DeleteConfirmationTextBlock.Text =
+                $"Are you sure you want to delete this {activityItem.ActivityType.ToLower()} \"{activityItem.Title}\"?";
+
+            DeleteConfirmationPanel.IsVisible = true;
+        }
+
+        private void ConfirmDeleteButton_Click(object? sender, RoutedEventArgs e)
+        {
+            if (_pendingDeleteAnnouncement != null)
+            {
+                AppServices.AnnouncementRepository.DeleteAnnouncement(_pendingDeleteAnnouncement.Id);
+
+                _pendingDeleteAnnouncement = null;
+                DeleteConfirmationPanel.IsVisible = false;
+
+                LoadProviderAnnouncements();
+                LoadDashboardCounts();
+
+                DashboardMessageTextBlock.Text = "The selected announcement was deleted.";
+                return;
+            }
+
+            if (_pendingDeleteItem == null)
+            {
+                DeleteConfirmationPanel.IsVisible = false;
+                return;
+            }
+
+            if (_pendingDeleteItem.ActivityType == "Event")
+            {
+                AppServices.ActivityEventRepository.DeleteEvent(_pendingDeleteItem.ItemId);
+            }
+            else if (_pendingDeleteItem.ActivityType == "Course")
+            {
+                AppServices.CourseRepository.DeleteCourse(_pendingDeleteItem.ItemId);
+            }
+
+            _pendingDeleteItem = null;
+
+            DeleteConfirmationPanel.IsVisible = false;
+
+            LoadProviderEvents();
+            LoadDashboardCounts();
+
+            DashboardMessageTextBlock.Text = "The selected item was deleted.";
+        }
+
+        private void CancelDeleteButton_Click(object? sender, RoutedEventArgs e)
+        {
+            _pendingDeleteItem = null;
+            _pendingDeleteAnnouncement = null;
+
+            DeleteConfirmationPanel.IsVisible = false;
+        }
+
+        private void SelectComboBoxItemByContent(ComboBox comboBox, string content)
+        {
+            foreach (object? item in comboBox.Items)
+            {
+                if (item is ComboBoxItem comboBoxItem &&
+                    comboBoxItem.Content?.ToString() == content)
+                {
+                    comboBox.SelectedItem = comboBoxItem;
+                    return;
+                }
+            }
+
+            comboBox.SelectedItem = null;
         }
 
         private void LoadAnnouncementTargetItems()
@@ -684,6 +913,91 @@ namespace ActivityProjectApp.Views
             return "All Events and Courses";
         }
 
+        private void ProviderAnnouncementsItemsControl_ButtonClick(object? sender, RoutedEventArgs e)
+        {
+            if (e.Source is not Button button)
+            {
+                return;
+            }
+
+            if (button.Tag is not Announcement announcement)
+            {
+                return;
+            }
+
+            if (button.Classes.Contains("edit-activity-button"))
+            {
+                OpenEditAnnouncementForm(announcement);
+                e.Handled = true;
+                return;
+            }
+
+            if (button.Classes.Contains("delete-activity-button"))
+            {
+                ShowDeleteAnnouncementConfirmation(announcement);
+                e.Handled = true;
+            }
+        }
+
+        private void OpenEditAnnouncementForm(Announcement announcement)
+        {
+            HideDashboardPanels();
+
+            CreateAnnouncementFormPanel.IsVisible = true;
+            DeleteConfirmationPanel.IsVisible = false;
+
+            _isAnnouncementEditMode = true;
+            _editingAnnouncementId = announcement.Id;
+
+            AnnouncementTitleTextBox.Text = announcement.Title;
+            AnnouncementTextTextBox.Text = announcement.Text;
+            AnnouncementGalleryTextBox.Text = announcement.Gallery;
+
+            AnnouncementStatusComboBox.SelectedIndex = announcement.IsActive ? 0 : 1;
+
+            AnnouncementTargetModeComboBox.SelectedIndex = 3;
+            LoadAnnouncementTargetItems();
+
+            List<AnnouncementTarget> existingTargets = AppServices.AnnouncementRepository
+                .GetTargetsByAnnouncementId(announcement.Id);
+
+            MarkSelectedAnnouncementTargets(existingTargets);
+
+            PublishAnnouncementButton.Content = "Update Announcement";
+
+            AnnouncementMessageTextBlock.Text = string.Empty;
+            DashboardMessageTextBlock.Text = "Editing selected announcement.";
+        }
+
+        private void MarkSelectedAnnouncementTargets(List<AnnouncementTarget> existingTargets)
+        {
+            if (AnnouncementTargetItemsControl.ItemsSource is not IEnumerable<AnnouncementTargetSelectionItem> targetItems)
+            {
+                return;
+            }
+
+            foreach (AnnouncementTargetSelectionItem targetItem in targetItems)
+            {
+                targetItem.IsSelected = existingTargets.Any(existingTarget =>
+                    existingTarget.ItemId == targetItem.ItemId &&
+                    existingTarget.ItemType == targetItem.ItemType);
+            }
+
+            AnnouncementTargetItemsControl.ItemsSource = null;
+            AnnouncementTargetItemsControl.ItemsSource = targetItems.ToList();
+        }
+
+        private void ShowDeleteAnnouncementConfirmation(Announcement announcement)
+        {
+            _pendingDeleteAnnouncement = announcement;
+            _pendingDeleteItem = null;
+
+            DeleteConfirmationTextBlock.Text =
+                $"Are you sure you want to delete announcement \"{announcement.Title}\"?";
+
+            DeleteConfirmationPanel.IsVisible = true;
+        }
+
         private void PublishAnnouncementButton_Click(object? sender, RoutedEventArgs e)
         {
             string title = AnnouncementTitleTextBox.Text?.Trim() ?? string.Empty;
@@ -722,6 +1036,7 @@ namespace ActivityProjectApp.Views
 
             Announcement announcement = new Announcement
             {
+                Id = _isAnnouncementEditMode ? _editingAnnouncementId : 0,
                 Title = title,
                 Text = text,
                 AnnouncementDate = DateTime.Now,
@@ -730,7 +1045,14 @@ namespace ActivityProjectApp.Views
                 ServiceProviderId = serviceProvider.Id
             };
 
-            AppServices.AnnouncementRepository.AddAnnouncement(announcement, targets);
+            if (_isAnnouncementEditMode)
+            {
+                AppServices.AnnouncementRepository.UpdateAnnouncement(announcement, targets);
+            }
+            else
+            {
+                AppServices.AnnouncementRepository.AddAnnouncement(announcement, targets);
+            }
 
             ClearAnnouncementForm();
             LoadDashboardCounts();
@@ -741,9 +1063,13 @@ namespace ActivityProjectApp.Views
             }
 
             AnnouncementMessageTextBlock.Foreground = Avalonia.Media.Brushes.Green;
-            AnnouncementMessageTextBlock.Text = "Announcement published successfully.";
+            AnnouncementMessageTextBlock.Text = _isAnnouncementEditMode
+                ? "Announcement updated successfully."
+                : "Announcement published successfully.";
 
-            DashboardMessageTextBlock.Text = "The announcement was published and linked to the selected events/courses.";
+            DashboardMessageTextBlock.Text = _isAnnouncementEditMode
+                ? "The announcement was updated successfully."
+                : "The announcement was published and linked to the selected events/courses.";
         }
 
         private List<AnnouncementTarget> GetSelectedAnnouncementTargets()
@@ -786,6 +1112,10 @@ namespace ActivityProjectApp.Views
             AnnouncementStatusComboBox.SelectedIndex = 0;
 
             LoadAnnouncementTargetItems();
+            _isAnnouncementEditMode = false;
+            _editingAnnouncementId = 0;
+
+            PublishAnnouncementButton.Content = "Publish";
         }
 
         private List<Announcement> GetProviderAnnouncements(ServiceProvider serviceProvider)
@@ -888,6 +1218,13 @@ namespace ActivityProjectApp.Views
             CourseStartTimeTextBox.Text = string.Empty;
             CourseEndTimeTextBox.Text = string.Empty;
             CourseAgeRestrictionTextBox.Text = string.Empty;
+
+            _isEditMode = false;
+            _editingItemId = 0;
+            _editingActivityType = string.Empty;
+
+            CreateItemTypeComboBox.IsEnabled = true;
+            SaveEventButton.Content = "Publish";
 
             UpdateCreateFormMode();
         }

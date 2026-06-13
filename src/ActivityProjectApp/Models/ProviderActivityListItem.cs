@@ -2,6 +2,8 @@ namespace ActivityProjectApp.Models
 {
     public class ProviderActivityListItem
     {
+        public int ItemId { get; set; }
+
         public string ActivityType { get; set; } = string.Empty;
 
         public string Title { get; set; } = string.Empty;

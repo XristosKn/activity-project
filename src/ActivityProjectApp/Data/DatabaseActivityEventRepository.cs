@@ -63,5 +63,59 @@ namespace ActivityProjectApp.Data
                     activityEvent.Address.ToLower().Contains(normalizedSearchText))
                 .ToList();
         }
+
+        public ActivityEvent? GetEventById(int eventId)
+        {
+            using AppDbContext dbContext = new AppDbContext();
+
+            return dbContext.ActivityEvents
+                .FirstOrDefault(activityEvent => activityEvent.Id == eventId);
+        }
+
+        public void UpdateEvent(ActivityEvent updatedEvent)
+        {
+            using AppDbContext dbContext = new AppDbContext();
+
+            ActivityEvent? existingEvent = dbContext.ActivityEvents
+                .FirstOrDefault(activityEvent => activityEvent.Id == updatedEvent.Id);
+
+            if (existingEvent == null)
+            {
+                return;
+            }
+
+            existingEvent.Title = updatedEvent.Title;
+            existingEvent.Category = updatedEvent.Category;
+            existingEvent.Description = updatedEvent.Description;
+            existingEvent.Latitude = updatedEvent.Latitude;
+            existingEvent.Longitude = updatedEvent.Longitude;
+            existingEvent.Address = updatedEvent.Address;
+            existingEvent.Date = updatedEvent.Date;
+            existingEvent.Time = updatedEvent.Time;
+            existingEvent.Price = updatedEvent.Price;
+            existingEvent.MaxSpace = updatedEvent.MaxSpace;
+            existingEvent.MainImagePath = updatedEvent.MainImagePath;
+            existingEvent.Gallery = updatedEvent.Gallery;
+            existingEvent.ServiceProviderId = updatedEvent.ServiceProviderId;
+            existingEvent.Status = updatedEvent.Status;
+
+            dbContext.SaveChanges();
+        }
+
+        public void DeleteEvent(int eventId)
+        {
+            using AppDbContext dbContext = new AppDbContext();
+
+            ActivityEvent? existingEvent = dbContext.ActivityEvents
+                .FirstOrDefault(activityEvent => activityEvent.Id == eventId);
+
+            if (existingEvent == null)
+            {
+                return;
+            }
+
+            dbContext.ActivityEvents.Remove(existingEvent);
+            dbContext.SaveChanges();
+        }
     }
 }

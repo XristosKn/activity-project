@@ -65,5 +65,60 @@ namespace ActivityProjectApp.Data
                     course.AgeRestriction.ToLower().Contains(normalizedSearchText))
                 .ToList();
         }
+        public Course? GetCourseById(int courseId)
+        {
+            using AppDbContext dbContext = new AppDbContext();
+
+            return dbContext.Courses
+                .FirstOrDefault(course => course.Id == courseId);
+        }
+
+        public void UpdateCourse(Course updatedCourse)
+        {
+            using AppDbContext dbContext = new AppDbContext();
+
+            Course? existingCourse = dbContext.Courses
+                .FirstOrDefault(course => course.Id == updatedCourse.Id);
+
+            if (existingCourse == null)
+            {
+                return;
+            }
+
+            existingCourse.Title = updatedCourse.Title;
+            existingCourse.Category = updatedCourse.Category;
+            existingCourse.Description = updatedCourse.Description;
+            existingCourse.Latitude = updatedCourse.Latitude;
+            existingCourse.Longitude = updatedCourse.Longitude;
+            existingCourse.Address = updatedCourse.Address;
+            existingCourse.Days = updatedCourse.Days;
+            existingCourse.StartTime = updatedCourse.StartTime;
+            existingCourse.EndTime = updatedCourse.EndTime;
+            existingCourse.Price = updatedCourse.Price;
+            existingCourse.MaxSpace = updatedCourse.MaxSpace;
+            existingCourse.AgeRestriction = updatedCourse.AgeRestriction;
+            existingCourse.MainImagePath = updatedCourse.MainImagePath;
+            existingCourse.Gallery = updatedCourse.Gallery;
+            existingCourse.ServiceProviderId = updatedCourse.ServiceProviderId;
+            existingCourse.Status = updatedCourse.Status;
+
+            dbContext.SaveChanges();
+        }
+
+        public void DeleteCourse(int courseId)
+        {
+            using AppDbContext dbContext = new AppDbContext();
+
+            Course? existingCourse = dbContext.Courses
+                .FirstOrDefault(course => course.Id == courseId);
+
+            if (existingCourse == null)
+            {
+                return;
+            }
+
+            dbContext.Courses.Remove(existingCourse);
+            dbContext.SaveChanges();
+        }
     }
 }

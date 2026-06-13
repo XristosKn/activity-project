@@ -126,5 +126,68 @@ namespace ActivityProjectApp.Data
             announcement.IsActive = true;
             dbContext.SaveChanges();
         }
+        public Announcement? GetAnnouncementById(int announcementId)
+        {
+            using AppDbContext dbContext = new AppDbContext();
+
+            return dbContext.Announcements
+                .FirstOrDefault(announcement => announcement.Id == announcementId);
+        }
+
+        public void UpdateAnnouncement(Announcement updatedAnnouncement, List<AnnouncementTarget> updatedTargets)
+        {
+            using AppDbContext dbContext = new AppDbContext();
+
+            Announcement? existingAnnouncement = dbContext.Announcements
+                .FirstOrDefault(announcement => announcement.Id == updatedAnnouncement.Id);
+
+            if (existingAnnouncement == null)
+            {
+                return;
+            }
+
+            existingAnnouncement.Title = updatedAnnouncement.Title;
+            existingAnnouncement.Text = updatedAnnouncement.Text;
+            existingAnnouncement.AnnouncementDate = updatedAnnouncement.AnnouncementDate;
+            existingAnnouncement.Gallery = updatedAnnouncement.Gallery;
+            existingAnnouncement.IsActive = updatedAnnouncement.IsActive;
+            existingAnnouncement.ServiceProviderId = updatedAnnouncement.ServiceProviderId;
+
+            List<AnnouncementTarget> existingTargets = dbContext.AnnouncementTargets
+                .Where(target => target.AnnouncementId == updatedAnnouncement.Id)
+                .ToList();
+
+            dbContext.AnnouncementTargets.RemoveRange(existingTargets);
+
+            foreach (AnnouncementTarget target in updatedTargets)
+            {
+                target.AnnouncementId = updatedAnnouncement.Id;
+                dbContext.AnnouncementTargets.Add(target);
+            }
+
+            dbContext.SaveChanges();
+        }
+
+        public void DeleteAnnouncement(int announcementId)
+        {
+            using AppDbContext dbContext = new AppDbContext();
+
+            Announcement? existingAnnouncement = dbContext.Announcements
+                .FirstOrDefault(announcement => announcement.Id == announcementId);
+
+            if (existingAnnouncement == null)
+            {
+                return;
+            }
+
+            List<AnnouncementTarget> existingTargets = dbContext.AnnouncementTargets
+                .Where(target => target.AnnouncementId == announcementId)
+                .ToList();
+
+            dbContext.AnnouncementTargets.RemoveRange(existingTargets);
+            dbContext.Announcements.Remove(existingAnnouncement);
+
+            dbContext.SaveChanges();
+        }
     }
 }
