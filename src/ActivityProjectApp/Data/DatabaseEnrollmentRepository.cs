@@ -48,6 +48,16 @@ namespace ActivityProjectApp.Data
                     enrollment.ItemType == itemType &&
                     enrollment.Status != EnrollmentStatus.Cancelled);
         }
+        public int GetActiveEnrollmentCount(int itemId, EnrollmentItemType itemType)
+        {
+            using AppDbContext dbContext = new AppDbContext();
+
+            return dbContext.Enrollments
+                .Count(enrollment =>
+                    enrollment.ItemId == itemId &&
+                    enrollment.ItemType == itemType &&
+                    enrollment.Status != EnrollmentStatus.Cancelled);
+        }
 
         public Enrollment CreateEnrollment(int customerId, int itemId, EnrollmentItemType itemType)
         {

@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ActivityProjectApp.Views.MiniMapView">
+
+    <Border Background="#DBEAFE"
+            CornerRadius="16"
+            BorderBrush="#93C5FD"
+            BorderThickness="1"
+            ClipToBounds="True">
+
+        <Grid>
+
+            <ContentControl x:Name="MiniMapHost"/>
+
+            <Border Background="#FFFFFFE8"
+                    CornerRadius="10"
+                    Padding="10,7"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Margin="10"
+                    BorderBrush="#E5E7EB"
+                    BorderThickness="1">
+
+                <TextBlock x:Name="AddressTextBlock"
+                           Text=""
+                           FontSize="12"
+                           FontWeight="SemiBold"
+                           Foreground="#1F2937"
+                           TextWrapping="Wrap"
+                           MaxWidth="420"/>
+
+            </Border>
+
+        </Grid>
+
+    </Border>
+
+</UserControl>

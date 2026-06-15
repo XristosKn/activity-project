@@ -12,31 +12,23 @@ using Mapsui.UI.Avalonia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ActivityProjectApp.Views
 {
     public partial class CustomerDashboardView : UserControl
     {
         private readonly AuthService _authService;
-
         private readonly MapControl _mapControl;
 
         private List<CustomerActivityListItem> _currentActivities = new List<CustomerActivityListItem>();
-
         private CustomerActivityListItem? _selectedActivity;
 
         private bool _isViewLoaded = false;
-
         private int _currentZoomLevel = 13;
 
         private const double DefaultLatitude = 37.9838;
         private const double DefaultLongitude = 23.7275;
-
         private const string ActivityEventsLayerName = "Activity Events Layer";
-
-        private readonly Dictionary<string, int> _pinBitmapIdsByColor = new Dictionary<string, int>();
-        
 
         public CustomerDashboardView()
         {
@@ -70,6 +62,10 @@ namespace ActivityProjectApp.Views
             SaveButton.Click += SaveButton_Click;
 
             AvailableEventsItemsControl.SelectionChanged += AvailableEventsItemsControl_SelectionChanged;
+            AvailableEventsItemsControl.AddHandler(
+                Button.ClickEvent,
+                AvailableEventsItemsControl_ButtonClick,
+                RoutingStrategies.Bubble);
 
             Loaded += CustomerDashboardView_Loaded;
         }
@@ -77,7 +73,6 @@ namespace ActivityProjectApp.Views
         private void CustomerDashboardView_Loaded(object? sender, RoutedEventArgs e)
         {
             _isViewLoaded = true;
-
             RefreshMapView();
         }
 
@@ -88,11 +83,27 @@ namespace ActivityProjectApp.Views
             if (currentUser != null)
             {
                 WelcomeTextBlock.Text = $"Welcome, {currentUser.Name} {currentUser.LastName}";
+                return;
             }
-            else
-            {
-                WelcomeTextBlock.Text = "Welcome, Customer";
-            }
+
+            WelcomeTextBlock.Text = "Welcome, Customer";
+        }
+
+        private void ShowSuccessMessage(string message)
+        {
+            DashboardMessageTextBlock.Foreground = Avalonia.Media.Brushes.Green;
+            DashboardMessageTextBlock.Text = message;
+        }
+
+        private void ShowErrorMessage(string message)
+        {
+            DashboardMessageTextBlock.Foreground = Avalonia.Media.Brushes.Red;
+            DashboardMessageTextBlock.Text = message;
+        }
+
+        private void ClearDashboardMessage()
+        {
+            DashboardMessageTextBlock.Text = string.Empty;
         }
 
         private void LoadAvailableEvents()
@@ -104,11 +115,11 @@ namespace ActivityProjectApp.Views
 
             if (_currentActivities.Count == 0)
             {
-                DashboardMessageTextBlock.Text = "No active events or courses are available yet.";
+                ShowErrorMessage("No active events or courses are available yet.");
             }
             else
             {
-                DashboardMessageTextBlock.Text = string.Empty;
+                ClearDashboardMessage();
             }
 
             RefreshMapView();
@@ -118,6 +129,21 @@ namespace ActivityProjectApp.Views
         {
             List<CustomerActivityListItem> activities = new List<CustomerActivityListItem>();
 
+            Customer? currentCustomer = _authService.GetCurrentUser() as Customer;
+
+            List<SavedItem> customerSavedItems = currentCustomer == null
+                ? new List<SavedItem>()
+                : AppServices.SavedItemRepository.GetSavedItemsByCustomerId(currentCustomer.Id);
+
+            List<Enrollment> customerEnrollments = currentCustomer == null
+                ? new List<Enrollment>()
+                : AppServices.EnrollmentRepository.GetEnrollmentsByCustomerId(currentCustomer.Id);
+
+            List<Enrollment> allActiveEnrollments = AppServices.EnrollmentRepository
+                .GetAllEnrollments()
+                .Where(enrollment => enrollment.Status != EnrollmentStatus.Cancelled)
+                .ToList();
+
             List<ActivityEvent> activeEvents = string.IsNullOrWhiteSpace(searchText)
                 ? AppServices.ActivityEventRepository.GetActiveEvents()
                 : AppServices.ActivityEventRepository.SearchActiveEvents(searchText);
@@ -126,41 +152,87 @@ namespace ActivityProjectApp.Views
                 ? AppServices.CourseRepository.GetActiveCourses()
                 : AppServices.CourseRepository.SearchActiveCourses(searchText);
 
-            activities.AddRange(activeEvents.Select(activityEvent => new CustomerActivityListItem
+            foreach (ActivityEvent activityEvent in activeEvents)
             {
-                ItemId = activityEvent.Id,
-                ItemType = EnrollmentItemType.Event,
-                ActivityType = "Event",
-                Title = activityEvent.Title,
-                Category = activityEvent.Category,
-                Description = activityEvent.Description,
-                Latitude = activityEvent.Latitude,
-                Longitude = activityEvent.Longitude,
-                Address = activityEvent.Address,
-                ScheduleText = $"{activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm}",
-                Price = activityEvent.Price,
-                PriceText = $"€{activityEvent.Price}",
-                MaxSpace = activityEvent.MaxSpace,
-                ExtraInfoText = $"Event | {activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm} | €{activityEvent.Price} | Max spaces: {activityEvent.MaxSpace}"
-            }));
+                int currentEnrollmentsCount = allActiveEnrollments.Count(enrollment =>
+                    enrollment.ItemId == activityEvent.Id &&
+                    enrollment.ItemType == EnrollmentItemType.Event);
 
-            activities.AddRange(activeCourses.Select(course => new CustomerActivityListItem
+                if (currentEnrollmentsCount >= activityEvent.MaxSpace)
+                {
+                    continue;
+                }
+
+                bool isSaved = customerSavedItems.Any(savedItem =>
+                    savedItem.ItemId == activityEvent.Id &&
+                    savedItem.ItemType == SavedItemType.Event);
+
+                bool isAlreadyEnrolled = customerEnrollments.Any(enrollment =>
+                    enrollment.ItemId == activityEvent.Id &&
+                    enrollment.ItemType == EnrollmentItemType.Event &&
+                    enrollment.Status != EnrollmentStatus.Cancelled);
+
+                activities.Add(new CustomerActivityListItem
+                {
+                    ItemId = activityEvent.Id,
+                    ItemType = EnrollmentItemType.Event,
+                    ActivityType = "Event",
+                    Title = activityEvent.Title,
+                    Category = activityEvent.Category,
+                    Description = activityEvent.Description,
+                    Latitude = activityEvent.Latitude,
+                    Longitude = activityEvent.Longitude,
+                    Address = activityEvent.Address,
+                    ScheduleText = $"{activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm}",
+                    Price = activityEvent.Price,
+                    PriceText = $"€{activityEvent.Price}",
+                    MaxSpace = activityEvent.MaxSpace,
+                    ExtraInfoText = $"Event | {activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm} | €{activityEvent.Price} | Max spaces: {activityEvent.MaxSpace}",
+                    IsSaved = isSaved,
+                    IsAlreadyEnrolled = isAlreadyEnrolled
+                });
+            }
+
+            foreach (Course course in activeCourses)
             {
-                ItemId = course.Id,
-                ItemType = EnrollmentItemType.Course,
-                ActivityType = "Course",
-                Title = course.Title,
-                Category = course.Category,
-                Description = course.Description,
-                Latitude = course.Latitude,
-                Longitude = course.Longitude,
-                Address = course.Address,
-                ScheduleText = $"{course.Days}, {course.StartTime:hh\\:mm} - {course.EndTime:hh\\:mm}",
-                Price = course.Price,
-                PriceText = $"€{course.Price}",
-                MaxSpace = course.MaxSpace,
-                ExtraInfoText = $"Course | {course.Days}, {course.StartTime:hh\\:mm} - {course.EndTime:hh\\:mm} | €{course.Price} | Max spaces: {course.MaxSpace} | Age: {course.AgeRestriction}"
-            }));
+                int currentEnrollmentsCount = allActiveEnrollments.Count(enrollment =>
+                    enrollment.ItemId == course.Id &&
+                    enrollment.ItemType == EnrollmentItemType.Course);
+
+                if (currentEnrollmentsCount >= course.MaxSpace)
+                {
+                    continue;
+                }
+
+                bool isSaved = customerSavedItems.Any(savedItem =>
+                    savedItem.ItemId == course.Id &&
+                    savedItem.ItemType == SavedItemType.Course);
+
+                bool isAlreadyEnrolled = customerEnrollments.Any(enrollment =>
+                    enrollment.ItemId == course.Id &&
+                    enrollment.ItemType == EnrollmentItemType.Course &&
+                    enrollment.Status != EnrollmentStatus.Cancelled);
+
+                activities.Add(new CustomerActivityListItem
+                {
+                    ItemId = course.Id,
+                    ItemType = EnrollmentItemType.Course,
+                    ActivityType = "Course",
+                    Title = course.Title,
+                    Category = course.Category,
+                    Description = course.Description,
+                    Latitude = course.Latitude,
+                    Longitude = course.Longitude,
+                    Address = course.Address,
+                    ScheduleText = $"{course.Days}, {course.StartTime:hh\\:mm} - {course.EndTime:hh\\:mm}",
+                    Price = course.Price,
+                    PriceText = $"€{course.Price}",
+                    MaxSpace = course.MaxSpace,
+                    ExtraInfoText = $"Course | {course.Days}, {course.StartTime:hh\\:mm} - {course.EndTime:hh\\:mm} | €{course.Price} | Max spaces: {course.MaxSpace} | Age: {course.AgeRestriction}",
+                    IsSaved = isSaved,
+                    IsAlreadyEnrolled = isAlreadyEnrolled
+                });
+            }
 
             return activities;
         }
@@ -169,6 +241,10 @@ namespace ActivityProjectApp.Views
         {
             string searchText = SearchTextBox.Text?.Trim() ?? string.Empty;
 
+            _selectedActivity = null;
+            SelectedEventPanel.IsVisible = false;
+            AvailableEventsItemsControl.SelectedItem = null;
+
             _currentActivities = GetAvailableActivities(searchText);
 
             AvailableEventsItemsControl.ItemsSource = _currentActivities;
@@ -176,27 +252,29 @@ namespace ActivityProjectApp.Views
 
             if (_currentActivities.Count == 0)
             {
-                DashboardMessageTextBlock.Text = "No events or courses found for your search.";
-                SelectedEventPanel.IsVisible = false;
-                _selectedActivity = null;
-                AvailableEventsItemsControl.SelectedItem = null;
+                ShowErrorMessage("No events or courses found for your search.");
             }
             else
             {
-                DashboardMessageTextBlock.Text = string.Empty;
+                ClearDashboardMessage();
             }
 
+            UpdateSaveButtonState();
+            UpdateEnrollButtonState();
             RefreshMapView();
         }
 
         private void ClearSearchButton_Click(object? sender, RoutedEventArgs e)
         {
             SearchTextBox.Text = string.Empty;
+
             _selectedActivity = null;
             SelectedEventPanel.IsVisible = false;
             AvailableEventsItemsControl.SelectedItem = null;
 
             UpdateSaveButtonState();
+            UpdateEnrollButtonState();
+
             LoadAvailableEvents();
         }
 
@@ -214,17 +292,50 @@ namespace ActivityProjectApp.Views
 
             return SavedItemType.Event;
         }
+
         private void EnrollButton_Click(object? sender, RoutedEventArgs e)
         {
             if (_selectedActivity == null)
             {
-                DashboardMessageTextBlock.Text = "Please select an event or course before enrolling.";
+                ShowErrorMessage("Please select an event or course before enrolling.");
                 return;
             }
 
             if (_authService.GetCurrentUser() is not Customer customer)
             {
-                DashboardMessageTextBlock.Text = "Only customers can enroll.";
+                ShowErrorMessage("Only customers can enroll.");
+                return;
+            }
+
+            bool alreadyEnrolled = AppServices.EnrollmentRepository.IsCustomerEnrolled(
+                customer.Id,
+                _selectedActivity.ItemId,
+                _selectedActivity.ItemType);
+
+            if (alreadyEnrolled)
+            {
+                ShowErrorMessage("You are already enrolled in this item.");
+                UpdateEnrollButtonState();
+                return;
+            }
+
+            int currentEnrollmentsCount = AppServices.EnrollmentRepository.GetActiveEnrollmentCount(
+                _selectedActivity.ItemId,
+                _selectedActivity.ItemType);
+
+            if (currentEnrollmentsCount >= _selectedActivity.MaxSpace)
+            {
+                ShowErrorMessage("This event/course is full. Enrollment is not available.");
+
+                _selectedActivity = null;
+                SelectedEventPanel.IsVisible = false;
+                AvailableEventsItemsControl.SelectedItem = null;
+
+                ReloadAvailableActivitiesPreservingMap(false);
+
+                UpdateSaveButtonState();
+                UpdateEnrollButtonState();
+
                 return;
             }
 
@@ -260,7 +371,7 @@ namespace ActivityProjectApp.Views
             }
             catch (Exception ex)
             {
-                DashboardMessageTextBlock.Text = $"Map loading error: {ex.Message}";
+                ShowErrorMessage($"Map loading error: {ex.Message}");
             }
         }
 
@@ -338,38 +449,6 @@ namespace ActivityProjectApp.Views
             };
         }
 
-        private int GetOrCreatePinBitmapId(string fillColorHex, string outlineColorHex)
-        {
-            string key = $"pin-{fillColorHex}-{outlineColorHex}";
-
-            if (_pinBitmapIdsByColor.TryGetValue(key, out int existingBitmapId))
-            {
-                return existingBitmapId;
-            }
-
-            string svg = CreatePinSvg(fillColorHex, outlineColorHex);
-
-            byte[] svgBytes = Encoding.UTF8.GetBytes(svg);
-
-            int bitmapId = BitmapRegistry.Instance.Register(svgBytes);
-
-            _pinBitmapIdsByColor[key] = bitmapId;
-
-            return bitmapId;
-        }
-
-        private string CreatePinSvg(string fillColor, string outlineColor)
-        {
-            return $@"
-        <svg width=""48"" height=""64"" viewBox=""0 0 48 64"" xmlns=""http://www.w3.org/2000/svg"">
-            <path d=""M24 2 C12 2 4 11 4 23 C4 40 24 62 24 62 C24 62 44 40 44 23 C44 11 36 2 24 2 Z""
-                fill=""{fillColor}""
-                stroke=""{outlineColor}""
-                stroke-width=""4""/>
-            <circle cx=""24"" cy=""23"" r=""8""
-                    fill=""#FFFFFF""/>
-        </svg>";
-        }
         private void RemoveExistingActivityEventLayer()
         {
             if (_mapControl.Map == null)
@@ -477,14 +556,12 @@ namespace ActivityProjectApp.Views
         private void ZoomInButton_Click(object? sender, RoutedEventArgs e)
         {
             _currentZoomLevel++;
-
             CenterMapOnCurrentEvents();
         }
 
         private void ZoomOutButton_Click(object? sender, RoutedEventArgs e)
         {
             _currentZoomLevel--;
-
             CenterMapOnCurrentEvents();
         }
 
@@ -497,6 +574,7 @@ namespace ActivityProjectApp.Views
 
             SelectActivity(selectedActivity);
         }
+
         private void SelectActivity(CustomerActivityListItem activity)
         {
             _selectedActivity = activity;
@@ -515,29 +593,114 @@ namespace ActivityProjectApp.Views
                 CategoryStyleHelper.GetAvaloniaBrush(activity.Category);
 
             SelectedEventAddressTextBlock.Text = activity.Address;
-
             SelectedEventInfoTextBlock.Text = activity.ExtraInfoText;
 
-            DashboardMessageTextBlock.Text = $"Selected {activity.ActivityType.ToLower()}: {activity.Title}";
+            ShowSuccessMessage($"Selected {activity.ActivityType.ToLower()}: {activity.Title}");
 
             SetMapView(activity.Latitude, activity.Longitude, _currentZoomLevel);
 
             UpdateSaveButtonState();
+            UpdateEnrollButtonState();
+        }
 
-            UpdateActivityEventLayer();
+        private void AvailableEventsItemsControl_ButtonClick(object? sender, RoutedEventArgs e)
+        {
+            if (e.Source is not Button button)
+            {
+                return;
+            }
+
+            if (!button.Classes.Contains("activity-card-unsave-button"))
+            {
+                return;
+            }
+
+            if (button.Tag is not CustomerActivityListItem activityItem)
+            {
+                return;
+            }
+
+            UnsaveActivityFromCard(activityItem);
+
+            e.Handled = true;
+        }
+
+        private void UnsaveActivityFromCard(CustomerActivityListItem activityItem)
+        {
+            if (_authService.GetCurrentUser() is not Customer customer)
+            {
+                ShowErrorMessage("Only customers can remove saved items.");
+                return;
+            }
+
+            SavedItemType savedItemType = ConvertToSavedItemType(activityItem.ItemType);
+
+            AppServices.SavedItemRepository.RemoveSavedItem(
+                customer.Id,
+                activityItem.ItemId,
+                savedItemType);
+
+            ShowSuccessMessage($"{activityItem.Title} removed from saved items.");
+
+            activityItem.IsSaved = false;
+
+            ReloadAvailableActivitiesPreservingMap(false);
+            UpdateSelectedActivityAfterListReload(activityItem.ItemId, activityItem.ItemType);
+        }
+
+        private void ReloadAvailableActivitiesPreservingMap(bool refreshMap)
+        {
+            string searchText = SearchTextBox.Text?.Trim() ?? string.Empty;
+
+            _currentActivities = GetAvailableActivities(searchText);
+
+            AvailableEventsItemsControl.ItemsSource = null;
+            AvailableEventsItemsControl.ItemsSource = _currentActivities;
+
+            EventsCountTextBlock.Text = $"{_currentActivities.Count} activities found";
+
+            if (refreshMap)
+            {
+                RefreshMapView();
+            }
+        }
+
+        private void UpdateSelectedActivityAfterListReload(int itemId, EnrollmentItemType itemType)
+        {
+            CustomerActivityListItem? refreshedSelectedActivity = _currentActivities
+                .FirstOrDefault(activity =>
+                    activity.ItemId == itemId &&
+                    activity.ItemType == itemType);
+
+            if (refreshedSelectedActivity == null)
+            {
+                _selectedActivity = null;
+                SelectedEventPanel.IsVisible = false;
+                AvailableEventsItemsControl.SelectedItem = null;
+
+                UpdateSaveButtonState();
+                UpdateEnrollButtonState();
+                return;
+            }
+
+            _selectedActivity = refreshedSelectedActivity;
+            AvailableEventsItemsControl.SelectedItem = refreshedSelectedActivity;
+
+            UpdateSaveButtonState();
+            UpdateEnrollButtonState();
         }
 
         private void SaveButton_Click(object? sender, RoutedEventArgs e)
         {
             if (_selectedActivity == null)
             {
-                DashboardMessageTextBlock.Text = "Please select an event or course before saving.";
+                ShowErrorMessage("Please select an event or course before saving.");
                 return;
             }
 
             if (_authService.GetCurrentUser() is not Customer customer)
             {
-                DashboardMessageTextBlock.Text = "Only customers can save items.";
+                ShowErrorMessage("Only customers can save items.");
                 return;
             }
 
@@ -548,6 +711,9 @@ namespace ActivityProjectApp.Views
                 _selectedActivity.ItemId,
                 savedItemType);
 
+            int selectedItemId = _selectedActivity.ItemId;
+            EnrollmentItemType selectedItemType = _selectedActivity.ItemType;
+
             if (alreadySaved)
             {
                 AppServices.SavedItemRepository.RemoveSavedItem(
@@ -555,7 +721,7 @@ namespace ActivityProjectApp.Views
                     _selectedActivity.ItemId,
                     savedItemType);
 
-                DashboardMessageTextBlock.Text = $"{_selectedActivity.Title} removed from saved items.";
+                ShowSuccessMessage($"{_selectedActivity.Title} removed from saved items.");
             }
             else
             {
@@ -564,10 +730,11 @@ namespace ActivityProjectApp.Views
                     _selectedActivity.ItemId,
                     savedItemType);
 
-                DashboardMessageTextBlock.Text = $"{_selectedActivity.Title} saved successfully.";
+                ShowSuccessMessage($"{_selectedActivity.Title} saved successfully.");
             }
 
-            UpdateSaveButtonState();
+            ReloadAvailableActivitiesPreservingMap(false);
+            UpdateSelectedActivityAfterListReload(selectedItemId, selectedItemType);
         }
 
         private void UpdateSaveButtonState()
@@ -605,6 +772,38 @@ namespace ActivityProjectApp.Views
             }
         }
 
+        private void UpdateEnrollButtonState()
+        {
+            if (_selectedActivity == null)
+            {
+                EnrollButton.Content = "Enroll";
+                EnrollButton.IsEnabled = true;
+                return;
+            }
+
+            if (_authService.GetCurrentUser() is not Customer customer)
+            {
+                EnrollButton.Content = "Enroll";
+                EnrollButton.IsEnabled = true;
+                return;
+            }
+
+            bool alreadyEnrolled = AppServices.EnrollmentRepository.IsCustomerEnrolled(
+                customer.Id,
+                _selectedActivity.ItemId,
+                _selectedActivity.ItemType);
+
+            if (alreadyEnrolled)
+            {
+                EnrollButton.Content = "Enrolled";
+                EnrollButton.IsEnabled = false;
+                return;
+            }
+
+            EnrollButton.Content = "Enroll";
+            EnrollButton.IsEnabled = true;
+        }
+
         private void ProfileButton_Click(object? sender, RoutedEventArgs e)
         {
             MainWindow? mainWindow = this.VisualRoot as MainWindow;
@@ -616,6 +815,7 @@ namespace ActivityProjectApp.Views
 
             mainWindow.Content = new CustomerProfileView();
         }
+
         private void LogoutButton_Click(object? sender, RoutedEventArgs e)
         {
             _authService.Logout();

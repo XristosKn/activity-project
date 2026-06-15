@@ -10,58 +10,11 @@
     </UserControl.Resources>
 
     <UserControl.Styles>
-        <!-- Section titles -->
-        <Style Selector="TextBlock.section-title">
-            <Setter Property="FontSize" Value="25"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="#1E3A8A"/>
-        </Style>
 
-        <Style Selector="TextBlock.subsection-title">
-            <Setter Property="FontSize" Value="20"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="#1E3A8A"/>
-        </Style>
-
-        <Style Selector="TextBlock.panel-description">
-            <Setter Property="FontSize" Value="14"/>
+        <Style Selector="Button.primary-action:disabled">
+            <Setter Property="Background" Value="#D1D5DB"/>
             <Setter Property="Foreground" Value="#6B7280"/>
-            <Setter Property="TextWrapping" Value="Wrap"/>
-        </Style>
-
-        <!-- Secondary button -->
-        <Style Selector="Button.secondary-action">
-            <Setter Property="Background" Value="#F8FAFC"/>
-            <Setter Property="Foreground" Value="#1F2937"/>
-            <Setter Property="BorderBrush" Value="#E5E7EB"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,6"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-
-        <Style Selector="Button.secondary-action:pointerover">
-            <Setter Property="Background" Value="#EEF2F7"/>
-            <Setter Property="BorderBrush" Value="#CBD5E1"/>
-        </Style>
-
-        <!-- Small map buttons -->
-        <Style Selector="Button.map-tool-button">
-            <Setter Property="Width" Value="42"/>
-            <Setter Property="Height" Value="42"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="#111827"/>
             <Setter Property="BorderBrush" Value="#D1D5DB"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="10"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-        </Style>
-
-        <Style Selector="Button.map-tool-button:pointerover">
-            <Setter Property="Background" Value="#EEF2F7"/>
-            <Setter Property="BorderBrush" Value="#CBD5E1"/>
         </Style>
 
         <!-- Shared template for blue primary buttons -->
@@ -80,10 +33,10 @@
                             CornerRadius="8">
 
                         <ContentPresenter Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        Padding="{TemplateBinding Padding}"
-                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
                     </Border>
                 </ControlTemplate>
@@ -102,7 +55,6 @@
             <Setter Property="BorderBrush" Value="#1E40AF"/>
         </Style>
 
-
         <!-- Save button when not saved -->
         <Style Selector="Button.save-action">
             <Setter Property="Background" Value="#2563EB"/>
@@ -119,10 +71,10 @@
                             CornerRadius="8">
 
                         <ContentPresenter Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        Padding="{TemplateBinding Padding}"
-                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
                     </Border>
                 </ControlTemplate>
@@ -140,7 +92,6 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderBrush" Value="#1E40AF"/>
         </Style>
-
 
         <!-- Save button when already saved -->
         <Style Selector="Button.save-action.saved">
@@ -161,6 +112,59 @@
             <Setter Property="BorderBrush" Value="#991B1B"/>
         </Style>
 
+        <!-- Default activity card -->
+        <Style Selector="Border.event-card">
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!-- Saved activity card -->
+        <Style Selector="Border.event-card.saved">
+            <Setter Property="Background" Value="#E5E7EB"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <!-- Hovered activity card -->
+        <Style Selector="ListBoxItem:pointerover Border.event-card">
+            <Setter Property="Background" Value="#F3F4F6"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+        </Style>
+
+        <!-- Hovered saved activity card -->
+        <Style Selector="ListBoxItem:pointerover Border.event-card.saved">
+            <Setter Property="Background" Value="#D1D5DB"/>
+            <Setter Property="BorderBrush" Value="#94A3B8"/>
+        </Style>
+
+        <!-- Selected activity card -->
+        <Style Selector="ListBoxItem:selected Border.event-card">
+            <Setter Property="Background" Value="#E5E7EB"/>
+            <Setter Property="BorderBrush" Value="#9CA3AF"/>
+        </Style>
+
+        <!-- Unsave button inside activity card -->
+        <Style Selector="Button.activity-card-unsave-button">
+            <Setter Property="Width" Value="82"/>
+            <Setter Property="Height" Value="28"/>
+            <Setter Property="Background" Value="#FEE2E2"/>
+            <Setter Property="Foreground" Value="#B91C1C"/>
+            <Setter Property="BorderBrush" Value="#FECACA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.activity-card-unsave-button:pointerover">
+            <Setter Property="Background" Value="#FECACA"/>
+            <Setter Property="BorderBrush" Value="#FCA5A5"/>
+        </Style>
+
     </UserControl.Styles>
 
     <Grid RowDefinitions="Auto,*"
@@ -169,47 +173,52 @@
         <!-- Top bar -->
         <Border Grid.Row="0"
                 Background="White"
-                Padding="24,18"
-                BorderBrush="#E5E7EB"
+                Padding="22,18"
+                BorderBrush="#E1E5EA"
                 BorderThickness="0,0,0,1">
 
-            <Grid ColumnDefinitions="*,Auto">
+            <DockPanel LastChildFill="True">
 
-                <StackPanel Grid.Column="0"
-                            Spacing="4">
-
-                    <TextBlock Text="Activity Map"
-                            FontSize="28"
-                            FontWeight="Bold"
-                            Foreground="#1E3A8A"/>
-
-                    <TextBlock x:Name="WelcomeTextBlock"
-                            Text="Welcome"
-                            FontSize="14"
-                            Foreground="#6B7280"/>
-
-                </StackPanel>
-
-                <StackPanel Grid.Column="1"
+                <StackPanel DockPanel.Dock="Right"
                             Orientation="Horizontal"
-                            Spacing="10"
-                            VerticalAlignment="Center">
+                            Spacing="10">
 
                     <Button x:Name="ProfileButton"
-                            Classes="secondary-action"
                             Content="Profile"
                             Width="110"
-                            Height="38"/>
+                            Height="38"
+                            Background="#F1F3F5"
+                            Foreground="#1F2937"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
 
                     <Button x:Name="LogoutButton"
-                            Classes="secondary-action"
                             Content="Logout"
                             Width="110"
-                            Height="38"/>
+                            Height="38"
+                            Background="#F1F3F5"
+                            Foreground="#1F2937"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
 
                 </StackPanel>
 
-            </Grid>
+                <StackPanel DockPanel.Dock="Left"
+                            Spacing="3">
+
+                    <TextBlock Text="Activity Map"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               Foreground="#111827"/>
+
+                    <TextBlock x:Name="WelcomeTextBlock"
+                               Text="Welcome"
+                               FontSize="14"
+                               Foreground="#6B7280"/>
+
+                </StackPanel>
+
+            </DockPanel>
 
         </Border>
 
@@ -222,49 +231,43 @@
             <Border Grid.Row="0"
                     Background="White"
                     CornerRadius="18"
-                    Padding="20"
+                    Padding="18"
                     Margin="0,0,0,20"
                     BorderBrush="#E5E7EB"
                     BorderThickness="1">
 
-                <StackPanel Spacing="12">
+                <Grid ColumnDefinitions="*,Auto,Auto">
 
-                    <TextBlock Text="Search Activities"
-                            Classes="subsection-title"/>
+                    <TextBox x:Name="SearchTextBox"
+                             Grid.Column="0"
+                             Watermark="Search by activity, category, description or area..."
+                             Height="42"
+                             Margin="0,0,12,0"
+                             Background="#F9FAFB"
+                             Foreground="#111827"
+                             BorderBrush="#D1D5DB"/>
 
-                    <Grid ColumnDefinitions="*,Auto,Auto">
+                    <Button x:Name="SearchButton"
+                            Classes="primary-action"
+                            Grid.Column="1"
+                            Content="Search"
+                            Width="120"
+                            Height="42"
+                            Margin="0,0,10,0"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
 
-                        <TextBox x:Name="SearchTextBox"
-                                Grid.Column="0"
-                                Watermark="Search by activity, category, description or area..."
-                                Height="42"
-                                Margin="0,0,12,0"
-                                Background="#F9FAFB"
-                                Foreground="#111827"
-                                BorderBrush="#D1D5DB"
-                                Padding="12,8"
-                                VerticalContentAlignment="Center"/>
+                    <Button x:Name="ClearSearchButton"
+                            Grid.Column="2"
+                            Content="Clear"
+                            Width="90"
+                            Height="42"
+                            Background="#F1F3F5"
+                            Foreground="#111827"
+                            HorizontalContentAlignment="Center"
+                            VerticalContentAlignment="Center"/>
 
-                        <Button x:Name="SearchButton"
-                                Classes="primary-action"
-                                Grid.Column="1"
-                                Content="Search"
-                                Width="120"
-                                Height="42"
-                                Margin="0,0,10,0"
-                                HorizontalContentAlignment="Center"
-                                VerticalContentAlignment="Center"/>
-
-                        <Button x:Name="ClearSearchButton"
-                                Classes="secondary-action"
-                                Grid.Column="2"
-                                Content="Clear"
-                                Width="90"
-                                Height="42"/>
-
-                    </Grid>
-
-                </StackPanel>
+                </Grid>
 
             </Border>
 
@@ -275,7 +278,7 @@
                 <!-- Map column -->
                 <Border Grid.Column="0"
                         Background="White"
-                        CornerRadius="18"
+                        CornerRadius="20"
                         Padding="20"
                         Margin="0,0,20,0"
                         BorderBrush="#E5E7EB"
@@ -292,10 +295,14 @@
                                         Spacing="4">
 
                                 <TextBlock Text="Explore Activities Near You"
-                                            Classes="section-title"/>
+                                           FontSize="24"
+                                           FontWeight="Bold"
+                                           Foreground="#111827"/>
 
                                 <TextBlock Text="Move around the map and click an activity point to preview details."
-                                           Classes="panel-description"/>
+                                           FontSize="14"
+                                           Foreground="#6B7280"
+                                           TextWrapping="Wrap"/>
 
                             </StackPanel>
 
@@ -340,22 +347,37 @@
                                     <StackPanel Spacing="8">
 
                                         <Button x:Name="ZoomInButton"
-                                                Classes="map-tool-button"
                                                 Content="+"
+                                                Width="42"
+                                                Height="42"
                                                 FontSize="22"
-                                                FontWeight="Bold"/>
+                                                FontWeight="Bold"
+                                                Background="White"
+                                                Foreground="#111827"
+                                                BorderBrush="#D1D5DB"
+                                                HorizontalContentAlignment="Center"/>
 
                                         <Button x:Name="ZoomOutButton"
-                                                Classes="map-tool-button"
                                                 Content="-"
+                                                Width="42"
+                                                Height="42"
                                                 FontSize="22"
-                                                FontWeight="Bold"/>
+                                                FontWeight="Bold"
+                                                Background="White"
+                                                Foreground="#111827"
+                                                BorderBrush="#D1D5DB"
+                                                HorizontalContentAlignment="Center"/>
 
                                         <Button x:Name="CenterMapButton"
-                                                Classes="map-tool-button"
                                                 Content="⌖"
+                                                Width="42"
+                                                Height="42"
                                                 FontSize="18"
-                                                FontWeight="Bold"/>
+                                                FontWeight="Bold"
+                                                Background="White"
+                                                Foreground="#111827"
+                                                BorderBrush="#D1D5DB"
+                                                HorizontalContentAlignment="Center"/>
 
                                     </StackPanel>
 
@@ -380,11 +402,11 @@
 
                         </Border>
 
-                        <!-- Selected event details -->
+                        <!-- Selected event/course details -->
                         <Border Grid.Row="2"
                                 x:Name="SelectedEventPanel"
                                 IsVisible="False"
-                                Background="#F8FAFC"
+                                Background="#F9FAFB"
                                 CornerRadius="18"
                                 Padding="18"
                                 Margin="0,16,0,0"
@@ -397,10 +419,10 @@
                                             Spacing="6">
 
                                     <TextBlock x:Name="SelectedEventTitleTextBlock"
-                                                Text=""
-                                                FontSize="21"
-                                                FontWeight="Bold"
-                                                Foreground="#1E3A8A"/>
+                                               Text=""
+                                               FontSize="20"
+                                               FontWeight="Bold"
+                                               Foreground="#111827"/>
 
                                     <TextBlock x:Name="SelectedEventCategoryTextBlock"
                                                Text=""
@@ -431,7 +453,8 @@
                                             Content="Enroll"
                                             Width="96"
                                             Height="38"
-                                            HorizontalContentAlignment="Center"/>
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"/>
 
                                     <Button x:Name="SaveButton"
                                             Classes="save-action"
@@ -451,10 +474,10 @@
 
                 </Border>
 
-                <!-- Events list column -->
+                <!-- Events / Courses list column -->
                 <Border Grid.Column="1"
                         Background="White"
-                        CornerRadius="18"
+                        CornerRadius="20"
                         Padding="20"
                         BorderBrush="#E5E7EB"
                         BorderThickness="1">
@@ -466,10 +489,12 @@
                                     Margin="0,0,0,12">
 
                             <TextBlock Text="Available Events / Courses"
-                                        Classes="section-title"/>
+                                       FontSize="23"
+                                       FontWeight="Bold"
+                                       Foreground="#111827"/>
 
                             <TextBlock x:Name="EventsCountTextBlock"
-                                       Text="0 events found"
+                                       Text="0 activities found"
                                        FontSize="13"
                                        Foreground="#6B7280"/>
 
@@ -487,9 +512,9 @@
                                       VerticalScrollBarVisibility="Auto">
 
                             <ListBox x:Name="AvailableEventsItemsControl"
-                                    Background="Transparent"
-                                    BorderThickness="0"
-                                    SelectionMode="Single">
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     SelectionMode="Single">
 
                                 <ListBox.Styles>
 
@@ -503,10 +528,10 @@
                                         <Setter Property="Template">
                                             <ControlTemplate>
                                                 <ContentPresenter Content="{TemplateBinding Content}"
-                                                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                Padding="{TemplateBinding Padding}"
-                                                                HorizontalContentAlignment="Stretch"
-                                                                VerticalContentAlignment="Stretch"/>
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                  Padding="{TemplateBinding Padding}"
+                                                                  HorizontalContentAlignment="Stretch"
+                                                                  VerticalContentAlignment="Stretch"/>
                                             </ControlTemplate>
                                         </Setter>
                                     </Style>
@@ -529,25 +554,6 @@
                                         <Setter Property="BorderThickness" Value="0"/>
                                     </Style>
 
-                                    <!-- Default event card style -->
-                                    <Style Selector="Border.event-card">
-                                        <Setter Property="Background" Value="#F9FAFB"/>
-                                        <Setter Property="BorderBrush" Value="#E5E7EB"/>
-                                        <Setter Property="BorderThickness" Value="1"/>
-                                    </Style>
-
-                                    <!-- Hovered event card style -->
-                                    <Style Selector="ListBoxItem:pointerover Border.event-card">
-                                        <Setter Property="Background" Value="#F3F4F6"/>
-                                        <Setter Property="BorderBrush" Value="#D1D5DB"/>
-                                    </Style>
-
-                                    <!-- Selected event card style -->
-                                    <Style Selector="ListBoxItem:selected Border.event-card">
-                                        <Setter Property="Background" Value="#E5E7EB"/>
-                                        <Setter Property="BorderBrush" Value="#9CA3AF"/>
-                                    </Style>
-
                                 </ListBox.Styles>
 
                                 <ListBox.ItemTemplate>
@@ -555,6 +561,7 @@
                                     <DataTemplate DataType="{x:Type models:CustomerActivityListItem}">
 
                                         <Border Classes="event-card"
+                                                Classes.saved="{Binding IsSaved}"
                                                 CornerRadius="14"
                                                 Padding="14">
 
@@ -563,67 +570,79 @@
                                                 <Grid ColumnDefinitions="*,Auto">
 
                                                     <TextBlock Grid.Column="0"
-                                                            Text="{Binding Title}"
-                                                            FontSize="17"
-                                                            FontWeight="Bold"
-                                                            Foreground="#1E3A8A"
-                                                            TextWrapping="Wrap"/>
+                                                               Text="{Binding Title}"
+                                                               FontSize="17"
+                                                               FontWeight="Bold"
+                                                               Foreground="#111827"
+                                                               TextWrapping="Wrap"
+                                                               VerticalAlignment="Center"/>
 
                                                     <Border Grid.Column="1"
-                                                            Background="#E5E7EB"
-                                                            CornerRadius="10"
-                                                            Padding="8,3"
-                                                            Margin="8,0,0,0">
+                                                            Background="#EFF6FF"
+                                                            CornerRadius="12"
+                                                            Padding="8,4"
+                                                            Margin="8,0,0,0"
+                                                            VerticalAlignment="Center">
 
                                                         <TextBlock Text="{Binding ActivityType}"
-                                                                FontSize="12"
-                                                                FontWeight="SemiBold"
-                                                                Foreground="#374151"/>
+                                                                   FontSize="12"
+                                                                   FontWeight="SemiBold"
+                                                                   Foreground="#1D4ED8"/>
 
                                                     </Border>
 
                                                 </Grid>
 
-                                                <Border Background="#EFF6FF"
+                                                <Border Background="#F8FAFC"
                                                         CornerRadius="12"
                                                         Padding="8,4"
-                                                        HorizontalAlignment="Left">
+                                                        HorizontalAlignment="Left"
+                                                        BorderBrush="#E5E7EB"
+                                                        BorderThickness="1">
 
                                                     <TextBlock Text="{Binding Category}"
-                                                            FontSize="12"
-                                                            FontWeight="SemiBold"
-                                                            Foreground="{Binding Category, Converter={StaticResource CategoryBrushConverter}}"/>
+                                                               FontSize="12"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{Binding Category, Converter={StaticResource CategoryBrushConverter}}"/>
 
                                                 </Border>
 
+                                                <TextBlock Text="{Binding Description}"
+                                                           FontSize="13"
+                                                           Foreground="#4B5563"
+                                                           TextWrapping="Wrap"
+                                                           MaxHeight="52"/>
+
                                                 <TextBlock Text="{Binding Address}"
-                                                        FontSize="13"
-                                                        Foreground="#4B5563"
-                                                        TextWrapping="Wrap"/>
+                                                           FontSize="13"
+                                                           Foreground="#4B5563"
+                                                           TextWrapping="Wrap"/>
 
-                                                <TextBlock Text="{Binding ScheduleText}"
-                                                        FontSize="13"
-                                                        Foreground="#4B5563"
-                                                        TextWrapping="Wrap"/>
+                                                <TextBlock Text="{Binding ExtraInfoText}"
+                                                           FontSize="12"
+                                                           Foreground="#6B7280"
+                                                           TextWrapping="Wrap"/>
 
-                                                <StackPanel Orientation="Horizontal"
-                                                            Spacing="8">
+                                                <Grid ColumnDefinitions="*,Auto"
+                                                      Margin="0,6,0,0">
 
-                                                    <TextBlock Text="Price:"
-                                                            FontSize="13"
-                                                            FontWeight="SemiBold"
-                                                            Foreground="#374151"/>
+                                                    <Button Grid.Column="0"
+                                                            Classes="activity-card-unsave-button"
+                                                            Content="Unsave"
+                                                            Tag="{Binding}"
+                                                            IsVisible="{Binding IsSaved}"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Center"/>
 
-                                                    <TextBlock Text="{Binding PriceText}"
-                                                            FontSize="13"
-                                                            Foreground="#059669"/>
+                                                    <TextBlock Grid.Column="1"
+                                                               Text="Saved"
+                                                               IsVisible="{Binding IsSaved}"
+                                                               FontSize="12"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#6B7280"
+                                                               VerticalAlignment="Center"/>
 
-                                                </StackPanel>
-
-                                                <TextBlock Text="Click to preview on map"
-                                                        FontSize="12"
-                                                        FontStyle="Italic"
-                                                        Foreground="#6B7280"/>
+                                                </Grid>
 
                                             </StackPanel>
 

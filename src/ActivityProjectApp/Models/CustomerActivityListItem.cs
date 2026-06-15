@@ -31,5 +31,10 @@ namespace ActivityProjectApp.Models
         public int MaxSpace { get; set; }
 
         public string ExtraInfoText { get; set; } = string.Empty;
+
+        public bool IsSaved { get; set; }
+
+        public bool IsAlreadyEnrolled { get; set; }
+
     }
 }

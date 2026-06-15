@@ -1,6 +1,7 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:models="clr-namespace:ActivityProjectApp.Models"
+             xmlns:views="clr-namespace:ActivityProjectApp.Views"
              x:Class="ActivityProjectApp.Views.CustomerProfileView"
              Background="#F4F6F8">
 
@@ -104,6 +105,11 @@
             <Setter Property="Padding" Value="14"/>
             <Setter Property="BorderBrush" Value="#E5E7EB"/>
             <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style Selector="Border.profile-card:pointerover">
+            <Setter Property="Background" Value="#EEF2F7"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
         </Style>
 
     </UserControl.Styles>
@@ -320,12 +326,12 @@
                                             <Grid ColumnDefinitions="*,Auto,Auto">
 
                                                 <TextBlock Grid.Column="0"
-                                                        Text="{Binding Title}"
-                                                        FontSize="16"
-                                                        FontWeight="Bold"
-                                                        Foreground="#111827"
-                                                        TextWrapping="Wrap"
-                                                        VerticalAlignment="Center"/>
+                                                           Text="{Binding Title}"
+                                                           FontSize="16"
+                                                           FontWeight="Bold"
+                                                           Foreground="#111827"
+                                                           TextWrapping="Wrap"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Border Grid.Column="1"
                                                         Background="#E5E7EB"
@@ -335,9 +341,9 @@
                                                         VerticalAlignment="Center">
 
                                                     <TextBlock Text="{Binding ItemTypeText}"
-                                                            FontSize="12"
-                                                            FontWeight="SemiBold"
-                                                            Foreground="#374151"/>
+                                                               FontSize="12"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#374151"/>
 
                                                 </Border>
 
@@ -357,6 +363,58 @@
                                             <TextBlock Text="{Binding ScheduleText}"
                                                        FontSize="13"
                                                        Foreground="#6B7280"/>
+
+                                            <!-- Expanded details -->
+                                            <Border IsVisible="{Binding IsExpanded}"
+                                                    Background="#EEF2F7"
+                                                    CornerRadius="12"
+                                                    Padding="12"
+                                                    Margin="0,8,0,0"
+                                                    BorderBrush="#CBD5E1"
+                                                    BorderThickness="1">
+
+                                                <StackPanel Spacing="8">
+
+                                                    <TextBlock Text="Details"
+                                                               FontSize="14"
+                                                               FontWeight="Bold"
+                                                               Foreground="#1F2937"/>
+
+                                                    <TextBlock Text="{Binding Description}"
+                                                               FontSize="13"
+                                                               Foreground="#4B5563"
+                                                               TextWrapping="Wrap"/>
+
+                                                    <TextBlock Text="{Binding Address}"
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#374151"
+                                                               TextWrapping="Wrap"/>
+
+                                                    <Grid ColumnDefinitions="*,*">
+
+                                                        <TextBlock Grid.Column="0"
+                                                                   Text="{Binding PriceText}"
+                                                                   FontSize="13"
+                                                                   Foreground="#4B5563"/>
+
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding MaxSpace, StringFormat='Max spaces: {0}'}"
+                                                                   FontSize="13"
+                                                                   Foreground="#4B5563"/>
+
+                                                    </Grid>
+
+                                                    <views:MiniMapView Height="320"
+                                                                       Latitude="{Binding Latitude}"
+                                                                       Longitude="{Binding Longitude}"
+                                                                       Address="{Binding Address}"
+                                                                       IsVisible="{Binding IsExpanded}"
+                                                                       Margin="0,6,0,0"/>
+
+                                                </StackPanel>
+
+                                            </Border>
 
                                         </StackPanel>
 
@@ -431,13 +489,15 @@
                                                            FontSize="16"
                                                            FontWeight="Bold"
                                                            Foreground="#111827"
-                                                           TextWrapping="Wrap"/>
+                                                           TextWrapping="Wrap"
+                                                           VerticalAlignment="Center"/>
 
                                                 <Border Grid.Column="1"
                                                         Background="#DCFCE7"
                                                         CornerRadius="10"
                                                         Padding="8,3"
-                                                        Margin="8,0,0,0">
+                                                        Margin="8,0,0,0"
+                                                        VerticalAlignment="Center">
 
                                                     <TextBlock Text="{Binding StatusText}"
                                                                FontSize="12"
@@ -460,6 +520,58 @@
                                             <TextBlock Text="{Binding ScheduleText}"
                                                        FontSize="13"
                                                        Foreground="#6B7280"/>
+
+                                            <!-- Expanded details -->
+                                            <Border IsVisible="{Binding IsExpanded}"
+                                                    Background="#EEF2F7"
+                                                    CornerRadius="12"
+                                                    Padding="12"
+                                                    Margin="0,8,0,0"
+                                                    BorderBrush="#CBD5E1"
+                                                    BorderThickness="1">
+
+                                                <StackPanel Spacing="8">
+
+                                                    <TextBlock Text="Details"
+                                                               FontSize="14"
+                                                               FontWeight="Bold"
+                                                               Foreground="#1F2937"/>
+
+                                                    <TextBlock Text="{Binding Description}"
+                                                               FontSize="13"
+                                                               Foreground="#4B5563"
+                                                               TextWrapping="Wrap"/>
+
+                                                    <TextBlock Text="{Binding Address}"
+                                                               FontSize="13"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="#374151"
+                                                               TextWrapping="Wrap"/>
+
+                                                    <Grid ColumnDefinitions="*,*">
+
+                                                        <TextBlock Grid.Column="0"
+                                                                   Text="{Binding PriceText}"
+                                                                   FontSize="13"
+                                                                   Foreground="#4B5563"/>
+
+                                                        <TextBlock Grid.Column="1"
+                                                                   Text="{Binding MaxSpace, StringFormat='Max spaces: {0}'}"
+                                                                   FontSize="13"
+                                                                   Foreground="#4B5563"/>
+
+                                                    </Grid>
+
+                                                    <views:MiniMapView Height="320"
+                                                                       Latitude="{Binding Latitude}"
+                                                                       Longitude="{Binding Longitude}"
+                                                                       Address="{Binding Address}"
+                                                                       IsVisible="{Binding IsExpanded}"
+                                                                       Margin="0,6,0,0"/>
+
+                                                </StackPanel>
+
+                                            </Border>
 
                                         </StackPanel>
 

@@ -15,5 +15,21 @@ namespace ActivityProjectApp.Models
         public string ScheduleText { get; set; } = string.Empty;
 
         public string StatusText { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
+
+        public string Address { get; set; } = string.Empty;
+
+        public decimal Price { get; set; }
+
+        public string PriceText { get; set; } = string.Empty;
+
+        public int MaxSpace { get; set; }
+
+        public double Latitude { get; set; }
+
+        public double Longitude { get; set; }
+
+        public bool IsExpanded { get; set; }
     }
 }

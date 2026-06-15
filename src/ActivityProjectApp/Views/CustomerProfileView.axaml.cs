@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using ActivityProjectApp.Models;
 using ActivityProjectApp.Services;
@@ -40,7 +41,23 @@ namespace ActivityProjectApp.Views
 
             SavedItemsFilterComboBox.SelectionChanged += SavedItemsFilterComboBox_SelectionChanged;
             MyItemsFilterComboBox.SelectionChanged += MyItemsFilterComboBox_SelectionChanged;
-            SavedItemsControl.AddHandler(Button.ClickEvent, SavedItemsControl_ButtonClick, RoutingStrategies.Bubble);
+
+            SavedItemsControl.AddHandler(
+                Button.ClickEvent,
+                SavedItemsControl_ButtonClick,
+                RoutingStrategies.Bubble);
+
+            SavedItemsControl.AddHandler(
+                InputElement.PointerPressedEvent,
+                SavedItemsControl_PointerPressed,
+                RoutingStrategies.Tunnel,
+                true);
+
+            MyItemsControl.AddHandler(
+                InputElement.PointerPressedEvent,
+                MyItemsControl_PointerPressed,
+                RoutingStrategies.Tunnel,
+                true);
 
             ShowProfileMainContent();
         }
@@ -148,6 +165,13 @@ namespace ActivityProjectApp.Views
 
                 if (activityEvent == null)
                 {
+                    RemoveUnavailableSavedItem(savedItem);
+                    return null;
+                }
+
+                if (!IsEventAvailableForEnrollment(activityEvent))
+                {
+                    RemoveUnavailableSavedItem(savedItem);
                     return null;
                 }
 
@@ -159,7 +183,15 @@ namespace ActivityProjectApp.Views
                     Title = activityEvent.Title,
                     Category = activityEvent.Category,
                     ScheduleText = $"{activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm}",
-                    StatusText = "Saved"
+                    StatusText = "Saved",
+                    Description = activityEvent.Description,
+                    Address = activityEvent.Address,
+                    Price = activityEvent.Price,
+                    PriceText = $"€{activityEvent.Price}",
+                    MaxSpace = activityEvent.MaxSpace,
+                    Latitude = activityEvent.Latitude,
+                    Longitude = activityEvent.Longitude,
+                    IsExpanded = false
                 };
             }
 
@@ -171,6 +203,13 @@ namespace ActivityProjectApp.Views
 
                 if (course == null)
                 {
+                    RemoveUnavailableSavedItem(savedItem);
+                    return null;
+                }
+
+                if (!IsCourseAvailableForEnrollment(course))
+                {
+                    RemoveUnavailableSavedItem(savedItem);
                     return null;
                 }
 
@@ -182,11 +221,65 @@ namespace ActivityProjectApp.Views
                     Title = course.Title,
                     Category = course.Category,
                     ScheduleText = $"{course.Days}, {course.StartTime:hh\\:mm} - {course.EndTime:hh\\:mm}",
-                    StatusText = "Saved"
+                    StatusText = "Saved",
+                    Description = course.Description,
+                    Address = course.Address,
+                    Price = course.Price,
+                    PriceText = $"€{course.Price}",
+                    MaxSpace = course.MaxSpace,
+                    Latitude = course.Latitude,
+                    Longitude = course.Longitude,
+                    IsExpanded = false
                 };
             }
 
             return null;
+        }
+
+        private bool IsEventAvailableForEnrollment(ActivityEvent activityEvent)
+        {
+            if (activityEvent.Status != EventStatus.Active)
+            {
+                return false;
+            }
+
+            if (activityEvent.MaxSpace <= 0)
+            {
+                return false;
+            }
+
+            int activeEnrollmentsCount = AppServices.EnrollmentRepository.GetActiveEnrollmentCount(
+                activityEvent.Id,
+                EnrollmentItemType.Event);
+
+            return activeEnrollmentsCount < activityEvent.MaxSpace;
+        }
+
+        private bool IsCourseAvailableForEnrollment(Course course)
+        {
+            if (course.Status != CourseStatus.Active)
+            {
+                return false;
+            }
+
+            if (course.MaxSpace <= 0)
+            {
+                return false;
+            }
+
+            int activeEnrollmentsCount = AppServices.EnrollmentRepository.GetActiveEnrollmentCount(
+                course.Id,
+                EnrollmentItemType.Course);
+
+            return activeEnrollmentsCount < course.MaxSpace;
+        }
+
+        private void RemoveUnavailableSavedItem(SavedItem savedItem)
+        {
+            AppServices.SavedItemRepository.RemoveSavedItem(
+                savedItem.CustomerId,
+                savedItem.ItemId,
+                savedItem.ItemType);
         }
 
         private void LoadMyEnrolledItems()
@@ -236,7 +329,15 @@ namespace ActivityProjectApp.Views
                     Title = activityEvent.Title,
                     Category = activityEvent.Category,
                     ScheduleText = $"{activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm}",
-                    StatusText = enrollment.Status.ToString()
+                    StatusText = enrollment.Status.ToString(),
+                    Description = activityEvent.Description,
+                    Address = activityEvent.Address,
+                    Price = activityEvent.Price,
+                    PriceText = $"€{activityEvent.Price}",
+                    MaxSpace = activityEvent.MaxSpace,
+                    Latitude = activityEvent.Latitude,
+                    Longitude = activityEvent.Longitude,
+                    IsExpanded = false
                 };
             }
 
@@ -259,44 +360,19 @@ namespace ActivityProjectApp.Views
                     Title = course.Title,
                     Category = course.Category,
                     ScheduleText = $"{course.Days}, {course.StartTime:hh\\:mm} - {course.EndTime:hh\\:mm}",
-                    StatusText = enrollment.Status.ToString()
+                    StatusText = enrollment.Status.ToString(),
+                    Description = course.Description,
+                    Address = course.Address,
+                    Price = course.Price,
+                    PriceText = $"€{course.Price}",
+                    MaxSpace = course.MaxSpace,
+                    Latitude = course.Latitude,
+                    Longitude = course.Longitude,
+                    IsExpanded = false
                 };
             }
 
             return null;
-        }
-
-        private void SavedItemsFilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            RefreshSavedItems();
-        }
-
-        private void MyItemsFilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
-        {
-            RefreshMyItems();
-        }
-
-        private void RefreshSavedItems()
-        {
-            string selectedFilter = GetSelectedSavedItemsFilter();
-
-            List<CustomerProfileItem> filteredItems = _allSavedItems;
-
-            if (selectedFilter == "Events")
-            {
-                filteredItems = _allSavedItems
-                    .Where(item => item.ItemType == EnrollmentItemType.Event)
-                    .ToList();
-            }
-            else if (selectedFilter == "Courses")
-            {
-                filteredItems = _allSavedItems
-                    .Where(item => item.ItemType == EnrollmentItemType.Course)
-                    .ToList();
-            }
-
-            SavedItemsControl.ItemsSource = filteredItems;
-            SavedItemsCountTextBlock.Text = $"{filteredItems.Count} saved";
         }
 
         private void SavedItemsControl_ButtonClick(object? sender, RoutedEventArgs e)
@@ -350,6 +426,147 @@ namespace ActivityProjectApp.Views
             return SavedItemType.Event;
         }
 
+        private void SavedItemsControl_PointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (IsClickComingFromButton(e.Source))
+            {
+                return;
+            }
+
+            CustomerProfileItem? item = FindCustomerProfileItemFromSource(e.Source);
+
+            if (item == null)
+            {
+                return;
+            }
+
+            ToggleSavedItemExpansion(item);
+
+            e.Handled = true;
+        }
+
+        private void MyItemsControl_PointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            if (IsClickComingFromButton(e.Source))
+            {
+                return;
+            }
+
+            CustomerProfileItem? item = FindCustomerProfileItemFromSource(e.Source);
+
+            if (item == null)
+            {
+                return;
+            }
+
+            ToggleMyItemExpansion(item);
+
+            e.Handled = true;
+        }
+
+        private bool IsClickComingFromButton(object? source)
+        {
+            Control? currentControl = source as Control;
+
+            while (currentControl != null)
+            {
+                if (currentControl is Button)
+                {
+                    return true;
+                }
+
+                currentControl = currentControl.Parent as Control;
+            }
+
+            return false;
+        }
+
+        private CustomerProfileItem? FindCustomerProfileItemFromSource(object? source)
+        {
+            Control? currentControl = source as Control;
+
+            while (currentControl != null)
+            {
+                if (currentControl.DataContext is CustomerProfileItem item)
+                {
+                    return item;
+                }
+
+                currentControl = currentControl.Parent as Control;
+            }
+
+            return null;
+        }
+
+        private void ToggleSavedItemExpansion(CustomerProfileItem selectedItem)
+        {
+            foreach (CustomerProfileItem item in _allSavedItems)
+            {
+                if (item == selectedItem)
+                {
+                    item.IsExpanded = !item.IsExpanded;
+                }
+                else
+                {
+                    item.IsExpanded = false;
+                }
+            }
+
+            RefreshSavedItems();
+        }
+
+        private void ToggleMyItemExpansion(CustomerProfileItem selectedItem)
+        {
+            foreach (CustomerProfileItem item in _allMyItems)
+            {
+                if (item == selectedItem)
+                {
+                    item.IsExpanded = !item.IsExpanded;
+                }
+                else
+                {
+                    item.IsExpanded = false;
+                }
+            }
+
+            RefreshMyItems();
+        }
+
+        private void SavedItemsFilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            RefreshSavedItems();
+        }
+
+        private void MyItemsFilterComboBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            RefreshMyItems();
+        }
+
+        private void RefreshSavedItems()
+        {
+            string selectedFilter = GetSelectedSavedItemsFilter();
+
+            List<CustomerProfileItem> filteredItems = _allSavedItems;
+
+            if (selectedFilter == "Events")
+            {
+                filteredItems = _allSavedItems
+                    .Where(item => item.ItemType == EnrollmentItemType.Event)
+                    .ToList();
+            }
+            else if (selectedFilter == "Courses")
+            {
+                filteredItems = _allSavedItems
+                    .Where(item => item.ItemType == EnrollmentItemType.Course)
+                    .ToList();
+            }
+
+            SavedItemsControl.ItemsSource = null;
+            SavedItemsControl.ItemsSource = filteredItems;
+
+            SavedItemsCountTextBlock.Text = $"{filteredItems.Count} saved";
+        }
+
         private void RefreshMyItems()
         {
             string selectedFilter = GetSelectedMyItemsFilter();
@@ -369,7 +586,9 @@ namespace ActivityProjectApp.Views
                     .ToList();
             }
 
+            MyItemsControl.ItemsSource = null;
             MyItemsControl.ItemsSource = filteredItems;
+
             MyItemsCountTextBlock.Text = $"{filteredItems.Count} enrolled";
         }
 
