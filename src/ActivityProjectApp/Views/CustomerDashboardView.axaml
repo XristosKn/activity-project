@@ -451,7 +451,7 @@
                                     <Button x:Name="EnrollButton"
                                             Classes="primary-action"
                                             Content="Enroll"
-                                            Width="96"
+                                            Width="120"
                                             Height="38"
                                             HorizontalContentAlignment="Center"
                                             VerticalContentAlignment="Center"/>

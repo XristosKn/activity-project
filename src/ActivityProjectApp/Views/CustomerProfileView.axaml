@@ -467,7 +467,7 @@
 
                         </Grid>
 
-                        <TextBlock Text="Confirmed enrollments will appear here."
+                        <TextBlock Text="Only paid and confirmed enrollments will appear here."
                                    FontSize="13"
                                    Foreground="#6B7280"/>
 

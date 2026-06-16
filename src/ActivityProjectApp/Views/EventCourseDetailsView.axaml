@@ -1,65 +1,41 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:ActivityProjectApp.Models"
              x:Class="ActivityProjectApp.Views.EventCourseDetailsView"
              Background="#F3F6FA">
 
     <UserControl.Styles>
 
-        <!-- Save button when item is not saved yet -->
-        <Style Selector="Button.save-action">
-            <Setter Property="Background" Value="#2563EB"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#2563EB"/>
+        <Style Selector="Button.gallery-thumbnail-button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.gallery-thumbnail-button:pointerover">
+            <Setter Property="Background" Value="#EFF6FF"/>
+            <Setter Property="BorderBrush" Value="#93C5FD"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+
+        <Style Selector="Button.top-bar-button">
+            <Setter Property="Background" Value="#F3F4F6"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Padding" Value="12,6"/>
-
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8">
-
-                        <ContentPresenter Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        Padding="{TemplateBinding Padding}"
-                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-
-                    </Border>
-                </ControlTemplate>
-            </Setter>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
 
-        <Style Selector="Button.save-action:pointerover">
-            <Setter Property="Background" Value="#1D4ED8"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#1D4ED8"/>
-        </Style>
-
-        <Style Selector="Button.save-action:pressed">
-            <Setter Property="Background" Value="#1E40AF"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#1E40AF"/>
-        </Style>
-
-        <!-- Save button when item is already saved -->
-        <Style Selector="Button.save-action.saved">
-            <Setter Property="Background" Value="#DC2626"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#DC2626"/>
-        </Style>
-
-        <Style Selector="Button.save-action.saved:pointerover">
-            <Setter Property="Background" Value="#B91C1C"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#B91C1C"/>
-        </Style>
-
-        <Style Selector="Button.save-action.saved:pressed">
-            <Setter Property="Background" Value="#991B1B"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#991B1B"/>
+        <Style Selector="Button.top-bar-button:pointerover">
+            <Setter Property="Background" Value="#E5E7EB"/>
+            <Setter Property="Foreground" Value="#111827"/>
         </Style>
 
         <Style Selector="Button.primary-action">
@@ -67,36 +43,76 @@
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderBrush" Value="#2563EB"/>
             <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
             <Setter Property="Padding" Value="12,6"/>
-
-            <Setter Property="Template">
-                <ControlTemplate>
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="8">
-
-                        <ContentPresenter Content="{TemplateBinding Content}"
-                                          ContentTemplate="{TemplateBinding ContentTemplate}"
-                                          Padding="{TemplateBinding Padding}"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-
-                    </Border>
-                </ControlTemplate>
-            </Setter>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
 
         <Style Selector="Button.primary-action:pointerover">
             <Setter Property="Background" Value="#1D4ED8"/>
-            <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderBrush" Value="#1D4ED8"/>
+            <Setter Property="Foreground" Value="White"/>
         </Style>
 
         <Style Selector="Button.primary-action:pressed">
             <Setter Property="Background" Value="#1E40AF"/>
-            <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderBrush" Value="#1E40AF"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.primary-action:disabled">
+            <Setter Property="Background" Value="#D1D5DB"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+        </Style>
+
+        <Style Selector="Button.save-action">
+            <Setter Property="Background" Value="#EFF6FF"/>
+            <Setter Property="Foreground" Value="#1D4ED8"/>
+            <Setter Property="BorderBrush" Value="#BFDBFE"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.save-action:pointerover">
+            <Setter Property="Background" Value="#DBEAFE"/>
+            <Setter Property="Foreground" Value="#1D4ED8"/>
+            <Setter Property="BorderBrush" Value="#93C5FD"/>
+        </Style>
+
+        <Style Selector="Button.save-action.saved">
+            <Setter Property="Background" Value="#FEE2E2"/>
+            <Setter Property="Foreground" Value="#B91C1C"/>
+            <Setter Property="BorderBrush" Value="#FECACA"/>
+        </Style>
+
+        <Style Selector="Button.save-action.saved:pointerover">
+            <Setter Property="Background" Value="#FECACA"/>
+            <Setter Property="Foreground" Value="#991B1B"/>
+            <Setter Property="BorderBrush" Value="#FCA5A5"/>
+        </Style>
+
+        <Style Selector="Button.close-preview-button">
+            <Setter Property="Background" Value="#FEE2E2"/>
+            <Setter Property="Foreground" Value="#B91C1C"/>
+            <Setter Property="BorderBrush" Value="#FECACA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.close-preview-button:pointerover">
+            <Setter Property="Background" Value="#FECACA"/>
+            <Setter Property="Foreground" Value="#991B1B"/>
+            <Setter Property="BorderBrush" Value="#FCA5A5"/>
         </Style>
 
     </UserControl.Styles>
@@ -106,41 +122,44 @@
         <!-- Top bar -->
         <Border Grid.Row="0"
                 Background="White"
-                Padding="22,18"
-                BorderBrush="#E1E5EA"
+                Padding="24,18"
+                BorderBrush="#E5E7EB"
                 BorderThickness="0,0,0,1">
 
-            <DockPanel LastChildFill="True">
-
-                <Button x:Name="LogoutButton"
-                        DockPanel.Dock="Right"
-                        Content="Logout"
-                        Width="110"
-                        Height="38"
-                        Background="#F1F3F5"
-                        Foreground="#111827"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"/>
+            <Grid ColumnDefinitions="Auto,*,Auto">
 
                 <Button x:Name="BackButton"
-                        DockPanel.Dock="Left"
+                        Grid.Column="0"
+                        Classes="top-bar-button"
                         Content="← Back"
                         Width="110"
-                        Height="38"
-                        Background="#F1F3F5"
-                        Foreground="#111827"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"/>
+                        Height="40"/>
 
-                <TextBlock x:Name="PageTitleTextBlock"
-                        Text="Enrollment Details"
-                        FontSize="24"
-                        FontWeight="Bold"
-                        Foreground="#111827"
-                        VerticalAlignment="Center"
-                        Margin="18,0,0,0"/>
+                <StackPanel Grid.Column="1"
+                            Margin="14,0"
+                            VerticalAlignment="Center"
+                            Spacing="2">
 
-            </DockPanel>
+                    <TextBlock x:Name="PageTitleTextBlock"
+                               Text="Enrollment Details"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="#111827"/>
+
+                    <TextBlock Text="Review the activity details, images and booking information."
+                               FontSize="13"
+                               Foreground="#6B7280"/>
+
+                </StackPanel>
+
+                <Button x:Name="LogoutButton"
+                        Grid.Column="2"
+                        Classes="top-bar-button"
+                        Content="Logout"
+                        Width="110"
+                        Height="40"/>
+
+            </Grid>
 
         </Border>
 
@@ -149,202 +168,314 @@
                       VerticalScrollBarVisibility="Auto">
 
             <Grid Margin="32"
-                  ColumnDefinitions="2*,1*">
+                  ColumnDefinitions="2.1*,0.9*">
 
-                <!-- Left card -->
-                <Border Grid.Column="0"
-                    Background="White"
-                    CornerRadius="22"
-                    Padding="26"
-                    Margin="0,0,24,0"
-                    BorderBrush="#E5E7EB"
-                    BorderThickness="1">
+                <!-- Left content -->
+                <StackPanel Grid.Column="0"
+                            Spacing="22"
+                            Margin="0,0,26,0">
 
-                    <StackPanel Spacing="18">
+                    <!-- Main image card -->
+                    <Border Background="White"
+                            CornerRadius="24"
+                            Padding="18"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="1">
 
-                        <!-- Image / video placeholder -->
-                        <Border Background="#DBEAFE"
-                                CornerRadius="20"
-                                Height="280"
-                                ClipToBounds="True">
+                        <StackPanel Spacing="14">
 
-                            <Grid>
+                            <Border Height="560"
+                                    Background="#E5E7EB"
+                                    CornerRadius="20"
+                                    ClipToBounds="True">
 
-                                <TextBlock x:Name="MediaPlaceholderTextBlock"
-                                           Text="Image / Video Preview"
-                                           FontSize="22"
+                                <Grid>
+
+                                    <Image x:Name="MainActivityImage"
+                                           Stretch="UniformToFill"
+                                           IsVisible="False"/>
+
+                                    <StackPanel x:Name="MediaPlaceholderTextBlock"
+                                                Spacing="8"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+
+                                        <TextBlock Text="Image Preview"
+                                                   FontSize="20"
+                                                   FontWeight="Bold"
+                                                   Foreground="#6B7280"
+                                                   HorizontalAlignment="Center"/>
+
+                                        <TextBlock Text="No main image has been uploaded for this activity."
+                                                   FontSize="13"
+                                                   Foreground="#9CA3AF"
+                                                   HorizontalAlignment="Center"/>
+
+                                    </StackPanel>
+
+                                </Grid>
+
+                            </Border>
+
+                            <StackPanel Spacing="6">
+
+                                <TextBlock x:Name="ItemTitleTextBlock"
+                                           Text="Title"
+                                           FontSize="32"
                                            FontWeight="Bold"
-                                           Foreground="#1D4ED8"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"/>
+                                           Foreground="#111827"
+                                           TextWrapping="Wrap"/>
 
-                            </Grid>
+                                <TextBlock x:Name="ItemCategoryTextBlock"
+                                           Text="Category"
+                                           FontSize="15"
+                                           FontWeight="SemiBold"
+                                           Foreground="#2563EB"/>
 
-                        </Border>
-
-                        <StackPanel Spacing="8">
-
-                            <TextBlock x:Name="ItemTitleTextBlock"
-                                       Text="Title"
-                                       FontSize="30"
-                                       FontWeight="Bold"
-                                       Foreground="#111827"
-                                       TextWrapping="Wrap"/>
-
-                            <TextBlock x:Name="ItemCategoryTextBlock"
-                                       Text="Category"
-                                       FontSize="15"
-                                       FontWeight="SemiBold"
-                                       Foreground="#2563EB"/>
-
-                            <TextBlock x:Name="ItemAddressTextBlock"
-                                       Text="Address"
-                                       FontSize="15"
-                                       Foreground="#4B5563"
-                                       TextWrapping="Wrap"/>
-
-                        </StackPanel>
-
-                        <Border Background="#F9FAFB"
-                                CornerRadius="16"
-                                Padding="18"
-                                BorderBrush="#E5E7EB"
-                                BorderThickness="1">
-
-                            <StackPanel Spacing="8">
-
-                                <TextBlock Text="Description"
-                                           FontSize="20"
-                                           FontWeight="Bold"
-                                           Foreground="#111827"/>
-
-                                <TextBlock x:Name="ItemDescriptionTextBlock"
-                                           Text="Description will appear here."
+                                <TextBlock x:Name="ItemAddressTextBlock"
+                                           Text="Address"
                                            FontSize="15"
                                            Foreground="#4B5563"
                                            TextWrapping="Wrap"/>
 
                             </StackPanel>
 
-                        </Border>
+                        </StackPanel>
 
-                    </StackPanel>
+                    </Border>
 
-                </Border>
+                    <!-- Description card -->
+                    <Border Background="White"
+                            CornerRadius="24"
+                            Padding="24"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="1">
 
-                <!-- Right payment summary -->
+                        <StackPanel Spacing="12">
+
+                            <TextBlock Text="Description"
+                                       FontSize="22"
+                                       FontWeight="Bold"
+                                       Foreground="#111827"/>
+
+                            <TextBlock x:Name="ItemDescriptionTextBlock"
+                                       Text="Description will appear here."
+                                       FontSize="15"
+                                       LineHeight="22"
+                                       Foreground="#4B5563"
+                                       TextWrapping="Wrap"/>
+
+                        </StackPanel>
+
+                    </Border>
+
+                    <!-- Gallery below description -->
+                    <Border x:Name="GallerySectionPanel"
+                            IsVisible="False"
+                            Background="White"
+                            CornerRadius="24"
+                            Padding="22"
+                            BorderBrush="#E5E7EB"
+                            BorderThickness="1">
+
+                        <StackPanel Spacing="14">
+
+                            <StackPanel Spacing="3">
+
+                                <TextBlock Text="Gallery"
+                                           FontSize="22"
+                                           FontWeight="Bold"
+                                           Foreground="#111827"/>
+
+                                <TextBlock Text="Click an image to preview it in product-view mode."
+                                           FontSize="13"
+                                           Foreground="#6B7280"/>
+
+                            </StackPanel>
+
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                                          VerticalScrollBarVisibility="Disabled">
+
+                                <ItemsControl x:Name="GalleryImagesItemsControl">
+
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Spacing="12"/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+
+                                        <DataTemplate DataType="{x:Type models:EventCourseGalleryImageItem}">
+
+                                            <Button Classes="gallery-thumbnail-button"
+                                                    Tag="{Binding}"
+                                                    Width="198"
+                                                    Height="133">
+
+                                                <Border Width="190"
+                                                        Height="125"
+                                                        Background="#E5E7EB"
+                                                        CornerRadius="14"
+                                                        ClipToBounds="True"
+                                                        BorderBrush="#E5E7EB"
+                                                        BorderThickness="1">
+
+                                                    <Image Source="{Binding PreviewImage}"
+                                                           Stretch="UniformToFill"/>
+
+                                                </Border>
+
+                                            </Button>
+
+                                        </DataTemplate>
+
+                                    </ItemsControl.ItemTemplate>
+
+                                </ItemsControl>
+
+                            </ScrollViewer>
+
+                        </StackPanel>
+
+                    </Border>
+
+                </StackPanel>
+
+                <!-- Right booking summary -->
                 <Border Grid.Column="1"
                         Background="White"
-                        CornerRadius="22"
+                        CornerRadius="24"
                         Padding="24"
                         BorderBrush="#E5E7EB"
                         BorderThickness="1"
                         VerticalAlignment="Top">
 
-                    <StackPanel Spacing="18">
+                    <StackPanel Spacing="20">
 
-                        <TextBlock Text="Booking Summary"
-                                   FontSize="24"
-                                   FontWeight="Bold"
-                                   Foreground="#111827"/>
+                        <StackPanel Spacing="4">
+
+                            <TextBlock Text="Booking Summary"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       Foreground="#111827"/>
+
+                            <TextBlock Text="Complete your payment to confirm participation."
+                                       FontSize="13"
+                                       Foreground="#6B7280"
+                                       TextWrapping="Wrap"/>
+
+                        </StackPanel>
 
                         <Border Background="#F9FAFB"
-                                CornerRadius="16"
-                                Padding="16">
+                                CornerRadius="18"
+                                Padding="18"
+                                BorderBrush="#E5E7EB"
+                                BorderThickness="1">
 
-                            <StackPanel Spacing="10">
+                            <StackPanel Spacing="14">
 
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Type:"
-                                               Width="120"
+                                <Grid ColumnDefinitions="120,*">
+                                    <TextBlock Grid.Column="0"
+                                               Text="Type"
                                                FontWeight="SemiBold"
                                                Foreground="#374151"/>
                                     <TextBlock x:Name="ItemTypeTextBlock"
+                                               Grid.Column="1"
                                                Text="-"
-                                               Foreground="#4B5563"/>
-                                </StackPanel>
+                                               Foreground="#4B5563"
+                                               TextWrapping="Wrap"/>
+                                </Grid>
 
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Date:"
-                                               Width="120"
+                                <Grid ColumnDefinitions="120,*">
+                                    <TextBlock Grid.Column="0"
+                                               Text="Date / Days"
                                                FontWeight="SemiBold"
                                                Foreground="#374151"/>
                                     <TextBlock x:Name="ItemDateTextBlock"
+                                               Grid.Column="1"
                                                Text="-"
-                                               Foreground="#4B5563"/>
-                                </StackPanel>
+                                               Foreground="#4B5563"
+                                               TextWrapping="Wrap"/>
+                                </Grid>
 
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Time:"
-                                               Width="120"
+                                <Grid ColumnDefinitions="120,*">
+                                    <TextBlock Grid.Column="0"
+                                               Text="Time"
                                                FontWeight="SemiBold"
                                                Foreground="#374151"/>
                                     <TextBlock x:Name="ItemTimeTextBlock"
+                                               Grid.Column="1"
                                                Text="-"
-                                               Foreground="#4B5563"/>
-                                </StackPanel>
+                                               Foreground="#4B5563"
+                                               TextWrapping="Wrap"/>
+                                </Grid>
 
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Spaces:"
-                                               Width="120"
+                                <Grid ColumnDefinitions="120,*">
+                                    <TextBlock Grid.Column="0"
+                                               Text="Spaces"
                                                FontWeight="SemiBold"
                                                Foreground="#374151"/>
                                     <TextBlock x:Name="ItemSpacesTextBlock"
+                                               Grid.Column="1"
                                                Text="-"
                                                Foreground="#4B5563"/>
-                                </StackPanel>
+                                </Grid>
 
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Price:"
-                                               Width="120"
+                                <Grid ColumnDefinitions="120,*">
+                                    <TextBlock Grid.Column="0"
+                                               Text="Price"
                                                FontWeight="SemiBold"
                                                Foreground="#374151"/>
                                     <TextBlock x:Name="ItemPriceTextBlock"
+                                               Grid.Column="1"
                                                Text="-"
+                                               FontSize="18"
                                                FontWeight="Bold"
                                                Foreground="#059669"/>
-                                </StackPanel>
+                                </Grid>
 
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="Status:"
-                                               Width="120"
+                                <Grid ColumnDefinitions="120,*">
+                                    <TextBlock Grid.Column="0"
+                                               Text="Status"
                                                FontWeight="SemiBold"
                                                Foreground="#374151"/>
                                     <TextBlock x:Name="EnrollmentStatusTextBlock"
+                                               Grid.Column="1"
                                                Text="-"
                                                FontWeight="SemiBold"
                                                Foreground="#D97706"/>
-                                </StackPanel>
+                                </Grid>
 
                             </StackPanel>
 
                         </Border>
 
-                        <TextBlock Text="By clicking Pay, you will be redirected to an external payment provider."
-                                   FontSize="13"
-                                   Foreground="#6B7280"
-                                   TextWrapping="Wrap"/>
+                        <Border Background="#EFF6FF"
+                                CornerRadius="16"
+                                Padding="14"
+                                BorderBrush="#BFDBFE"
+                                BorderThickness="1">
 
-                        <StackPanel Orientation="Horizontal"
-                                    Spacing="10">
+                            <TextBlock Text="By clicking Pay, you will be redirected to an external payment provider."
+                                       FontSize="13"
+                                       Foreground="#1D4ED8"
+                                       TextWrapping="Wrap"/>
+
+                        </Border>
+
+                        <StackPanel Spacing="10">
 
                             <Button x:Name="PayButton"
                                     Classes="primary-action"
                                     Content="Pay"
-                                    Width="120"
-                                    Height="44"
-                                    FontWeight="SemiBold"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"/>
+                                    Height="46"/>
 
                             <Button x:Name="SaveButton"
                                     Classes="save-action"
                                     Content="Save"
-                                    Width="100"
-                                    Height="44"
-                                    FontWeight="SemiBold"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"/>
+                                    Height="44"/>
 
                         </StackPanel>
 
@@ -355,6 +486,97 @@
             </Grid>
 
         </ScrollViewer>
+
+        <!-- Product-style gallery image preview overlay -->
+        <Border x:Name="GalleryImageOverlay"
+                Grid.RowSpan="2"
+                IsVisible="False"
+                Background="#D9111827">
+
+            <Grid ColumnDefinitions="7*,3*">
+
+                <!-- 70% image area -->
+                <Border x:Name="GalleryPreviewImageArea"
+                        Grid.Column="0"
+                        Background="#0F172A"
+                        Padding="34">
+
+                    <Border x:Name="GalleryPreviewImageCard"
+                            Background="#111827"
+                            CornerRadius="24"
+                            Padding="18"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            BorderBrush="#374151"
+                            BorderThickness="1">
+
+                        <Image x:Name="ExpandedGalleryImage"
+                               Stretch="Uniform"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>
+
+                    </Border>
+
+                </Border>
+
+                <!-- 30% close / information area -->
+                <Border x:Name="GalleryPreviewCloseArea"
+                        Grid.Column="1"
+                        Background="#F9FAFB"
+                        Padding="28">
+
+                    <StackPanel Spacing="18">
+
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <TextBlock Grid.Column="0"
+                                       Text="Image Preview"
+                                       FontSize="26"
+                                       FontWeight="Bold"
+                                       Foreground="#111827"
+                                       VerticalAlignment="Center"/>
+
+                            <Button x:Name="CloseGalleryPreviewButton"
+                                    Grid.Column="1"
+                                    Classes="close-preview-button"
+                                    Content="×"
+                                    Width="42"
+                                    Height="42"
+                                    FontSize="24"/>
+
+                        </Grid>
+
+                        <Border Background="#EFF6FF"
+                                CornerRadius="16"
+                                Padding="14"
+                                BorderBrush="#BFDBFE"
+                                BorderThickness="1">
+
+                            <TextBlock Text="Click the close button or anywhere in this right-side panel to return to the activity details."
+                                       FontSize="14"
+                                       Foreground="#1D4ED8"
+                                       TextWrapping="Wrap"/>
+
+                        </Border>
+
+                        <TextBlock x:Name="ExpandedGalleryImageCaptionTextBlock"
+                                   Text=""
+                                   FontSize="15"
+                                   Foreground="#4B5563"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock Text="The image is displayed in its original proportions, similar to product galleries in online stores."
+                                   FontSize="13"
+                                   Foreground="#6B7280"
+                                   TextWrapping="Wrap"/>
+
+                    </StackPanel>
+
+                </Border>
+
+            </Grid>
+
+        </Border>
 
     </Grid>
 

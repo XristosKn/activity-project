@@ -55,12 +55,46 @@
                 <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
         <Style Selector="DatePicker.signup-input">
-                <Setter Property="Height" Value="40"/>
-                <Setter Property="FontSize" Value="14"/>
-                <Setter Property="Padding" Value="12,8"/>
-                <Setter Property="Background" Value="#F9FAFB"/>
-                <Setter Property="BorderBrush" Value="#E5E7EB"/>
-                <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="BorderBrush" Value="#CBD5E1"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+            <Setter Property="CornerRadius" Value="10"/>
+        </Style>
+
+        <Style Selector="DatePicker.signup-input:pointerover">
+            <Setter Property="Background" Value="#F8FAFC"/>
+            <Setter Property="BorderBrush" Value="#60A5FA"/>
+        </Style>
+
+        <Style Selector="DatePicker.signup-input:focus">
+            <Setter Property="BorderBrush" Value="#2563EB"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+
+        <!-- Internal DatePicker buttons -->
+        <Style Selector="DatePicker.signup-input /template/ Button">
+            <Setter Property="Background" Value="#E0ECFF"/>
+            <Setter Property="Foreground" Value="#1E3A8A"/>
+            <Setter Property="BorderBrush" Value="#93C5FD"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="8,4"/>
+        </Style>
+
+        <Style Selector="DatePicker.signup-input /template/ Button:pointerover">
+            <Setter Property="Background" Value="#DBEAFE"/>
+            <Setter Property="BorderBrush" Value="#2563EB"/>
+            <Setter Property="Foreground" Value="#1D4ED8"/>
+        </Style>
+
+        <Style Selector="DatePicker.signup-input /template/ Button:pressed">
+            <Setter Property="Background" Value="#BFDBFE"/>
+            <Setter Property="BorderBrush" Value="#1E40AF"/>
         </Style>
 
         <Style Selector="Button.primary-button">
@@ -417,7 +451,7 @@
                                             <TextBlock Text="Date of Birth"
                                                        Classes="field-label"/>
 
-                                            <DatePicker x:Name="DateOfBirthPicker"
+                                            <CalendarDatePicker x:Name="DateOfBirthPicker"
                                                         Classes="signup-input"
                                                         HorizontalAlignment="Stretch"/>
 

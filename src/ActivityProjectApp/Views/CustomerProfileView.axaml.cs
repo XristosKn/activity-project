@@ -329,7 +329,7 @@ namespace ActivityProjectApp.Views
                     Title = activityEvent.Title,
                     Category = activityEvent.Category,
                     ScheduleText = $"{activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm}",
-                    StatusText = enrollment.Status.ToString(),
+                    StatusText = FormatEnrollmentStatus(enrollment.Status),
                     Description = activityEvent.Description,
                     Address = activityEvent.Address,
                     Price = activityEvent.Price,
@@ -360,7 +360,7 @@ namespace ActivityProjectApp.Views
                     Title = course.Title,
                     Category = course.Category,
                     ScheduleText = $"{course.Days}, {course.StartTime:hh\\:mm} - {course.EndTime:hh\\:mm}",
-                    StatusText = enrollment.Status.ToString(),
+                    StatusText = FormatEnrollmentStatus(enrollment.Status),
                     Description = course.Description,
                     Address = course.Address,
                     Price = course.Price,
@@ -373,6 +373,26 @@ namespace ActivityProjectApp.Views
             }
 
             return null;
+        }
+
+        private string FormatEnrollmentStatus(EnrollmentStatus status)
+        {
+            if (status == EnrollmentStatus.PendingPayment)
+            {
+                return "Pending payment";
+            }
+
+            if (status == EnrollmentStatus.Confirmed)
+            {
+                return "Confirmed";
+            }
+
+            if (status == EnrollmentStatus.Cancelled)
+            {
+                return "Cancelled";
+            }
+
+            return status.ToString();
         }
 
         private void SavedItemsControl_ButtonClick(object? sender, RoutedEventArgs e)

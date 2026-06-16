@@ -6,6 +6,26 @@
 
     <UserControl.Styles>
 
+        <Style Selector="CalendarDatePicker.signup-input">
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#111827"/>
+            <Setter Property="BorderBrush" Value="#D1D5DB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+
+        <Style Selector="CalendarDatePicker.signup-input:pointerover">
+            <Setter Property="BorderBrush" Value="#93C5FD"/>
+            <Setter Property="Background" Value="#F9FAFB"/>
+        </Style>
+
+        <Style Selector="CalendarDatePicker.signup-input:focus">
+            <Setter Property="BorderBrush" Value="#2563EB"/>
+        </Style>
+
         <Style Selector="TextBlock.section-title">
             <Setter Property="FontSize" Value="25"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -38,10 +58,10 @@
                             CornerRadius="{TemplateBinding CornerRadius}">
 
                         <ContentPresenter Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        Padding="{TemplateBinding Padding}"
-                                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                          ContentTemplate="{TemplateBinding ContentTemplate}"
+                                          Padding="{TemplateBinding Padding}"
+                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
 
                     </Border>
                 </ControlTemplate>
@@ -213,6 +233,10 @@
                             Classes="menu-button"
                             Content="My Announcements"/>
 
+                    <Button x:Name="GalleryButton"
+                            Classes="menu-button"
+                            Content="Gallery"/>
+
                     <Button x:Name="SettingsButton"
                             Classes="menu-button"
                             Content="Settings"/>
@@ -332,6 +356,7 @@
                                    Text="Select an option from the menu."
                                    FontSize="14"
                                    Foreground="#777777"/>
+
                         <Border x:Name="DeleteConfirmationPanel"
                                 IsVisible="False"
                                 Background="#FEF2F2"
@@ -343,13 +368,13 @@
                             <Grid ColumnDefinitions="*,Auto,Auto">
 
                                 <TextBlock x:Name="DeleteConfirmationTextBlock"
-                                        Grid.Column="0"
-                                        Text="Are you sure you want to delete this item?"
-                                        FontSize="13"
-                                        FontWeight="SemiBold"
-                                        Foreground="#991B1B"
-                                        VerticalAlignment="Center"
-                                        TextWrapping="Wrap"/>
+                                           Grid.Column="0"
+                                           Text="Are you sure you want to delete this item?"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           Foreground="#991B1B"
+                                           VerticalAlignment="Center"
+                                           TextWrapping="Wrap"/>
 
                                 <Button x:Name="ConfirmDeleteButton"
                                         Grid.Column="1"
@@ -463,7 +488,7 @@
 
                                     <Grid ColumnDefinitions="*,*">
 
-                                        <DatePicker x:Name="EventDatePicker"
+                                        <CalendarDatePicker x:Name="EventDatePicker"
                                                     Grid.Column="0"
                                                     HorizontalAlignment="Stretch"
                                                     Margin="0,0,8,0"/>
@@ -525,9 +550,116 @@
 
                                 </Grid>
 
-                                <TextBox x:Name="EventGalleryTextBox"
-                                         Watermark="Gallery image paths separated by comma"
-                                         Height="36"/>
+                                <!-- Images upload panel -->
+                                <TextBlock Text="Images"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           Foreground="#1F2937"
+                                           Margin="0,12,0,0"/>
+
+                                <Border Background="#F9FAFB"
+                                        CornerRadius="12"
+                                        Padding="14"
+                                        BorderBrush="#E5E7EB"
+                                        BorderThickness="1">
+
+                                    <StackPanel Spacing="12">
+
+                                        <TextBlock Text="Main image"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#374151"/>
+
+                                        <Grid ColumnDefinitions="Auto,*">
+
+                                            <Button x:Name="UploadMainImageButton"
+                                                    Grid.Column="0"
+                                                    Content="Upload Main Image"
+                                                    Width="170"
+                                                    Height="36"
+                                                    Margin="0,0,12,0"/>
+
+                                            <TextBlock x:Name="MainImagePathTextBlock"
+                                                       Grid.Column="1"
+                                                       Text="No main image selected"
+                                                       FontSize="13"
+                                                       Foreground="#6B7280"
+                                                       VerticalAlignment="Center"
+                                                       TextWrapping="Wrap"/>
+
+                                        </Grid>
+                                        <Button x:Name="SelectMainImageFromGalleryButton"
+                                                Content="Select Main Image From Gallery"
+                                                Height="34"
+                                                HorizontalAlignment="Left"
+                                                Padding="14,0"
+                                                Background="#EFF6FF"
+                                                Foreground="#1D4ED8"
+                                                BorderBrush="#BFDBFE"
+                                                BorderThickness="1"
+                                                CornerRadius="8"/>
+
+                                        <TextBlock Text="Gallery images"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#374151"
+                                                   Margin="0,8,0,0"/>
+
+                                        <Grid ColumnDefinitions="Auto,*">
+
+                                            <Button x:Name="UploadGalleryImagesButton"
+                                                    Grid.Column="0"
+                                                    Content="Upload Gallery Images"
+                                                    Width="190"
+                                                    Height="36"
+                                                    Margin="0,0,12,0"/>
+
+                                            <TextBlock x:Name="GalleryImagesCountTextBlock"
+                                                       Grid.Column="1"
+                                                       Text="No gallery images selected"
+                                                       FontSize="13"
+                                                       Foreground="#6B7280"
+                                                       VerticalAlignment="Center"
+                                                       TextWrapping="Wrap"/>
+
+                                        </Grid>
+
+                                        <Button x:Name="SelectGalleryImagesFromGalleryButton"
+                                                Content="Add Gallery Images From Gallery"
+                                                Height="34"
+                                                HorizontalAlignment="Left"
+                                                Padding="14,0"
+                                                Background="#F0FDF4"
+                                                Foreground="#166534"
+                                                BorderBrush="#BBF7D0"
+                                                BorderThickness="1"
+                                                CornerRadius="8"/>
+
+                                        <ItemsControl x:Name="SelectedGalleryImagesItemsControl">
+
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Background="White"
+                                                            CornerRadius="8"
+                                                            Padding="8"
+                                                            Margin="0,0,0,6"
+                                                            BorderBrush="#E5E7EB"
+                                                            BorderThickness="1">
+
+                                                        <TextBlock Text="{Binding}"
+                                                                   FontSize="12"
+                                                                   Foreground="#4B5563"
+                                                                   TextWrapping="Wrap"/>
+
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+
+                                        </ItemsControl>
+
+                                    </StackPanel>
+
+                                </Border>
 
                                 <ComboBox x:Name="EventStatusComboBox"
                                           PlaceholderText="Select status"
@@ -596,10 +728,10 @@
                                          Height="90"/>
 
                                 <ComboBox x:Name="AnnouncementTargetModeComboBox"
-                                        PlaceholderText="Select announcement audience"
-                                        Height="36"
-                                        HorizontalAlignment="Stretch"
-                                        SelectedIndex="0">
+                                          PlaceholderText="Select announcement audience"
+                                          Height="36"
+                                          HorizontalAlignment="Stretch"
+                                          SelectedIndex="0">
 
                                     <ComboBoxItem Content="All Events and Courses"/>
                                     <ComboBoxItem Content="All Events"/>
@@ -618,18 +750,18 @@
                                     <StackPanel Spacing="8">
 
                                         <TextBlock Text="Select related events/courses"
-                                                FontSize="13"
-                                                FontWeight="SemiBold"
-                                                Foreground="#374151"/>
+                                                   FontSize="13"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#374151"/>
 
                                         <TextBlock x:Name="AnnouncementTargetsHelpTextBlock"
-                                                Text="Targets are selected automatically based on the option above."
-                                                FontSize="12"
-                                                Foreground="#6B7280"
-                                                TextWrapping="Wrap"/>
+                                                   Text="Targets are selected automatically based on the option above."
+                                                   FontSize="12"
+                                                   Foreground="#6B7280"
+                                                   TextWrapping="Wrap"/>
 
                                         <ScrollViewer MaxHeight="180"
-                                                    VerticalScrollBarVisibility="Auto">
+                                                      VerticalScrollBarVisibility="Auto">
 
                                             <ItemsControl x:Name="AnnouncementTargetItemsControl">
 
@@ -638,9 +770,9 @@
                                                     <DataTemplate DataType="{x:Type models:AnnouncementTargetSelectionItem}">
 
                                                         <CheckBox Content="{Binding DisplayText}"
-                                                                IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                                                Margin="0,0,0,6"
-                                                                VerticalContentAlignment="Center"/>
+                                                                  IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                                  Margin="0,0,0,6"
+                                                                  VerticalContentAlignment="Center"/>
 
                                                     </DataTemplate>
 
@@ -753,12 +885,12 @@
                                                     <Grid ColumnDefinitions="*,Auto,Auto,Auto">
 
                                                         <TextBlock Grid.Column="0"
-                                                                Text="{Binding Title}"
-                                                                FontSize="16"
-                                                                FontWeight="Bold"
-                                                                Foreground="Black"
-                                                                TextWrapping="Wrap"
-                                                                VerticalAlignment="Center"/>
+                                                                   Text="{Binding Title}"
+                                                                   FontSize="16"
+                                                                   FontWeight="Bold"
+                                                                   Foreground="Black"
+                                                                   TextWrapping="Wrap"
+                                                                   VerticalAlignment="Center"/>
 
                                                         <Border Grid.Column="1"
                                                                 Background="#E5E7EB"
@@ -768,9 +900,9 @@
                                                                 VerticalAlignment="Center">
 
                                                             <TextBlock Text="{Binding ActivityType}"
-                                                                    FontSize="12"
-                                                                    FontWeight="SemiBold"
-                                                                    Foreground="#374151"/>
+                                                                       FontSize="12"
+                                                                       FontWeight="SemiBold"
+                                                                       Foreground="#374151"/>
 
                                                         </Border>
 
@@ -864,12 +996,12 @@
                                                     <Grid ColumnDefinitions="*,Auto,Auto,Auto">
 
                                                         <TextBlock Grid.Column="0"
-                                                                Text="{Binding Title}"
-                                                                FontSize="16"
-                                                                FontWeight="Bold"
-                                                                Foreground="Black"
-                                                                TextWrapping="Wrap"
-                                                                VerticalAlignment="Center"/>
+                                                                   Text="{Binding Title}"
+                                                                   FontSize="16"
+                                                                   FontWeight="Bold"
+                                                                   Foreground="Black"
+                                                                   TextWrapping="Wrap"
+                                                                   VerticalAlignment="Center"/>
 
                                                         <Border Grid.Column="1"
                                                                 Background="#E5E7EB"
@@ -879,9 +1011,9 @@
                                                                 VerticalAlignment="Center">
 
                                                             <TextBlock Text="{Binding IsActive}"
-                                                                    FontSize="12"
-                                                                    FontWeight="SemiBold"
-                                                                    Foreground="#374151"/>
+                                                                       FontSize="12"
+                                                                       FontWeight="SemiBold"
+                                                                       Foreground="#374151"/>
 
                                                         </Border>
 
@@ -897,6 +1029,7 @@
                                                                 Tag="{Binding}"/>
 
                                                     </Grid>
+
                                                     <TextBlock Text="Announcement"
                                                                FontSize="13"
                                                                FontWeight="SemiBold"
@@ -910,6 +1043,122 @@
                                                     <TextBlock Text="{Binding AnnouncementDate, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"
                                                                FontSize="12"
                                                                Foreground="#777777"/>
+
+                                                </StackPanel>
+
+                                            </Border>
+
+                                        </DataTemplate>
+
+                                    </ItemsControl.ItemTemplate>
+
+                                </ItemsControl>
+
+                            </StackPanel>
+
+                        </Border>
+
+                        <!-- Provider Gallery panel -->
+                        <Border x:Name="ProviderGalleryPanel"
+                                IsVisible="False"
+                                Background="#F4F6F8"
+                                CornerRadius="14"
+                                Padding="20"
+                                BorderBrush="#E5E7EB"
+                                BorderThickness="1">
+
+                            <StackPanel Spacing="14">
+
+                                <Grid ColumnDefinitions="*,Auto">
+
+                                    <StackPanel Grid.Column="0"
+                                                Spacing="4">
+
+                                        <TextBlock Text="Gallery"
+                                                Classes="subsection-title"/>
+
+                                        <TextBlock x:Name="ProviderGalleryHelpTextBlock"
+                                                Text="View your uploaded images or select images for an event/course."
+                                                FontSize="13"
+                                                Foreground="#6B7280"
+                                                TextWrapping="Wrap"/>
+
+                                    </StackPanel>
+
+                                    <Button x:Name="UploadProviderGalleryImagesButton"
+                                            Grid.Column="1"
+                                            Content="Upload Images"
+                                            Width="140"
+                                            Height="36"
+                                            Background="#D0D0D0"
+                                            Foreground="Black"
+                                            HorizontalContentAlignment="Center"
+                                            VerticalContentAlignment="Center"/>
+
+                                </Grid>
+
+                                <TextBlock x:Name="ProviderGalleryCountTextBlock"
+                                        Text="0 images"
+                                        FontSize="13"
+                                        Foreground="#6B7280"/>
+
+                                <ItemsControl x:Name="ProviderGalleryItemsControl">
+
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel/>
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+
+                                    <ItemsControl.ItemTemplate>
+
+                                        <DataTemplate DataType="{x:Type models:ProviderGalleryImageListItem}">
+
+                                            <Border Background="White"
+                                                    CornerRadius="12"
+                                                    Padding="10"
+                                                    Margin="0,0,12,12"
+                                                    Width="210"
+                                                    BorderBrush="#E5E7EB"
+                                                    BorderThickness="1">
+
+                                                <StackPanel Spacing="8">
+
+                                                    <Border Height="120"
+                                                            Background="#E5E7EB"
+                                                            CornerRadius="10"
+                                                            ClipToBounds="True">
+
+                                                        <Image Source="{Binding PreviewImage}"
+                                                            Stretch="UniformToFill"/>
+
+                                                    </Border>
+
+                                                    <TextBlock Text="{Binding OriginalFileName}"
+                                                            FontSize="13"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="#111827"
+                                                            TextWrapping="Wrap"
+                                                            MaxHeight="38"/>
+
+                                                    <TextBlock Text="{Binding UploadedAtText}"
+                                                            FontSize="11"
+                                                            Foreground="#6B7280"/>
+
+                                                    <Button Classes="card-action-button edit-activity-button gallery-select-main-button"
+                                                            Content="Main"
+                                                            Tag="{Binding}"
+                                                            Width="180"/>
+
+                                                    <Button Classes="card-action-button edit-activity-button gallery-add-to-activity-button"
+                                                            Content="Add"
+                                                            Tag="{Binding}"
+                                                            Width="180"/>
+
+                                                    <Button Classes="card-action-button delete-activity-button gallery-delete-image-button"
+                                                            Content="Delete"
+                                                            Tag="{Binding}"
+                                                            Width="180"/>
 
                                                 </StackPanel>
 

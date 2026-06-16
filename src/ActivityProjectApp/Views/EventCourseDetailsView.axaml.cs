@@ -1,8 +1,12 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using ActivityProjectApp.Models;
 using ActivityProjectApp.Services;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using AppActivityEvent = ActivityProjectApp.Models.ActivityEvent;
@@ -17,6 +21,11 @@ namespace ActivityProjectApp.Views
 
         private AppActivityEvent? _activityEvent;
         private Course? _course;
+
+        public EventCourseDetailsView()
+        {
+            InitializeComponent();
+        }
 
         public EventCourseDetailsView(
             int itemId,
@@ -41,6 +50,15 @@ namespace ActivityProjectApp.Views
             PayButton.Click += PayButton_Click;
             LogoutButton.Click += LogoutButton_Click;
             SaveButton.Click += SaveButton_Click;
+
+            GalleryImagesItemsControl.AddHandler(
+                Button.ClickEvent,
+                GalleryImagesItemsControl_ButtonClick,
+                RoutingStrategies.Bubble);
+
+            GalleryPreviewImageCard.PointerPressed += GalleryPreviewImageCard_PointerPressed;
+            GalleryPreviewCloseArea.PointerPressed += GalleryPreviewCloseArea_PointerPressed;
+            CloseGalleryPreviewButton.Click += CloseGalleryPreviewButton_Click;
 
             AppServices.PaymentSimulationService.PaymentStatusChanged += PaymentSimulationService_PaymentStatusChanged;
         }
@@ -71,7 +89,6 @@ namespace ActivityProjectApp.Views
             }
 
             PageTitleTextBlock.Text = "Event Enrollment Details";
-            MediaPlaceholderTextBlock.Text = "Event Image / Video Preview";
 
             ItemTitleTextBlock.Text = _activityEvent.Title;
             ItemCategoryTextBlock.Text = _activityEvent.Category;
@@ -86,6 +103,13 @@ namespace ActivityProjectApp.Views
 
             EnrollmentStatusTextBlock.Text = _enrollment.Status.ToString();
 
+            LoadImagesForItem(
+                _activityEvent.Id,
+                ActivityImageItemType.Event,
+                _activityEvent.MainImagePath,
+                _activityEvent.Gallery);
+
+            UpdateSaveButtonState();
             UpdatePaymentUiByStatus();
         }
 
@@ -115,7 +139,6 @@ namespace ActivityProjectApp.Views
             }
 
             PageTitleTextBlock.Text = "Course Enrollment Details";
-            MediaPlaceholderTextBlock.Text = "Course Image / Video Preview";
 
             ItemTitleTextBlock.Text = _course.Title;
             ItemCategoryTextBlock.Text = _course.Category;
@@ -130,7 +153,163 @@ namespace ActivityProjectApp.Views
 
             EnrollmentStatusTextBlock.Text = _enrollment.Status.ToString();
 
+            LoadImagesForItem(
+                _course.Id,
+                ActivityImageItemType.Course,
+                _course.MainImagePath,
+                _course.Gallery);
+
+            UpdateSaveButtonState();
             UpdatePaymentUiByStatus();
+        }
+
+        private void LoadImagesForItem(
+            int itemId,
+            ActivityImageItemType itemType,
+            string fallbackMainImagePath,
+            string fallbackGallery)
+        {
+            ActivityImage? mainImage = AppServices.ActivityImageRepository
+                .GetMainImage(itemId, itemType);
+
+            List<ActivityImage> galleryImages = AppServices.ActivityImageRepository
+                .GetGalleryImages(itemId, itemType);
+
+            string mainImagePath = string.Empty;
+
+            if (mainImage != null && !string.IsNullOrWhiteSpace(mainImage.ImagePath))
+            {
+                mainImagePath = mainImage.ImagePath;
+            }
+            else if (!string.IsNullOrWhiteSpace(fallbackMainImagePath))
+            {
+                mainImagePath = fallbackMainImagePath;
+            }
+
+            Bitmap? mainBitmap = LoadBitmapOrNull(mainImagePath);
+
+            if (mainBitmap != null)
+            {
+                MainActivityImage.Source = mainBitmap;
+                MainActivityImage.IsVisible = true;
+                MediaPlaceholderTextBlock.IsVisible = false;
+            }
+            else
+            {
+                MainActivityImage.Source = null;
+                MainActivityImage.IsVisible = false;
+                MediaPlaceholderTextBlock.IsVisible = true;
+            }
+
+            List<EventCourseGalleryImageItem> galleryItems = new List<EventCourseGalleryImageItem>();
+
+            if (galleryImages.Count > 0)
+            {
+                galleryItems = galleryImages
+                    .Select(image => new EventCourseGalleryImageItem
+                    {
+                        ImagePath = image.ImagePath,
+                        Caption = image.Caption,
+                        PreviewImage = LoadBitmapOrNull(image.ImagePath)
+                    })
+                    .Where(item => item.PreviewImage != null)
+                    .ToList();
+            }
+            else if (!string.IsNullOrWhiteSpace(fallbackGallery))
+            {
+                galleryItems = fallbackGallery
+                    .Split(';', ',', System.StringSplitOptions.RemoveEmptyEntries)
+                    .Select(path => path.Trim())
+                    .Where(path => !string.IsNullOrWhiteSpace(path))
+                    .Select(path => new EventCourseGalleryImageItem
+                    {
+                        ImagePath = path,
+                        Caption = string.Empty,
+                        PreviewImage = LoadBitmapOrNull(path)
+                    })
+                    .Where(item => item.PreviewImage != null)
+                    .ToList();
+            }
+
+            GalleryImagesItemsControl.ItemsSource = galleryItems;
+            GallerySectionPanel.IsVisible = galleryItems.Count > 0;
+        }
+
+        private Bitmap? LoadBitmapOrNull(string imagePath)
+        {
+            if (string.IsNullOrWhiteSpace(imagePath))
+            {
+                return null;
+            }
+
+            if (!File.Exists(imagePath))
+            {
+                return null;
+            }
+
+            try
+            {
+                return new Bitmap(imagePath);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private void GalleryImagesItemsControl_ButtonClick(object? sender, RoutedEventArgs e)
+        {
+            if (e.Source is not Button button)
+            {
+                return;
+            }
+
+            if (button.Tag is not EventCourseGalleryImageItem galleryImageItem)
+            {
+                return;
+            }
+
+            if (galleryImageItem.PreviewImage == null)
+            {
+                return;
+            }
+
+            ExpandedGalleryImage.Source = galleryImageItem.PreviewImage;
+
+            ExpandedGalleryImageCaptionTextBlock.Text = string.IsNullOrWhiteSpace(galleryImageItem.Caption)
+                ? "Selected gallery image"
+                : galleryImageItem.Caption;
+
+            GalleryImageOverlay.IsVisible = true;
+
+            e.Handled = true;
+        }
+
+        private void GalleryPreviewImageCard_PointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            // Keep the preview open when the user clicks on the image area.
+            e.Handled = true;
+        }
+
+        private void GalleryPreviewCloseArea_PointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            CloseGalleryImagePreview();
+
+            e.Handled = true;
+        }
+
+        private void CloseGalleryPreviewButton_Click(object? sender, RoutedEventArgs e)
+        {
+            CloseGalleryImagePreview();
+
+            e.Handled = true;
+        }
+
+        private void CloseGalleryImagePreview()
+        {
+            GalleryImageOverlay.IsVisible = false;
+            ExpandedGalleryImage.Source = null;
+            ExpandedGalleryImageCaptionTextBlock.Text = string.Empty;
         }
 
         private void PaymentSimulationService_PaymentStatusChanged(int enrollmentId, EnrollmentStatus status)
@@ -178,6 +357,7 @@ namespace ActivityProjectApp.Views
         {
             AppServices.PaymentSimulationService.OpenPaymentPage(_enrollment.Id);
         }
+
         private void SaveButton_Click(object? sender, RoutedEventArgs e)
         {
             if (AppServices.AuthService.GetCurrentUser() is not Customer customer)

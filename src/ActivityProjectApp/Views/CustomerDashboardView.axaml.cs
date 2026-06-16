@@ -167,10 +167,20 @@ namespace ActivityProjectApp.Views
                     savedItem.ItemId == activityEvent.Id &&
                     savedItem.ItemType == SavedItemType.Event);
 
-                bool isAlreadyEnrolled = customerEnrollments.Any(enrollment =>
+                bool hasConfirmedEnrollment = customerEnrollments.Any(enrollment =>
                     enrollment.ItemId == activityEvent.Id &&
                     enrollment.ItemType == EnrollmentItemType.Event &&
-                    enrollment.Status != EnrollmentStatus.Cancelled);
+                    enrollment.Status == EnrollmentStatus.Confirmed);
+
+                if (hasConfirmedEnrollment)
+                {
+                    continue;
+                }
+
+                bool hasPendingPayment = customerEnrollments.Any(enrollment =>
+                    enrollment.ItemId == activityEvent.Id &&
+                    enrollment.ItemType == EnrollmentItemType.Event &&
+                    enrollment.Status == EnrollmentStatus.PendingPayment);
 
                 activities.Add(new CustomerActivityListItem
                 {
@@ -187,9 +197,12 @@ namespace ActivityProjectApp.Views
                     Price = activityEvent.Price,
                     PriceText = $"€{activityEvent.Price}",
                     MaxSpace = activityEvent.MaxSpace,
-                    ExtraInfoText = $"Event | {activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm} | €{activityEvent.Price} | Max spaces: {activityEvent.MaxSpace}",
+                    ExtraInfoText = hasPendingPayment
+                        ? $"Pending payment | Event | {activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm} | €{activityEvent.Price}"
+                        : $"Event | {activityEvent.Date:dd/MM/yyyy} at {activityEvent.Time:hh\\:mm} | €{activityEvent.Price} | Max spaces: {activityEvent.MaxSpace}",
                     IsSaved = isSaved,
-                    IsAlreadyEnrolled = isAlreadyEnrolled
+                    IsAlreadyEnrolled = hasConfirmedEnrollment,
+                    HasPendingPayment = hasPendingPayment
                 });
             }
 
@@ -208,10 +221,20 @@ namespace ActivityProjectApp.Views
                     savedItem.ItemId == course.Id &&
                     savedItem.ItemType == SavedItemType.Course);
 
-                bool isAlreadyEnrolled = customerEnrollments.Any(enrollment =>
+                bool hasConfirmedEnrollment = customerEnrollments.Any(enrollment =>
                     enrollment.ItemId == course.Id &&
                     enrollment.ItemType == EnrollmentItemType.Course &&
-                    enrollment.Status != EnrollmentStatus.Cancelled);
+                    enrollment.Status == EnrollmentStatus.Confirmed);
+
+                if (hasConfirmedEnrollment)
+                {
+                    continue;
+                }
+
+                bool hasPendingPayment = customerEnrollments.Any(enrollment =>
+                    enrollment.ItemId == course.Id &&
+                    enrollment.ItemType == EnrollmentItemType.Course &&
+                    enrollment.Status == EnrollmentStatus.PendingPayment);
 
                 activities.Add(new CustomerActivityListItem
                 {
@@ -230,7 +253,8 @@ namespace ActivityProjectApp.Views
                     MaxSpace = course.MaxSpace,
                     ExtraInfoText = $"Course | {course.Days}, {course.StartTime:hh\\:mm} - {course.EndTime:hh\\:mm} | €{course.Price} | Max spaces: {course.MaxSpace} | Age: {course.AgeRestriction}",
                     IsSaved = isSaved,
-                    IsAlreadyEnrolled = isAlreadyEnrolled
+                    IsAlreadyEnrolled = hasConfirmedEnrollment,
+                    HasPendingPayment = hasPendingPayment
                 });
             }
 
@@ -307,12 +331,31 @@ namespace ActivityProjectApp.Views
                 return;
             }
 
-            bool alreadyEnrolled = AppServices.EnrollmentRepository.IsCustomerEnrolled(
+            Enrollment? existingEnrollment = AppServices.EnrollmentRepository.GetEnrollment(
                 customer.Id,
                 _selectedActivity.ItemId,
                 _selectedActivity.ItemType);
 
-            if (alreadyEnrolled)
+            if (existingEnrollment != null &&
+                existingEnrollment.Status == EnrollmentStatus.PendingPayment)
+            {
+                MainWindow? paymentWindow = this.VisualRoot as MainWindow;
+
+                if (paymentWindow == null)
+                {
+                    return;
+                }
+
+                paymentWindow.Content = new EventCourseDetailsView(
+                    _selectedActivity.ItemId,
+                    _selectedActivity.ItemType,
+                    existingEnrollment);
+
+                return;
+            }
+
+            if (existingEnrollment != null &&
+                existingEnrollment.Status == EnrollmentStatus.Confirmed)
             {
                 ShowErrorMessage("You are already enrolled in this item.");
                 UpdateEnrollButtonState();
@@ -777,6 +820,13 @@ namespace ActivityProjectApp.Views
             if (_selectedActivity == null)
             {
                 EnrollButton.Content = "Enroll";
+                EnrollButton.IsEnabled = false;
+                return;
+            }
+
+            if (_selectedActivity.HasPendingPayment)
+            {
+                EnrollButton.Content = "View / Enroll";
                 EnrollButton.IsEnabled = true;
                 return;
             }
@@ -784,16 +834,18 @@ namespace ActivityProjectApp.Views
             if (_authService.GetCurrentUser() is not Customer customer)
             {
                 EnrollButton.Content = "Enroll";
-                EnrollButton.IsEnabled = true;
+                EnrollButton.IsEnabled = false;
                 return;
             }
 
-            bool alreadyEnrolled = AppServices.EnrollmentRepository.IsCustomerEnrolled(
-                customer.Id,
-                _selectedActivity.ItemId,
-                _selectedActivity.ItemType);
+            bool alreadyConfirmed = AppServices.EnrollmentRepository
+                .GetEnrollmentsByCustomerId(customer.Id)
+                .Any(enrollment =>
+                    enrollment.ItemId == _selectedActivity.ItemId &&
+                    enrollment.ItemType == _selectedActivity.ItemType &&
+                    enrollment.Status == EnrollmentStatus.Confirmed);
 
-            if (alreadyEnrolled)
+            if (alreadyConfirmed)
             {
                 EnrollButton.Content = "Enrolled";
                 EnrollButton.IsEnabled = false;
